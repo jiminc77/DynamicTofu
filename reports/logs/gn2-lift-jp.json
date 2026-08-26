@@ -1,31 +1,11 @@
 {
   "gentle": {
     "tag": "gentle",
-    "f_g_n": 0.5,
+    "f_g_n": 1.2,
     "lifted": true,
     "final_damage_fraction": 0.0,
     "peak_damage_fraction": 0.0,
     "damage_trace": [
-      {
-        "t": 3.4,
-        "damage_fraction": 0.0
-      },
-      {
-        "t": 3.5,
-        "damage_fraction": 0.0
-      },
-      {
-        "t": 3.6,
-        "damage_fraction": 0.0
-      },
-      {
-        "t": 3.7,
-        "damage_fraction": 0.0
-      },
-      {
-        "t": 3.8,
-        "damage_fraction": 0.0
-      },
       {
         "t": 4.2,
         "damage_fraction": 0.0
@@ -47,37 +27,57 @@
         "damage_fraction": 0.0
       },
       {
-        "t": 4.7,
+        "t": 5.5,
         "damage_fraction": 0.0
       },
       {
-        "t": 4.8,
+        "t": 5.6,
         "damage_fraction": 0.0
       },
       {
-        "t": 4.9,
+        "t": 5.7,
         "damage_fraction": 0.0
       },
       {
-        "t": 5.0,
+        "t": 5.8,
         "damage_fraction": 0.0
       },
       {
-        "t": 5.1,
+        "t": 5.9,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 6.0,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 6.1,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 6.2,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 6.3,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 6.4,
         "damage_fraction": 0.0
       }
     ],
-    "block_z_mean": 0.21268539130687714,
-    "volume_drift_since_pregrasp": 0.25477254432197194,
+    "block_z_mean": 0.2191358208656311,
+    "volume_drift_since_pregrasp": 13.087829452214812,
     "health": {
       "clean": true,
-      "max_particle_speed_ms": 0.7752076387405396,
+      "max_particle_speed_ms": 0.9753618240356445,
       "speed_limit_ms": 5.0,
       "nan_free": true,
       "jp_finite": true,
       "sparse_grid_ok": true,
       "sparse_grid_error": "",
-      "n_checks": 8
+      "n_checks": 16
     },
     "n_snapshots": 30
   },
@@ -88,38 +88,6 @@
     "final_damage_fraction": 0.0,
     "peak_damage_fraction": 0.0,
     "damage_trace": [
-      {
-        "t": 3.4,
-        "damage_fraction": 0.0
-      },
-      {
-        "t": 3.5,
-        "damage_fraction": 0.0
-      },
-      {
-        "t": 3.6,
-        "damage_fraction": 0.0
-      },
-      {
-        "t": 3.7,
-        "damage_fraction": 0.0
-      },
-      {
-        "t": 3.8,
-        "damage_fraction": 0.0
-      },
-      {
-        "t": 3.9,
-        "damage_fraction": 0.0
-      },
-      {
-        "t": 4.0,
-        "damage_fraction": 0.0
-      },
-      {
-        "t": 4.1,
-        "damage_fraction": 0.0
-      },
       {
         "t": 4.2,
         "damage_fraction": 0.0
@@ -187,23 +155,55 @@
       {
         "t": 5.8,
         "damage_fraction": 0.0
+      },
+      {
+        "t": 5.9,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 6.0,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 6.1,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 6.2,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 6.3,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 6.4,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 6.5,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 6.6,
+        "damage_fraction": 0.0
       }
     ],
-    "block_z_mean": 0.21177184581756592,
-    "volume_drift_since_pregrasp": 1.1016526030429796,
+    "block_z_mean": 0.21716594696044922,
+    "volume_drift_since_pregrasp": 1.4605037443530977,
     "health": {
       "clean": true,
-      "max_particle_speed_ms": 0.8865602016448975,
+      "max_particle_speed_ms": 0.028451964259147644,
       "speed_limit_ms": 5.0,
       "nan_free": true,
       "jp_finite": true,
       "sparse_grid_ok": true,
       "sparse_grid_error": "",
-      "n_checks": 8
+      "n_checks": 12
     },
     "n_snapshots": 30
   },
-  "lift_rise_m": -0.007314608693122865,
+  "lift_rise_m": -0.0008641791343688976,
   "separation_ratio_crush_over_gentle": Infinity,
-  "wall_s": 42.673598766326904
+  "wall_s": 50.1928870677948
 }

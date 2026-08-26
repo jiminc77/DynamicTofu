@@ -24,7 +24,7 @@ from scripts.probes.gn2_ar_probe import FRAME_DT, GRASP_Z, PREGRASP_Z, Rig
 ROOT = os.path.join(os.path.dirname(__file__), "..", "..")
 DAMAGE_JP_DEV = 0.05   # judgment v1, frozen
 LIFT_M = 0.05
-F_GENTLE = 0.5
+F_GENTLE = 1.2  # holds 0.63 N at pad mu=1.0 with lift-accel margin; below plastic-flow extrusion
 F_CRUSH = 5.0
 
 
@@ -62,8 +62,13 @@ def run(f_g: float, tag: str, lift: bool):
     rig.step(int(0.5 / FRAME_DT))
     rig.move_ee((BLOCK_CENTER[0], BLOCK_CENTER[1], PREGRASP_Z), 1.5)
     rig.move_ee((BLOCK_CENTER[0], BLOCK_CENTER[1], GRASP_Z), 1.0)
+    resid = rig.move_ee_converge((BLOCK_CENTER[0], BLOCK_CENTER[1], GRASP_Z))
     rig.step(int(0.3 / FRAME_DT))
     vol_ref = block_volume_estimate(rig.state.particle_q.numpy())
+    n_ramp = int(0.3 / FRAME_DT)                        # ramped close, avoids slamming the soft block
+    for k in range(n_ramp):
+        rig.fingers.apply(rig.control, f_g * (k + 1) / n_ramp)
+        rig.step(1)
     rig.fingers.apply(rig.control, f_g)
     record(int(0.5 / FRAME_DT), snap_every=10)          # close + hold
     if lift:
@@ -71,11 +76,13 @@ def run(f_g: float, tag: str, lift: bool):
         start = GRASP_Z
         n = int(0.3 / FRAME_DT)
         for k in range(n):
-            z = start + LIFT_M * (k + 1) / n
-            rig.move_ee((BLOCK_CENTER[0], BLOCK_CENTER[1], z), FRAME_DT)
+            s = (k + 1) / n
+            s = s * s * (3.0 - 2.0 * s)  # smoothstep: zero start/end velocity per the phase contract
+            rig.move_ee((BLOCK_CENTER[0], BLOCK_CENTER[1], start + LIFT_M * s), FRAME_DT)
             if (k + 1) % 6 == 0:
                 snapshot(rig, frames_dir, tag, snap_i)
                 snap_i += 1
+        rig.move_ee_converge((BLOCK_CENTER[0], BLOCK_CENTER[1], start + LIFT_M))
         record(int(1.0 / FRAME_DT), snap_every=20)      # gentle hold aloft
     else:
         record(int(2.0 / FRAME_DT), snap_every=20)      # keep crushing

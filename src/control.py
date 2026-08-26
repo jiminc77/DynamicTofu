@@ -104,6 +104,12 @@ class FingerForceCommand:
             jf[d] = cmd
         control.joint_f.assign(jf)
 
+    def apply_open(self, control: newton.Control, f_open_newton: float = 1.0) -> None:
+        """Hold the gripper OPEN (approach/descend phases). EFFORT-mode fingers
+        have no holding stiffness and drift shut under arm motion otherwise
+        (observed: q 0.04 -> 0.006 during descend, plowing the block)."""
+        self.apply(control, -abs(f_open_newton))
+
 
 @dataclass
 class PhaseSchedule:

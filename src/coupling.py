@@ -122,6 +122,15 @@ def build_coupled_solver(
     return solver
 
 
+def mpm_entry_state(solver):
+    """The MPM entry's OWN state. The coupled wrapper does not sync custom
+    state attributes (mpm:particle_Jp etc.) back to the parent state - the
+    parent buffer stays at its initial value. All Jp/tactile reads MUST use
+    this state. (Found empirically: parent Jp stayed 1.0 while the entry
+    state showed Jp in [0.39, 957] under a crush.)"""
+    return solver._entries["mpm"].state_0
+
+
 def harvested_body_wrenches(solver) -> np.ndarray:
     """Per-body harvested spatial wrenches ([:, 0:3]=force N, [:, 3:6]=torque N*m)."""
     mappings = getattr(solver, "_proxy_mappings", None)

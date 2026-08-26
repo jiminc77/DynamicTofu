@@ -24,7 +24,7 @@ import warp as wp
 import newton
 
 from src.scene import BLOCK_CENTER, VOXEL_SIZE_M, build_scene
-from src.coupling import ar_check, build_coupled_solver, harvested_body_wrenches, node_reduction_per_body
+from src.coupling import ar_check, build_coupled_solver, harvested_body_wrenches, mpm_entry_state, node_reduction_per_body
 from src.control import ArmIK, FingerForceCommand, assert_control_contract
 from src.health import HealthAccumulator
 
@@ -36,8 +36,10 @@ F_G_PROBE = 0.5  # gentle probe grasp; crush behaviour is a separate probe
 
 
 class Rig:
-    def __init__(self, include_block: bool, proxy_iterations: int = 1, sigma_y: float = 3333.0, seed: int = 0):
-        self.model, self.meta, _ = build_scene(sigma_y, seed=seed, include_block=include_block)
+    def __init__(self, include_block: bool, proxy_iterations: int = 1, sigma_y: float = 3333.0, seed: int = 0, material_completion: bool = False):
+        self.model, self.meta, _ = build_scene(
+            sigma_y, seed=seed, include_block=include_block, material_completion=material_completion
+        )
         assert_control_contract(self.model, self.meta)
         if include_block:
             self.solver = build_coupled_solver(
@@ -56,7 +58,12 @@ class Rig:
             self.rigid_substeps = 4
         self.state = self.model.state()
         self.control = self.model.control()
-        self.pipeline = newton.CollisionPipeline(self.model, soft_contact_max=0)
+        # tight speculative gap: the default 0.1 m velocity-adapted extension
+        # engages table-fingertip contacts centimetres early during the descend
+        spec = newton.CollisionPipeline.SpeculativeContactConfig(max_speculative_extension=0.005)
+        self.pipeline = newton.CollisionPipeline(
+            self.model, soft_contact_max=0, rigid_contact_max=512, speculative_config=spec
+        )
         self.contacts = self.pipeline.contacts()
         newton.eval_fk(self.model, self.model.joint_q, self.model.joint_qd, self.state)
         self.ik = ArmIK(self.model, self.meta, (BLOCK_CENTER[0], BLOCK_CENTER[1], PREGRASP_Z), GRASP_QUAT_WXYZ)
@@ -67,11 +74,13 @@ class Rig:
         tq = self.control.joint_target_q.numpy()
         tq[:] = self.model.joint_q.numpy()
         self.control.joint_target_q.assign(tq)
+        # hold the gripper open until a grasp is commanded
+        self.fingers.apply_open(self.control)
 
     def step(self, n: int, health_every: int = 20):
         for i in range(n):
             self.state.clear_forces()
-            self.pipeline.collide(self.state, self.contacts)
+            self.pipeline.collide(self.state, self.contacts, dt=FRAME_DT)
             if self.mpm is None:
                 sub_dt = FRAME_DT / self.rigid_substeps
                 for _ in range(self.rigid_substeps):
@@ -82,8 +91,12 @@ class Rig:
             if health_every and (i + 1) % health_every == 0 and self.model.particle_count and self.mpm is not None:
                 q = self.state.particle_q.numpy()
                 qd = self.state.particle_qd.numpy()
-                jp = self.state.mpm.particle_Jp.numpy()
+                jp = self.jp()
                 self.health.check_tick(q, qd, jp, mpm_solver=self.mpm)
+
+    def jp(self):
+        """Jp from the MPM entry state (parent-state Jp is never updated)."""
+        return mpm_entry_state(self.solver).mpm.particle_Jp.numpy()
 
     def move_ee(self, pos, duration_s: float):
         """Solve IK once for the target and linearly interpolate arm coord targets."""
@@ -97,6 +110,35 @@ class Rig:
             tq[arm] = (1 - alpha) * start[arm] + alpha * sol[arm]
             self.control.joint_target_q.assign(tq)
             self.step(1)
+
+    def realized_tool(self) -> np.ndarray:
+        """Realized tool point from the current dynamic state (FK on link7)."""
+        from src.control import EE_TOOL_OFFSET
+
+        bq = self.state.body_q.numpy()[self.meta.ee_body_index]
+        x, y, z, w = bq[3:7]
+        u = np.array([x, y, z]); v = np.array(EE_TOOL_OFFSET)
+        return bq[:3] + 2 * np.dot(u, v) * u + (w * w - np.dot(u, u)) * v + 2 * w * np.cross(u, v)
+
+    def move_ee_converge(self, pos, tol_m: float = 0.003, max_iters: int = 12):
+        """Closed-loop settle onto `pos`: re-solve IK on a bias-corrected target
+        until the REALIZED tool point is within tol (kills gravity sag)."""
+        target = np.asarray(pos, dtype=float)
+        bias = np.zeros(3)
+        err = None
+        arm = np.asarray(self.meta.arm_coord_indices, dtype=int)
+        for _ in range(max_iters):
+            sol = self.ik.solve_to_targets((target + bias).tolist(), GRASP_QUAT_WXYZ)
+            tq = self.control.joint_target_q.numpy()
+            tq[arm] = sol[arm]
+            self.control.joint_target_q.assign(tq)
+            self.step(int(0.25 / FRAME_DT))
+            realized = self.realized_tool()
+            err = target - realized
+            if np.linalg.norm(err) <= tol_m:
+                break
+            bias += 0.8 * err
+        return float(np.linalg.norm(err)) if err is not None else float("nan")
 
     def finger_q(self) -> np.ndarray:
         return self.state.joint_q.numpy()[np.asarray(self.meta.finger_coord_indices, dtype=int)]
@@ -123,10 +165,16 @@ def run_grasp(include_block: bool, proxy_iterations: int = 1):
     rig.step(int(0.5 / FRAME_DT))                       # settle
     rig.move_ee((BLOCK_CENTER[0], BLOCK_CENTER[1], PREGRASP_Z), 1.5)
     rig.move_ee((BLOCK_CENTER[0], BLOCK_CENTER[1], GRASP_Z), 1.0)
+    resid = rig.move_ee_converge((BLOCK_CENTER[0], BLOCK_CENTER[1], GRASP_Z))
+    print(f"grasp-pose servo residual: {resid*1000:.2f} mm")
     rig.step(int(0.3 / FRAME_DT))                       # settle at grasp pose
     deflection_trace = []
-    rig.fingers.apply(rig.control, F_G_PROBE)           # symmetric slow close (constant effort)
-    n_close = int(2.0 / FRAME_DT)
+    n_ramp = int(0.3 / FRAME_DT)                        # ramp the close to avoid slamming the soft block
+    for k in range(n_ramp):
+        rig.fingers.apply(rig.control, F_G_PROBE * (k + 1) / n_ramp)
+        rig.step(1)
+        deflection_trace.append(rig.finger_q().tolist())
+    n_close = int(1.7 / FRAME_DT)
     for _ in range(n_close):
         rig.step(1)
         deflection_trace.append(rig.finger_q().tolist())

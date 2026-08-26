@@ -39,6 +39,7 @@ FRANKA_HOME_Q6 = [0.0, 0.0, 0.0, -1.59695, 0.0, 2.5307]
 
 ARM_TARGET_KE = 3000.0
 ARM_TARGET_KD = 150.0
+PAD_FRICTION_MU = 1.0  # rubber fingertip pads; recorded in every config block
 
 ARM_JOINT_LABELS = [f"fr3_joint{i}" for i in range(1, 8)]
 FINGER_JOINT_LABELS = ["fr3_finger_joint1", "fr3_finger_joint2"]
@@ -92,7 +93,22 @@ def _joint_coord_offsets(builder: newton.ModelBuilder) -> list[int]:
     return offsets
 
 
-def _add_block(builder, lo, res, cell, particle_mass, radius, sigma_y_pa):
+# APPROVED material completion (external sign-off 2026-08-27, DECISIONS.md):
+# yield_pressure = 2 x sigma_Y (4.0 / 6.67 / 12.0 kPa). Protocol constant;
+# enters every JSON config block and every gate receipt. Nothing else was
+# approved (no hardening change, no initial-Jp bias).
+YIELD_PRESSURE_FACTOR = 2.0
+
+
+def _add_block(builder, lo, res, cell, particle_mass, radius, sigma_y_pa, approved_material: bool):
+    attrs = {
+        "mpm:young_modulus": BLOCK_E_PA,
+        "mpm:poisson_ratio": BLOCK_NU,
+        "mpm:yield_stress": float(sigma_y_pa),
+        "mpm:damping": BLOCK_MPM_DAMPING,
+    }
+    if approved_material:
+        attrs["mpm:yield_pressure"] = YIELD_PRESSURE_FACTOR * float(sigma_y_pa)
     builder.add_particle_grid(
         pos=wp.vec3(*lo.tolist()),
         rot=wp.quat_identity(),
@@ -106,16 +122,13 @@ def _add_block(builder, lo, res, cell, particle_mass, radius, sigma_y_pa):
         mass=particle_mass,
         jitter=0.0,  # deterministic lattice; seed variation enters via pose jitter + solver sampling
         radius_mean=radius,
-        custom_attributes={
-            "mpm:young_modulus": BLOCK_E_PA,
-            "mpm:poisson_ratio": BLOCK_NU,
-            "mpm:yield_stress": float(sigma_y_pa),
-            "mpm:damping": BLOCK_MPM_DAMPING,
-        },
+        custom_attributes=attrs,
     )
 
 
-def build_scene(sigma_y_pa: float, *, seed: int = 0, pose_jitter_m: float = 0.0, include_block: bool = True):
+def build_scene(sigma_y_pa: float, *, seed: int = 0, pose_jitter_m: float = 0.0, include_block: bool = True, material_completion: bool = True):
+    """material_completion=True applies the SIGNED-OFF yield_pressure = 2*sigma_Y;
+    False reproduces the pre-sign-off baseline (archival probes only)."""
     """Build the model. Returns (builder-finalized model, SceneMeta, builder)."""
     rng = np.random.default_rng(np.random.SeedSequence([1234, int(seed)]))
 
@@ -201,10 +214,19 @@ def build_scene(sigma_y_pa: float, *, seed: int = 0, pose_jitter_m: float = 0.0,
     radius = 0.5 * cell
     particle_start = builder.particle_count
     if include_block:
-        _add_block(builder, lo, res, cell, particle_mass, radius, sigma_y_pa)
+        _add_block(builder, lo, res, cell, particle_mass, radius, sigma_y_pa, material_completion)
+
     particle_count = builder.particle_count - particle_start
 
     model = builder.finalize()
+
+    # finger-pad friction (rubber pads); MPM collider discovery reads shape materials
+    mu = model.shape_material_mu.numpy()
+    sb = model.shape_body.numpy()
+    for i in range(model.shape_count):
+        if sb[i] in finger_bodies:
+            mu[i] = PAD_FRICTION_MU
+    model.shape_material_mu.assign(mu)
 
     # --- post-finalize control-contract assertions (plan, control contract) --
     ke = model.joint_target_ke.numpy()
@@ -244,6 +266,10 @@ def build_scene(sigma_y_pa: float, *, seed: int = 0, pose_jitter_m: float = 0.0,
             "seed_rng_derivation": "np.random.SeedSequence([1234, seed]) -> xy pose jitter",
             "arm_target_ke": ARM_TARGET_KE,
             "arm_target_kd": ARM_TARGET_KD,
+            "pad_friction_mu": PAD_FRICTION_MU,
+            "default_shape_mu": 0.5,  # frozen protocol constant (external sign-off 2026-08-27)
+            "yield_pressure_pa": YIELD_PRESSURE_FACTOR * float(sigma_y_pa) if material_completion else None,
+            "yield_pressure_factor": YIELD_PRESSURE_FACTOR if material_completion else None,
         },
     )
     return model, meta, builder
