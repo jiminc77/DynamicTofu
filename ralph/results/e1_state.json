@@ -1812,6 +1812,894 @@
    ],
    "status": "done",
    "artifact": "ralph/results/trials/s6000_a1_f0.3_seed0.json"
+  },
+  "s6000_a1_f0.3_seed1": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 36.8
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a1_f0.3_seed1.json"
+  },
+  "s6000_a1_f0.3_seed2": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 37.7
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a1_f0.3_seed2.json"
+  },
+  "s6000_a1_f0.8_seed0": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 37.7
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a1_f0.8_seed0.json"
+  },
+  "s6000_a1_f0.8_seed1": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 37.3
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a1_f0.8_seed1.json"
+  },
+  "s6000_a1_f0.8_seed2": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 37.3
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a1_f0.8_seed2.json"
+  },
+  "s6000_a1_f1.8_seed0": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 37.7
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a1_f1.8_seed0.json"
+  },
+  "s6000_a1_f1.8_seed1": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 37.4
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a1_f1.8_seed1.json"
+  },
+  "s6000_a1_f1.8_seed2": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 37.5
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a1_f1.8_seed2.json"
+  },
+  "s6000_a1_f3.5_seed0": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 37.5
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a1_f3.5_seed0.json"
+  },
+  "s6000_a1_f3.5_seed1": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 37.4
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a1_f3.5_seed1.json"
+  },
+  "s6000_a1_f3.5_seed2": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 38.0
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a1_f3.5_seed2.json"
+  },
+  "s6000_a1_f5_seed0": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 37.2
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a1_f5_seed0.json"
+  },
+  "s6000_a1_f5_seed1": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 37.4
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a1_f5_seed1.json"
+  },
+  "s6000_a1_f5_seed2": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 37.9
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a1_f5_seed2.json"
+  },
+  "s6000_a2.5_f0.3_seed0": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 32.1
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a2.5_f0.3_seed0.json"
+  },
+  "s6000_a2.5_f0.3_seed1": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 32.4
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a2.5_f0.3_seed1.json"
+  },
+  "s6000_a2.5_f0.3_seed2": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 33.1
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a2.5_f0.3_seed2.json"
+  },
+  "s6000_a2.5_f0.8_seed0": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 32.4
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a2.5_f0.8_seed0.json"
+  },
+  "s6000_a2.5_f0.8_seed1": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 32.4
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a2.5_f0.8_seed1.json"
+  },
+  "s6000_a2.5_f0.8_seed2": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 33.1
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a2.5_f0.8_seed2.json"
+  },
+  "s6000_a2.5_f1.8_seed0": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 32.5
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a2.5_f1.8_seed0.json"
+  },
+  "s6000_a2.5_f1.8_seed1": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 32.5
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a2.5_f1.8_seed1.json"
+  },
+  "s6000_a2.5_f1.8_seed2": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 33.0
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a2.5_f1.8_seed2.json"
+  },
+  "s6000_a2.5_f3.5_seed0": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 32.4
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a2.5_f3.5_seed0.json"
+  },
+  "s6000_a2.5_f3.5_seed1": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 32.6
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a2.5_f3.5_seed1.json"
+  },
+  "s6000_a2.5_f3.5_seed2": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 33.0
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a2.5_f3.5_seed2.json"
+  },
+  "s6000_a2.5_f5_seed0": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 32.3
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a2.5_f5_seed0.json"
+  },
+  "s6000_a2.5_f5_seed1": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 32.5
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a2.5_f5_seed1.json"
+  },
+  "s6000_a2.5_f5_seed2": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 33.1
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a2.5_f5_seed2.json"
+  },
+  "s6000_a5_f0.3_seed0": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 29.9
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a5_f0.3_seed0.json"
+  },
+  "s6000_a5_f0.3_seed1": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 30.0
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a5_f0.3_seed1.json"
+  },
+  "s6000_a5_f0.3_seed2": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 30.6
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a5_f0.3_seed2.json"
+  },
+  "s6000_a5_f0.8_seed0": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 30.1
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a5_f0.8_seed0.json"
+  },
+  "s6000_a5_f0.8_seed1": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 30.2
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a5_f0.8_seed1.json"
+  },
+  "s6000_a5_f0.8_seed2": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 30.6
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a5_f0.8_seed2.json"
+  },
+  "s6000_a5_f1.8_seed0": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 29.9
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a5_f1.8_seed0.json"
+  },
+  "s6000_a5_f1.8_seed1": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 30.3
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a5_f1.8_seed1.json"
+  },
+  "s6000_a5_f1.8_seed2": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 30.8
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a5_f1.8_seed2.json"
+  },
+  "s6000_a5_f3.5_seed0": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 30.0
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a5_f3.5_seed0.json"
+  },
+  "s6000_a5_f3.5_seed1": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 30.1
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a5_f3.5_seed1.json"
+  },
+  "s6000_a5_f3.5_seed2": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 30.4
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a5_f3.5_seed2.json"
+  },
+  "s6000_a5_f5_seed0": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 30.4
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a5_f5_seed0.json"
+  },
+  "s6000_a5_f5_seed1": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 30.3
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a5_f5_seed1.json"
+  },
+  "s6000_a5_f5_seed2": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 30.3
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a5_f5_seed2.json"
+  },
+  "s6000_a10_f0.3_seed0": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 29.3
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a10_f0.3_seed0.json"
+  },
+  "s6000_a10_f0.3_seed1": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 29.2
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a10_f0.3_seed1.json"
+  },
+  "s6000_a10_f0.3_seed2": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 29.2
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a10_f0.3_seed2.json"
+  },
+  "s6000_a10_f0.8_seed0": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 29.5
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a10_f0.8_seed0.json"
+  },
+  "s6000_a10_f0.8_seed1": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 29.2
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a10_f0.8_seed1.json"
+  },
+  "s6000_a10_f0.8_seed2": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 29.2
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a10_f0.8_seed2.json"
+  },
+  "s6000_a10_f1.8_seed0": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 29.7
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a10_f1.8_seed0.json"
+  },
+  "s6000_a10_f1.8_seed1": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 29.4
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a10_f1.8_seed1.json"
+  },
+  "s6000_a10_f1.8_seed2": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 29.3
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a10_f1.8_seed2.json"
+  },
+  "s6000_a10_f3.5_seed0": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 29.6
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a10_f3.5_seed0.json"
+  },
+  "s6000_a10_f3.5_seed1": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 28.9
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a10_f3.5_seed1.json"
+  },
+  "s6000_a10_f3.5_seed2": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 29.8
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a10_f3.5_seed2.json"
+  },
+  "s6000_a10_f5_seed0": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 29.6
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a10_f5_seed0.json"
+  },
+  "s6000_a10_f5_seed1": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 28.9
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a10_f5_seed1.json"
+  },
+  "s6000_a10_f5_seed2": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 29.7
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a10_f5_seed2.json"
+  },
+  "s6000_a15_f0.3_seed0": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 29.3
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a15_f0.3_seed0.json"
+  },
+  "s6000_a15_f0.3_seed1": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 28.6
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a15_f0.3_seed1.json"
+  },
+  "s6000_a15_f0.3_seed2": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 29.7
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a15_f0.3_seed2.json"
+  },
+  "s6000_a15_f0.8_seed0": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 29.0
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a15_f0.8_seed0.json"
+  },
+  "s6000_a15_f0.8_seed1": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 29.1
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a15_f0.8_seed1.json"
+  },
+  "s6000_a15_f0.8_seed2": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 29.7
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a15_f0.8_seed2.json"
+  },
+  "s6000_a15_f1.8_seed0": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 29.0
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a15_f1.8_seed0.json"
+  },
+  "s6000_a15_f1.8_seed1": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 29.3
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a15_f1.8_seed1.json"
+  },
+  "s6000_a15_f1.8_seed2": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 29.8
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a15_f1.8_seed2.json"
+  },
+  "s6000_a15_f3.5_seed0": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 29.0
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a15_f3.5_seed0.json"
+  },
+  "s6000_a15_f3.5_seed1": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 29.5
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a15_f3.5_seed1.json"
+  },
+  "s6000_a15_f3.5_seed2": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 29.4
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a15_f3.5_seed2.json"
+  },
+  "s6000_a15_f5_seed0": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 29.5
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a15_f5_seed0.json"
+  },
+  "s6000_a15_f5_seed1": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 29.4
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a15_f5_seed1.json"
+  },
+  "s6000_a15_f5_seed2": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 29.3
+    }
+   ],
+   "status": "done",
+   "artifact": "ralph/results/trials/s6000_a15_f5_seed2.json"
   }
  },
  "started": 1787776087.6376715
