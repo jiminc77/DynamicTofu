@@ -131,3 +131,11 @@ The approved P3 dynamic-ladder gate ran in full (36 + 12 trials, `reports/logs/g
 - (ii) Rate adequacy re-scoped from pass/fail to a RECORDED rate-sensitivity observable (0.6 s fractions reported alongside 0.3 s; direction must be monotone — slower ⇒ lower fractions — which holds).
 
 **Gate outcome under P5 (all numbers already measured):** onsets 2.43 < 5.57 < censored_high(>7.18) N; monotone ✓; separation 3.14 N ≫ max(0.05, 2×0.132) ✓; top-only censoring ✓; health clean in all 54 trials ✓ → **PASS**. Bearing capacities (P4 observable): 5.61 / 6.11 / 7.18 N (bilateral sums). No sweep or gate call until P5 is decided.
+
+## 2026-08-27 — P5 EXTERNALLY APPROVED; gate PASS stamped; standing authorization resumes
+
+Both amendments approved (external spot-check against gn2-dynamic-ladder.json confirmed: onset_0p3=5.5747, sigma2000 censored_low, onset_0p6 null, gate_pass correctly held false under the pre-P5 rule):
+- (i) Downward ladder extension with pre-registered E1-grid forces only; σ=2000 ladder = {0.8, 1.2, 1.8, 2.5, 3.5, 5.0}.
+- (ii) Rate adequacy re-scoped to a RECORDED rate-sensitivity observable with a monotone-direction requirement (slower close ⇒ lower fractions — holds). E1 close rate is fixed at 0.3 s; cross-cell comparability unaffected.
+
+Recomputed gate outcome under P5, from the persisted trial points (60 dynamic-crush trials, health clean 60/60 incl. extension): onsets 2.43 < 5.57 < censored-above-7.18 N (bilateral sums), separation 3.14 N ≫ max(0.05, 2×0.132) ⇒ **σ_Y monotonicity gate: PASS** — stamped in `reports/logs/gn2-dynamic-ladder-P5.json`. Standing authorization resumes: G-N2 receipt → G-N3 → E1 Stage A; only NEW protocol changes need sign-off.
