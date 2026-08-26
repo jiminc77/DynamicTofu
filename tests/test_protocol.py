@@ -94,3 +94,17 @@ class SchemaTests(unittest.TestCase):
     with self.assertRaises(ValueError): io_schemas.validate(bad)
 
 if __name__ == "__main__": unittest.main()
+
+
+class TestSlipDropPrecedenceOrder(unittest.TestCase):
+    def test_slip_before_drop_still_suppressed(self):
+        # slip fires at t=1.0, drop only later at t=2.5: final set must not contain slip
+        samples = [
+            {"t": 0.5},
+            {"t": 1.0, "slip_net_m": 0.006},
+            {"t": 2.5, "relative_displacement_m": 0.03},
+            {"t": 3.0},
+        ]
+        out = judgment.evaluate(samples, lift_complete=0.0, settle_end=4.0)
+        self.assertIn("drop", out["label_set"])
+        self.assertNotIn("slip", out["label_set"])

@@ -54,10 +54,13 @@ def evaluate(samples, lift_complete, settle_end, particle_count=None, thresholds
             loss_start = None
         if float(s.get("relative_displacement_m", 0.0)) > thresholds.rel_disp_m:
             labels.add("drop")
-        if "drop" not in labels:
-            if (float(s.get("slip_net_m", 0.0)) > thresholds.slip_net_m or
-                    float(s.get("slip_peak_m", 0.0)) > thresholds.slip_peak_m):
-                labels.add("slip")
+        if (float(s.get("slip_net_m", 0.0)) > thresholds.slip_net_m or
+                float(s.get("slip_peak_m", 0.0)) > thresholds.slip_peak_m):
+            labels.add("slip")
+    # Frozen precedence: slip is defined "without drop" over the FINAL label set,
+    # so a drop occurring after a slip event still suppresses slip.
+    if "drop" in labels:
+        labels.discard("slip")
     return {"labels": sorted(labels), "label_set": labels,
             "peak_damage_fraction": peak_damage}
 
