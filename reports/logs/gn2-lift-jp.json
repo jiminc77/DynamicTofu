@@ -1,0 +1,209 @@
+{
+  "gentle": {
+    "tag": "gentle",
+    "f_g_n": 0.5,
+    "lifted": true,
+    "final_damage_fraction": 0.0,
+    "peak_damage_fraction": 0.0,
+    "damage_trace": [
+      {
+        "t": 3.4,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 3.5,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 3.6,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 3.7,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 3.8,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 4.2,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 4.3,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 4.4,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 4.5,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 4.6,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 4.7,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 4.8,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 4.9,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 5.0,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 5.1,
+        "damage_fraction": 0.0
+      }
+    ],
+    "block_z_mean": 0.21268539130687714,
+    "volume_drift_since_pregrasp": 0.25477254432197194,
+    "health": {
+      "clean": true,
+      "max_particle_speed_ms": 0.7752076387405396,
+      "speed_limit_ms": 5.0,
+      "nan_free": true,
+      "jp_finite": true,
+      "sparse_grid_ok": true,
+      "sparse_grid_error": "",
+      "n_checks": 8
+    },
+    "n_snapshots": 30
+  },
+  "crush": {
+    "tag": "crush",
+    "f_g_n": 5.0,
+    "lifted": false,
+    "final_damage_fraction": 0.0,
+    "peak_damage_fraction": 0.0,
+    "damage_trace": [
+      {
+        "t": 3.4,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 3.5,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 3.6,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 3.7,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 3.8,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 3.9,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 4.0,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 4.1,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 4.2,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 4.3,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 4.4,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 4.5,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 4.6,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 4.7,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 4.8,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 4.9,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 5.0,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 5.1,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 5.2,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 5.3,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 5.4,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 5.5,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 5.6,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 5.7,
+        "damage_fraction": 0.0
+      },
+      {
+        "t": 5.8,
+        "damage_fraction": 0.0
+      }
+    ],
+    "block_z_mean": 0.21177184581756592,
+    "volume_drift_since_pregrasp": 1.1016526030429796,
+    "health": {
+      "clean": true,
+      "max_particle_speed_ms": 0.8865602016448975,
+      "speed_limit_ms": 5.0,
+      "nan_free": true,
+      "jp_finite": true,
+      "sparse_grid_ok": true,
+      "sparse_grid_error": "",
+      "n_checks": 8
+    },
+    "n_snapshots": 30
+  },
+  "lift_rise_m": -0.007314608693122865,
+  "separation_ratio_crush_over_gentle": Infinity,
+  "wall_s": 42.673598766326904
+}
