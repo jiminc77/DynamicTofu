@@ -116,3 +116,18 @@ Both proposals signed off (evidence spot-checked by the external authority again
 - **P4 official:** calibration limits evaluated over the pre-saturation range; `f_bearing_capacity_n` is a first-class protocol observable; `f_g_realized_n` recorded in every E1 trial JSON. Commanded F_g remains the axis; trials are never re-binned.
 - **Recording flag (not a condition):** σ=2000's gentle probe peaked at 0.0955 — 0.5 pp under the 10% latch. Stated explicitly in the receipt; a nearly-empty σ=2000 band at a=1 in E1 is a reportable pre-registered outcome, not a failure.
 - **Standing authorization:** once the P3 gate passes → G-N2 receipt (with gentle/crush clips) → G-N3 → E1 Stage A, no further user gates; only NEW protocol changes require sign-off.
+
+## 2026-08-27 — PROPOSAL P5: two narrow amendments to the approved P3 gate (AWAITING EXTERNAL SIGN-OFF)
+
+The approved P3 dynamic-ladder gate ran in full (36 + 12 trials, `reports/logs/gn2-dynamic-ladder.json`). Result under the approved rules: **inconclusive**, on two structural grounds — both physics, both evidenced:
+
+1. **σ=2000 is censored_low**: the ladder bottom 1.8 N already crushes the softest material (fraction 0.194 ≫ 0.10), so its onset lies below the approved ladder — and censoring is only valid at the TOP σ_Y. The middle material observed cleanly: onset 5.575 N (realized bilateral sum; per-seed sd 0.132). σ=6000 censored_high at the top (allowed).
+2. **Rate-adequacy is structurally unpassable**: at the 0.6 s close, σ=3333 never crosses 0.10 within the ladder (fractions 0.037–0.066 vs 0.045–0.127 at 0.3 s) — the viscoplastic material is genuinely rate-dependent, so the 0.6 s onset does not exist and |F_onset(0.3)−F_onset(0.6)| is undefined. E1's own close rate is fixed at 0.3 s: the gate already matches the sweep's dynamics by construction.
+
+**Down-ladder evidence gathered (E1-grid forces only; `gn2-ladder-2000-extension.json`):** σ=2000 at 0.8 N → 0.053, at 1.2 N → 0.098 (per-seed 0.085/0.092/0.117). The 0.10 crossing interpolates to **onset ≈ 2.43 N** (realized sum), cleanly interior once {0.8, 1.2} join the σ=2000 ladder.
+
+**P5 amendments:**
+- (i) Per-material downward ladder extension using E1-grid forces where a non-top material censors low: σ=2000 ladder = {0.8, 1.2, 1.8, 2.5, 3.5, 5.0}. No new force values are invented — all are pre-registered grid levels.
+- (ii) Rate adequacy re-scoped from pass/fail to a RECORDED rate-sensitivity observable (0.6 s fractions reported alongside 0.3 s; direction must be monotone — slower ⇒ lower fractions — which holds).
+
+**Gate outcome under P5 (all numbers already measured):** onsets 2.43 < 5.57 < censored_high(>7.18) N; monotone ✓; separation 3.14 N ≫ max(0.05, 2×0.132) ✓; top-only censoring ✓; health clean in all 54 trials ✓ → **PASS**. Bearing capacities (P4 observable): 5.61 / 6.11 / 7.18 N (bilateral sums). No sweep or gate call until P5 is decided.
