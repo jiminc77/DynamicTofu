@@ -74,6 +74,18 @@ Every trial JSON records the TIME of the damage latch (`damage_latch_t`) and of 
 
 Implemented in `src/judgment.py` + `src/trial.py`; covered by 3 unit tests (23 green). The band estimator's intact predicate is untouched.
 
+## 2026-08-27 — PROPOSAL P3: re-operationalize the σ_Y monotonicity gate (AWAITING EXTERNAL SIGN-OFF)
+
+**Result of the pre-registered quasi-static ramp gate (evidence `reports/logs/gn2-ramp-gate.json`):** σ=2000 onsets cleanly (F_onset = 2.69 ± 0.06 N over 3 seeds), but σ=3333 and 6000 are censored at the 6.0 N ceiling — an inconclusive censoring pattern, i.e. a fail-closed MISS under the frozen rule.
+
+**Extended-ceiling evidence (12 N command, frozen 0.483 N/s rate, seed 0):** the quasi-static ramp SATURATES — realized bilateral normal plateaus at 5.1 N (σ=3333) / 6.95 N (σ=6000) while damage fraction freezes at 0.049 / 0.019. Under slow loading the viscoplastic v2 material relieves pressure by deviatoric flow faster than compaction accumulates; quasi-static onset is unreachable for the two firmer materials at ANY ceiling. The operationalization, not the material, is wrong-shaped.
+
+**Contrast (already-measured dynamic crush, `reports/logs/gn2-jp-probe-*.json`):** the sweep-matched dynamic crush (0.3 s ramp + hold) fires the same predicate at 5 N for σ=2000 (0.319) and σ=3333 (0.140) and leaves σ=6000 below threshold (0.025) — monotone in σ_Y and physically the regime E1 actually probes (every E1 cell closes in 0.3 s).
+
+**Proposal P3 — dynamic-ladder onset gate:** for each material, run dynamic crush trials (0.3 s ramp to F + 2.0 s hold, the E1 close profile) over the force ladder F ∈ {1.8, 2.5, 3.5, 5.0} N, 3 seeds each. F_onset* = realized bilateral normal interpolated between the bracketing ladder forces where the peak damage fraction crosses 10%. Direction (strictly increasing in σ_Y), separation (> max(0.05 N, 2 × max sd_seed)), and censoring rules unchanged; censoring valid only at the largest σ_Y. Rate adequacy: repeat σ=3333 with the close ramp doubled to 0.6 s; same tolerance max(0.05 N, 5%).
+
+The quasi-static ramp result (2000 = 2.69 N, 3333/6000 censored + saturation traces) is preserved in the gate report as evidence either way. No sweep runs until P3 is decided.
+
 ## 2026-08-27 — Gentle-grasp force raised to 1.5 N (probe parameter, not protocol)
 
 F_g = 0.5 N cannot statically hold the 0.63 N block at μ = 0.5 (friction capacity = μ·2·F_n = 0.5 N < mg). The gentle-lift probe uses **F_g = 1.5 N** (capacity 1.5 N, margin 2.4×). E1 grid forces are unchanged — trials at low F_g are *expected* to drop/slip; that is the phase diagram working as designed.

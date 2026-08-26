@@ -32,10 +32,18 @@ from scripts.probes.gn2_ar_probe import FRAME_DT, GRASP_Z, PREGRASP_Z, Rig
 from scripts.probes.gn2_lift_jp import snapshot
 
 ROOT = os.path.join(os.path.dirname(__file__), "..", "..")
-SIGMAS = [2000.0, 3333.0, 6000.0]
-F_CRUSH = 5.0
-F_GENTLE = 1.5
 LIFT_M = 0.05
+
+# Per-material E1-bracketing probe forces (P2 Option 1, authorized GO):
+# gentle = an in-grid force gentle FOR that material; crush = grid top 5 N.
+# expect_crush_censored: damage onset above the grid top is recorded as
+# censored_high (per Option 1), not a gate failure.
+PER_MATERIAL = {
+    2000.0: {"gentle": 0.4, "crush": 5.0, "expect_crush_censored": False},
+    3333.0: {"gentle": 1.5, "crush": 5.0, "expect_crush_censored": False},
+    6000.0: {"gentle": 1.5, "crush": 5.0, "expect_crush_censored": True},
+}
+SIGMAS = sorted(PER_MATERIAL)
 
 
 def run_case(sigma: float, mode: str):
@@ -73,7 +81,7 @@ def run_case(sigma: float, mode: str):
     rig.move_ee_converge((BLOCK_CENTER[0], BLOCK_CENTER[1], GRASP_Z))
     sample("pregrasp")
 
-    f_target = F_CRUSH if mode == "crush" else F_GENTLE
+    f_target = PER_MATERIAL[sigma]["crush"] if mode == "crush" else PER_MATERIAL[sigma]["gentle"]
     n_ramp = int(0.3 / FRAME_DT)
     for k in range(n_ramp):
         rig.fingers.apply(rig.control, f_target * (k + 1) / n_ramp)
@@ -117,13 +125,21 @@ def main() -> int:
         crush = run_case(sigma, "crush")
         gentle = run_case(sigma, "gentle")
         sep = crush["peak_damage_fraction"] / max(gentle["peak_damage_fraction"], 1e-9)
-        ok = (
+        expect_censored = PER_MATERIAL[sigma]["expect_crush_censored"]
+        crush_ok = (
             crush["peak_damage_fraction"] > 0.10
+            if not expect_censored
+            else crush["peak_damage_fraction"] <= 0.10  # onset above grid top: censored_high
+        )
+        ok = (
+            crush_ok
             and gentle["peak_damage_fraction"] < 0.10
             and crush["health"]["clean"]
             and gentle["health"]["clean"]
         )
-        out = {"crush": crush, "gentle": gentle, "separation_ratio": sep, "pass": bool(ok)}
+        out = {"crush": crush, "gentle": gentle, "separation_ratio": sep, "pass": bool(ok),
+               "crush_onset_status": "censored_high_above_grid" if expect_censored else "fires_in_grid",
+               "probe_forces": PER_MATERIAL[sigma]}
         path = os.path.join(ROOT, "reports", "logs", f"gn2-jp-probe-{int(sigma)}.json")
         with open(path, "w") as fh:
             json.dump(out, fh, indent=2)
