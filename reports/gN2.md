@@ -1,7 +1,8 @@
-# G-N2 Gate Receipt — Physics Smoke (DRAFT: gate call pending P3/P4 ruling)
+# G-N2 Gate Receipt — Physics Smoke
 
 - Gate: G-N2 (deadline 2026-08-29 23:59:59 Asia/Seoul — cutoff per external confirmation 2026-08-27)
-- Status: **all rig criteria measured; P3 + P4 externally APPROVED and executed; one narrow ruling pending (P5: per-material downward ladder extension + rate-check re-scope — `ralph/DECISIONS.md`). Fail-closed: no gate call until P5 is decided.**
+- Executed: 2026-08-27 02:30–05:30 KST
+- Verdict: **PASS** — every criterion satisfied under the externally approved protocol rulings P2 GO / P3 / P4 / P5 (`ralph/DECISIONS.md`), all evidence artifact-backed below.
 - Material under test: pre-registered E=7 kPa, ν=0.45, ρ=1000, σ_Y ∈ {2000, 3333, 6000} Pa **plus the externally signed-off completion** (P2 GO): `yield_pressure = 0.85σ_Y`, `tensile_yield_ratio = 1.0`, `viscosity = 20 Pa·s`. Frozen contact constants: `default_shape_mu = 0.5`, `pad_friction_mu = 1.0`.
 
 ## Composition (plan contract)
@@ -24,7 +25,7 @@
 | particle_Jp readout (condition 1, per-material contract) | **PASS all three** — crush fires: 2000: 0.319, 3333: 0.140; 6000: 0.025 = censored_high above grid top (authorized); gentle clean: 0.095 / 0.064 / 0.012; separations 3.3× / 2.2× / 2.2× | `gn2-jp-probe-{2000,3333,6000}.json` |
 | Condition 4 (extrusion registers as damage) | **confirmed** — crush damage latches while grasped (`cell_color = damage`) | same |
 | Condition 3 (window scaling) | window functions (fires 0.14–0.32 vs clean 0.01–0.095); **no rescale proposal needed** | same |
-| σ_Y monotonicity gate (**P3 approved**: dynamic ladder) | executed in full (54 trials, health clean): σ=3333 onset **5.575 N** observed (per-seed sd 0.132); σ=6000 censored_high at the top (allowed); σ=2000 censored_low at the approved ladder bottom ⇒ **P5 pending** (down-ladder E1-grid points measured: 0.8 N→0.053, 1.2 N→0.098 → onset ≈ **2.43 N** interior once {0.8, 1.2} join its ladder). Rate-sensitivity recorded: 0.6 s close never crosses 0.10 (0.037–0.066) — genuine viscoplastic rate dependence; E1's own close is 0.3 s. Under P5 the gate **passes**: 2.43 < 5.57 < censored-above-7.18 N, monotone, separation 3.14 N ≫ tolerance | `gn2-dynamic-ladder.json`, `gn2-ladder-2000-extension.json` |
+| σ_Y monotonicity gate (**P3 + P5 approved**, official) | **PASS** (stamped `gn2-dynamic-ladder-P5.json`, 54 trials health clean 54/54): onsets (realized bilateral sums) **2.429 / 5.575 / censored-above-7.18 N**, all-observed-except-top censoring per rule; strictly monotone; separation 3.15 N ≫ max(0.05, 2×0.165); per-seed sd 0.165/0.132/0.0. Rate-sensitivity observable (P5-ii): 0.6 s close fractions ≤ 0.3 s fractions at every ladder force (monotone direction holds) — genuine viscoplastic rate dependence, E1's close fixed at 0.3 s | `gn2-dynamic-ladder.json`, `gn2-ladder-2000-extension.json`, `gn2-dynamic-ladder-P5.json` |
 
 ## Video evidence (user-ordered amendment)
 
@@ -48,8 +49,6 @@ Quasi-static loading cannot crush the firmer materials: at the frozen 0.483 N/s 
 
 σ=2000's gentle probe peaked at **0.0955 — 0.5 pp under the 10% latch**. If E1 later shows the σ=2000 band nearly empty even at a=1, that is a reportable pre-registered outcome, not a failure.
 
-## Pending before the gate call
+## Gate call
 
-1. **P5** — per-material downward ladder extension (E1-grid forces only) + rate-adequacy re-scope to a recorded observable. All supporting numbers are already measured; under P5 every G-N2 criterion is satisfied.
-
-On P5 sign-off: finalize this receipt with the gate call, commit, checkpoint G002, then proceed G-N3 → E1 Stage A under the standing authorization.
+**G-N2: PASS**, called 2026-08-27 ~05:30 KST under standing authorization (P5 approved). Bearing capacities (P4 first-class observable, realized bilateral sums): **5.61 / 6.11 / 7.18 N** for σ_Y 2000/3333/6000. Every protocol constant used is recorded in the config blocks (`yield_pressure = 0.85σ_Y`, `tensile_yield_ratio = 1.0`, `viscosity = 20 Pa·s`, `default_shape_mu = 0.5`, `pad_friction_mu = 1.0`, judgment v1 thresholds verbatim, cell-color precedence rule). Next per authorization: G-N3, then E1 Stage A.

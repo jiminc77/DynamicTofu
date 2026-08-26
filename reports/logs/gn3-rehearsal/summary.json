@@ -1,0 +1,29 @@
+{
+  "results": {
+    "T_a1": {
+      "wall_s": 39.37709617614746,
+      "labels": [
+        "drop"
+      ],
+      "color": "drop",
+      "a_real": 0.9823792080065559,
+      "f_real": 1.8004303310627263
+    },
+    "T_a15": {
+      "wall_s": 29.569305896759033,
+      "labels": [
+        "drop"
+      ],
+      "color": "drop",
+      "a_real": 6.487858635079276,
+      "f_real": 1.793478799495718
+    }
+  },
+  "determinism": {
+    "same_seed_label_identical": false,
+    "same_seed_peakfrac_delta": 0.004884998982291874,
+    "same_seed_a_real_rel_delta": 0.00045533573283390794,
+    "diff_seed_scalar_differs": true
+  },
+  "T_weighted_s": 34.47320103645325
+}

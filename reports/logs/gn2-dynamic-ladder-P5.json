@@ -1,0 +1,158 @@
+{
+  "official": "P3 gate under approved P5 amendments (external sign-off 2026-08-27)",
+  "provenance": "recomputed from persisted trial points: gn2-dynamic-ladder.json raw_points + gn2-ladder-2000-extension.json; no re-simulation",
+  "ladders_n": {
+    "2000": [
+      0.8,
+      1.2,
+      1.8,
+      2.5,
+      3.5,
+      5.0
+    ],
+    "3333": [
+      1.8,
+      2.5,
+      3.5,
+      5.0
+    ],
+    "6000": [
+      1.8,
+      2.5,
+      3.5,
+      5.0
+    ]
+  },
+  "onset_realized_bilateral_sum_n": {
+    "2000": 2.429140933860415,
+    "3333": 5.574699227418765,
+    "6000": null
+  },
+  "onset_status": {
+    "2000": "observed",
+    "3333": "observed",
+    "6000": "censored_high"
+  },
+  "per_force_means": {
+    "2000": [
+      {
+        "f_cmd": 0.8,
+        "frac_mean": 0.05339575276477373,
+        "f_real_mean": 1.600049792661232
+      },
+      {
+        "f_cmd": 1.2,
+        "frac_mean": 0.09776782685392497,
+        "f_real_mean": 2.401224896316499
+      },
+      {
+        "f_cmd": 1.8,
+        "frac_mean": 0.19363593188140307,
+        "f_real_mean": 3.6001720406798268
+      },
+      {
+        "f_cmd": 2.5,
+        "frac_mean": 0.2344799511500102,
+        "f_real_mean": 4.998720931421386
+      },
+      {
+        "f_cmd": 3.5,
+        "frac_mean": 0.2614831399687903,
+        "f_real_mean": 5.110895494013079
+      },
+      {
+        "f_cmd": 5.0,
+        "frac_mean": 0.3175927810570595,
+        "f_real_mean": 5.606501294407816
+      }
+    ],
+    "3333": [
+      {
+        "f_cmd": 1.8,
+        "frac_mean": 0.04477915733767556,
+        "f_real_mean": 3.600697668904695
+      },
+      {
+        "f_cmd": 2.5,
+        "frac_mean": 0.056923807585317863,
+        "f_real_mean": 4.996962469277809
+      },
+      {
+        "f_cmd": 3.5,
+        "frac_mean": 0.09152588370988535,
+        "f_real_mean": 5.407182982784644
+      },
+      {
+        "f_cmd": 5.0,
+        "frac_mean": 0.12714566795576362,
+        "f_real_mean": 6.1113145154741035
+      }
+    ],
+    "6000": [
+      {
+        "f_cmd": 1.8,
+        "frac_mean": 0.006241943144039623,
+        "f_real_mean": 3.599732653856337
+      },
+      {
+        "f_cmd": 2.5,
+        "frac_mean": 0.010787706085894565,
+        "f_real_mean": 4.999631424277642
+      },
+      {
+        "f_cmd": 3.5,
+        "frac_mean": 0.024696383743808944,
+        "f_real_mean": 6.980816473486823
+      },
+      {
+        "f_cmd": 5.0,
+        "frac_mean": 0.023135897957799037,
+        "f_real_mean": 7.181081837257897
+      }
+    ]
+  },
+  "per_seed_sd_n": {
+    "2000": 0.16461636551475242,
+    "3333": 0.13233447809369592,
+    "6000": 0.0
+  },
+  "rate_sensitivity_observable": {
+    "rows": [
+      {
+        "f_cmd": 1.8,
+        "frac_0p3": 0.04477915733767556,
+        "frac_0p6": 0.037112422823800804
+      },
+      {
+        "f_cmd": 2.5,
+        "frac_0p3": 0.056923807585317863,
+        "frac_0p6": 0.051088947689802565
+      },
+      {
+        "f_cmd": 3.5,
+        "frac_0p3": 0.09152588370988535,
+        "frac_0p6": 0.057670126874279116
+      },
+      {
+        "f_cmd": 5.0,
+        "frac_0p3": 0.12714566795576362,
+        "frac_0p6": 0.06635456950946468
+      }
+    ],
+    "monotone_direction_ok": true
+  },
+  "f_bearing_capacity_n": {
+    "2000": 5.606501294407816,
+    "3333": 6.1113145154741035,
+    "6000": 7.181081837257897
+  },
+  "checks": {
+    "monotone_ok": true,
+    "separation_ok": true,
+    "max_seed_sd_n": 0.16461636551475242,
+    "top_only_censoring": true,
+    "health_clean_all": true,
+    "n_trials": 54
+  },
+  "gate_pass": true
+}
