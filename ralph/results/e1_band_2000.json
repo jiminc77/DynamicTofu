@@ -28,15 +28,15 @@
     "f_g_convention": "per_finger_normal_mean",
     "material": {
       "E_pa": 7000.0,
-      "f_bearing_capacity_n": 6.11,
+      "f_bearing_capacity_n": 5.61,
       "mpm_damping_s": 0.001,
       "nu": 0.45,
       "rho": 1000.0,
-      "sigma_y_pa": 3333.0,
+      "sigma_y_pa": 2000.0,
       "tensile_yield_ratio": 1.0,
       "viscosity_pa_s": 20.0,
       "yield_pressure_factor": 0.85,
-      "yield_pressure_pa": 2833.0499999999997
+      "yield_pressure_pa": 1700.0
     },
     "newton_commit": "b74df534bee62a17e0e57cc9cdfd1a67d91ca817",
     "particle_count": 4913,
@@ -548,7 +548,84 @@
         "status": "done"
       }
     },
-    "extra_replications": {},
+    "extra_replications": {
+      "a10_f0.8": {
+        "certified": false,
+        "certified_color": null,
+        "color_counts": {
+          "damage": 3,
+          "drop": 2
+        },
+        "n_planned": 5,
+        "n_resolved": 5,
+        "note": "boundary sharpened; still no intact -> band remains empty; this refines drop<->damage attribution only",
+        "required_pass_4of5": 4,
+        "seed_colors": {
+          "0": "damage",
+          "1": "damage",
+          "2": "drop",
+          "3": "damage",
+          "4": "drop"
+        }
+      },
+      "a15_f0.8": {
+        "certified": false,
+        "certified_color": null,
+        "color_counts": {
+          "damage": 3,
+          "drop": 2
+        },
+        "n_planned": 5,
+        "n_resolved": 5,
+        "note": "boundary sharpened; still no intact -> band remains empty; this refines drop<->damage attribution only",
+        "required_pass_4of5": 4,
+        "seed_colors": {
+          "0": "drop",
+          "1": "damage",
+          "2": "drop",
+          "3": "damage",
+          "4": "damage"
+        }
+      },
+      "a2.5_f0.8": {
+        "certified": false,
+        "certified_color": null,
+        "color_counts": {
+          "damage": 3,
+          "drop": 2
+        },
+        "n_planned": 5,
+        "n_resolved": 5,
+        "note": "boundary sharpened; still no intact -> band remains empty; this refines drop<->damage attribution only",
+        "required_pass_4of5": 4,
+        "seed_colors": {
+          "0": "damage",
+          "1": "damage",
+          "2": "drop",
+          "3": "damage",
+          "4": "drop"
+        }
+      },
+      "a5_f0.8": {
+        "certified": false,
+        "certified_color": null,
+        "color_counts": {
+          "damage": 3,
+          "drop": 2
+        },
+        "n_planned": 5,
+        "n_resolved": 5,
+        "note": "boundary sharpened; still no intact -> band remains empty; this refines drop<->damage attribution only",
+        "required_pass_4of5": 4,
+        "seed_colors": {
+          "0": "damage",
+          "1": "damage",
+          "2": "drop",
+          "3": "damage",
+          "4": "drop"
+        }
+      }
+    },
     "rows": [
       {
         "F_max": null,

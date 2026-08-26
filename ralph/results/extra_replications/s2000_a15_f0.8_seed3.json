@@ -1,0 +1,117 @@
+{
+  "config": {
+    "asset_urdf_sha256": "2a270e19a9b9c7ca5eb62ec9d503d779281605b6bba881f5ac6e8090aa382497",
+    "brief_sha256": "bb41367843d73f070f109954ae674bbc2fcb1d24ff651cac3355a4fdc6f0d6b0",
+    "calibration": {
+      "hysteresis": 0.0254,
+      "intercept": 0.00027,
+      "residual": 0.00034,
+      "slope": 0.99984,
+      "status": "P4 pre-saturation acceptance (approved)"
+    },
+    "contact_params": {
+      "default_shape_mu": 0.5,
+      "impulse_eps": 1e-08,
+      "max_speculative_extension_m": 0.005,
+      "pad_friction_mu": 1.0
+    },
+    "coupling_params": {
+      "composition": "SolverCoupledProxy(mjc: SolverMuJoCo substeps=4; mpm: SolverImplicitMPM in_place)",
+      "frame_dt_s": 0.005,
+      "mass_scale": 1.0,
+      "mpm_max_iterations": 50,
+      "proxy_iterations": 1,
+      "proxy_mode": "lagged",
+      "rigid_substeps": 4,
+      "voxel_size_m": 0.005
+    },
+    "dt": 0.005,
+    "f_g_convention": "per_finger_normal_mean",
+    "material": {
+      "E_pa": 7000.0,
+      "f_bearing_capacity_n": 5.61,
+      "mpm_damping_s": 0.001,
+      "nu": 0.45,
+      "rho": 1000.0,
+      "sigma_y_pa": 2000.0,
+      "tensile_yield_ratio": 1.0,
+      "viscosity_pa_s": 20.0,
+      "yield_pressure_factor": 0.85,
+      "yield_pressure_pa": 1700.0
+    },
+    "newton_commit": "b74df534bee62a17e0e57cc9cdfd1a67d91ca817",
+    "particle_count": 4913,
+    "profile_id": "trapz_reversal_default",
+    "replication_class": "extra_seed_boundary_densification_NOT_in_360_universe",
+    "seed_rng_derivation": "np.random.SeedSequence([1234, seed]) -> xy pose jitter",
+    "substeps": 4,
+    "voxel_size": 0.005,
+    "windows": {
+      "judgment": "lift_complete..settle_end inclusive",
+      "phases_s": {
+        "close_hold": 0.5,
+        "final_settle": 0.5,
+        "lift": 0.3,
+        "postlift_hold": 0.2,
+        "settle": 0.5
+      },
+      "thresholds": {
+        "contact_loss_s": 0.2,
+        "damage_frac": 0.1,
+        "jp_dev": 0.05,
+        "rel_disp_m": 0.02,
+        "slip_net_m": 0.005,
+        "slip_peak_m": 0.008
+      }
+    }
+  },
+  "payload": {
+    "a_peak_cmd_ms2": 15.0,
+    "a_peak_realized_ms2": 6.4849594591451885,
+    "cell_color": "damage",
+    "damage_after_drop": false,
+    "damage_evidence_in_window": true,
+    "damage_latch_t": 5.45,
+    "damage_latch_t_rel": 1.4500000000000632,
+    "drop_evidence_in_window": true,
+    "drop_t": 5.47,
+    "drop_t_rel": 1.4700000000000628,
+    "f_g_n": 0.8,
+    "f_g_realized_n": 0.8147562075073046,
+    "health": {
+      "clean": true,
+      "jp_finite": true,
+      "max_particle_speed_ms": 0.028881963342428207,
+      "n_checks": 9,
+      "nan_free": true,
+      "sparse_grid_error": "",
+      "sparse_grid_ok": true,
+      "speed_limit_ms": 5.0
+    },
+    "judgment_window_abs_s": [
+      5.299999999999909,
+      7.3049999999998665
+    ],
+    "labels": [
+      "damage",
+      "drop"
+    ],
+    "peak_damage_fraction": 0.13250559739466722,
+    "phase_timestamps": {
+      "close_hold": 0.5,
+      "final_settle": 2.805,
+      "lift": 1.0,
+      "lift_complete": 1.3,
+      "reversal": 2.1398,
+      "settle": 0.0,
+      "settle_end": 3.305,
+      "transport": 1.5
+    },
+    "phase_timestamps_frame": "relative_to_t0_abs_s (drop_t/damage_latch_t are absolute; *_rel are t0-subtracted)",
+    "seed": 3,
+    "sigma_y_pa": 2000.0,
+    "t0_abs_s": 3.999999999999937,
+    "wall_time_s": 28.826680183410645
+  },
+  "schema": "e1.v1"
+}

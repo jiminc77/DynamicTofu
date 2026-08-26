@@ -28,15 +28,15 @@
     "f_g_convention": "per_finger_normal_mean",
     "material": {
       "E_pa": 7000.0,
-      "f_bearing_capacity_n": 6.11,
+      "f_bearing_capacity_n": 7.18,
       "mpm_damping_s": 0.001,
       "nu": 0.45,
       "rho": 1000.0,
-      "sigma_y_pa": 3333.0,
+      "sigma_y_pa": 6000.0,
       "tensile_yield_ratio": 1.0,
       "viscosity_pa_s": 20.0,
       "yield_pressure_factor": 0.85,
-      "yield_pressure_pa": 2833.0499999999997
+      "yield_pressure_pa": 5100.0
     },
     "newton_commit": "b74df534bee62a17e0e57cc9cdfd1a67d91ca817",
     "particle_count": 4913,

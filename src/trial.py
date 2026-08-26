@@ -257,6 +257,22 @@ def run_trial(
     )
     labels = verdict["labels"] if verdict["labels"] else ["intact"]
 
+    # Time-frame reconciliation (documented): the judgment reducer works in the
+    # ABSOLUTE sim clock (rig.t); phase_timestamps are stored RELATIVE to t0 (the
+    # sim time when the judged phases begin, after approach+servo). drop_t and
+    # damage_latch_t come back ABSOLUTE. Store both frames + explicit in-window
+    # booleans so each JSON is self-verifiable without external state.
+    lc_abs = phase_ts["lift_complete"] + t0
+    se_abs = phase_ts["settle_end"] + t0
+    dt_abs = verdict["drop_t"]
+    dm_abs = verdict["damage_latch_t"]
+    drop_in_window = dt_abs is not None and lc_abs - 1e-9 <= dt_abs <= se_abs + 1e-9
+    damage_in_window = dm_abs is not None and lc_abs - 1e-9 <= dm_abs <= se_abs + 1e-9
+    # invariant self-check: the reducer only sets these from in-window samples,
+    # so a label present with an out-of-window time is a hard contract violation
+    if ("drop" in labels) != drop_in_window and "drop" in labels:
+        raise AssertionError(f"drop label with out-of-window drop_t={dt_abs} window=[{lc_abs},{se_abs}]")
+
     payload = {
         "sigma_y_pa": sigma_y,
         "a_peak_cmd_ms2": a_peak,
@@ -266,12 +282,19 @@ def run_trial(
         "seed": seed,
         "labels": labels,
         "cell_color": verdict["cell_color"],
-        "damage_latch_t": verdict["damage_latch_t"],
-        "drop_t": verdict["drop_t"],
+        "t0_abs_s": t0,
+        "judgment_window_abs_s": [lc_abs, se_abs],
+        "damage_latch_t": dm_abs,
+        "damage_latch_t_rel": (dm_abs - t0) if dm_abs is not None else None,
+        "drop_t": dt_abs,
+        "drop_t_rel": (dt_abs - t0) if dt_abs is not None else None,
+        "drop_evidence_in_window": bool(drop_in_window),
+        "damage_evidence_in_window": bool(damage_in_window),
         "damage_after_drop": verdict["damage_after_drop"],
         "peak_damage_fraction": verdict["peak_damage_fraction"],
         "health": rig.health.report(),
         "phase_timestamps": {k: round(v, 4) for k, v in phase_ts.items()},
+        "phase_timestamps_frame": "relative_to_t0_abs_s (drop_t/damage_latch_t are absolute; *_rel are t0-subtracted)",
         "wall_time_s": time.time() - t_wall0,
     }
     config = {

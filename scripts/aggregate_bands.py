@@ -104,12 +104,21 @@ def main() -> int:
     if not trials:
         print("no trials found; nothing to aggregate")
         return 1
-    # config block from any trial (protocol constants are uniform per sweep)
-    any_path = os.path.join(ROOT, next(iter({t["artifact"] for t in trials.values()})))
-    config = io_schemas.read_json(any_path)["config"]
+    # PER-MATERIAL config block: each band JSON must carry the config of a trial
+    # OF ITS OWN material (protocol constants like sigma_y_pa, yield_pressure_pa,
+    # f_bearing_capacity_n differ by material). Earlier a single arbitrary trial's
+    # config was reused for all three -> a header-template bug (data was sound).
+    config_by_sigma = {}
+    for (s, _a, _f, _seed), t in trials.items():
+        if s not in config_by_sigma:
+            config_by_sigma[s] = io_schemas.read_json(os.path.join(ROOT, t["artifact"]))["config"]
 
     sigmas = [args.sigma] if args.sigma else SIGMAS
     for sigma in sigmas:
+        config = config_by_sigma.get(sigma)
+        if config is None:
+            print(f"sigma={int(sigma)}: no trials found for this material; skipping")
+            continue
         doc, checkpoint = aggregate_material(sigma, trials, {}, config)
         out = os.path.join(args.results, f"e1_band_{int(sigma)}.json")
         io_schemas.write_json(out, doc)

@@ -1,0 +1,78 @@
+{
+  "a2.5_f0.8": {
+    "n_planned": 5,
+    "n_resolved": 5,
+    "required_pass_4of5": 4,
+    "seed_colors": {
+      "0": "damage",
+      "1": "damage",
+      "2": "drop",
+      "3": "damage",
+      "4": "drop"
+    },
+    "color_counts": {
+      "damage": 3,
+      "drop": 2
+    },
+    "certified_color": null,
+    "certified": false,
+    "note": "boundary sharpened; still no intact -> band remains empty; this refines drop<->damage attribution only"
+  },
+  "a5_f0.8": {
+    "n_planned": 5,
+    "n_resolved": 5,
+    "required_pass_4of5": 4,
+    "seed_colors": {
+      "0": "damage",
+      "1": "damage",
+      "2": "drop",
+      "3": "damage",
+      "4": "drop"
+    },
+    "color_counts": {
+      "damage": 3,
+      "drop": 2
+    },
+    "certified_color": null,
+    "certified": false,
+    "note": "boundary sharpened; still no intact -> band remains empty; this refines drop<->damage attribution only"
+  },
+  "a10_f0.8": {
+    "n_planned": 5,
+    "n_resolved": 5,
+    "required_pass_4of5": 4,
+    "seed_colors": {
+      "0": "damage",
+      "1": "damage",
+      "2": "drop",
+      "3": "damage",
+      "4": "drop"
+    },
+    "color_counts": {
+      "damage": 3,
+      "drop": 2
+    },
+    "certified_color": null,
+    "certified": false,
+    "note": "boundary sharpened; still no intact -> band remains empty; this refines drop<->damage attribution only"
+  },
+  "a15_f0.8": {
+    "n_planned": 5,
+    "n_resolved": 5,
+    "required_pass_4of5": 4,
+    "seed_colors": {
+      "0": "drop",
+      "1": "damage",
+      "2": "drop",
+      "3": "damage",
+      "4": "damage"
+    },
+    "color_counts": {
+      "drop": 2,
+      "damage": 3
+    },
+    "certified_color": null,
+    "certified": false,
+    "note": "boundary sharpened; still no intact -> band remains empty; this refines drop<->damage attribution only"
+  }
+}

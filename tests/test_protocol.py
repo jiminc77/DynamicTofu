@@ -144,3 +144,33 @@ class TestCellColorPrecedence(unittest.TestCase):
         samples = [{"t": 1.0, "jp": self._jp(0.0)}]
         out = judgment.evaluate(samples, lift_complete=0.0, settle_end=3.0)
         self.assertEqual(out["cell_color"], "intact")
+
+
+class TestDropWindowInvariant(unittest.TestCase):
+    def _jp(self, frac):
+        import numpy as np
+        n_bad = int(round(frac * 100))
+        return np.concatenate([np.full(n_bad, 1.2), np.ones(100 - n_bad)])
+
+    def test_drop_evidence_after_settle_end_not_labeled(self):
+        # grasp lost only AFTER settle_end (e.g. block hits the table late) -> NO drop label
+        samples = [
+            {"t": 1.0, "jp": self._jp(0.0), "grasp_established": True, "bilateral_contact": True},
+            {"t": 2.0, "jp": self._jp(0.0), "grasp_established": True, "bilateral_contact": True},
+            # out-of-window impact: contact lost long after settle_end=3.0
+            {"t": 5.0, "grasp_established": True, "bilateral_contact": False},
+            {"t": 5.3, "grasp_established": True, "bilateral_contact": False, "relative_displacement_m": 0.05},
+        ]
+        out = judgment.evaluate(samples, lift_complete=0.5, settle_end=3.0)
+        self.assertNotIn("drop", out["label_set"])
+        self.assertIsNone(out["drop_t"])
+        self.assertEqual(out["cell_color"], "intact")
+
+    def test_drop_evidence_inside_window_is_labeled(self):
+        samples = [
+            {"t": 1.0, "grasp_established": True, "bilateral_contact": True},
+            {"t": 2.0, "grasp_established": True, "bilateral_contact": True, "relative_displacement_m": 0.05},
+        ]
+        out = judgment.evaluate(samples, lift_complete=0.5, settle_end=3.0)
+        self.assertIn("drop", out["label_set"])
+        self.assertEqual(out["drop_t"], 2.0)  # in-window sample time
