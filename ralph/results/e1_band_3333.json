@@ -1,0 +1,611 @@
+{
+  "config": {
+    "asset_urdf_sha256": "2a270e19a9b9c7ca5eb62ec9d503d779281605b6bba881f5ac6e8090aa382497",
+    "brief_sha256": "bb41367843d73f070f109954ae674bbc2fcb1d24ff651cac3355a4fdc6f0d6b0",
+    "calibration": {
+      "hysteresis": 0.06674073161087879,
+      "intercept": 0.44382365750630953,
+      "residual": 0.5973713370857561,
+      "slope": 0.5835165001105969
+    },
+    "contact_params": {
+      "default_shape_mu": 0.5,
+      "impulse_eps": 1e-08,
+      "max_speculative_extension_m": 0.005,
+      "pad_friction_mu": 1.0
+    },
+    "coupling_params": {
+      "composition": "SolverCoupledProxy(mjc: SolverMuJoCo substeps=4; mpm: SolverImplicitMPM in_place)",
+      "frame_dt_s": 0.005,
+      "mass_scale": 1.0,
+      "mpm_max_iterations": 50,
+      "proxy_iterations": 1,
+      "proxy_mode": "lagged",
+      "rigid_substeps": 4,
+      "voxel_size_m": 0.005
+    },
+    "dt": 0.005,
+    "f_g_convention": "per_finger_normal_mean",
+    "material": {
+      "E_pa": 7000.0,
+      "f_bearing_capacity_n": 6.11,
+      "mpm_damping_s": 0.001,
+      "nu": 0.45,
+      "rho": 1000.0,
+      "sigma_y_pa": 3333.0,
+      "tensile_yield_ratio": 1.0,
+      "viscosity_pa_s": 20.0,
+      "yield_pressure_factor": 0.85,
+      "yield_pressure_pa": 2833.0499999999997
+    },
+    "newton_commit": "b74df534bee62a17e0e57cc9cdfd1a67d91ca817",
+    "particle_count": 4913,
+    "profile_id": "trapz_reversal_default",
+    "seed_rng_derivation": "np.random.SeedSequence([1234, seed]) -> xy pose jitter",
+    "substeps": 4,
+    "voxel_size": 0.005,
+    "windows": {
+      "judgment": "lift_complete..settle_end inclusive",
+      "phases_s": {
+        "close_hold": 0.5,
+        "final_settle": 0.5,
+        "lift": 0.3,
+        "postlift_hold": 0.2,
+        "settle": 0.5
+      },
+      "thresholds": {
+        "contact_loss_s": 0.2,
+        "damage_frac": 0.1,
+        "jp_dev": 0.05,
+        "rel_disp_m": 0.02,
+        "slip_net_m": 0.005,
+        "slip_peak_m": 0.008
+      }
+    }
+  },
+  "payload": {
+    "a_star": 1.0,
+    "a_star_status": "observed",
+    "coverage": {
+      "s3333_a10_f0.3_seed0": {
+        "reason": "ralph/results/trials/s3333_a10_f0.3_seed0.json",
+        "status": "done"
+      },
+      "s3333_a10_f0.3_seed1": {
+        "reason": "ralph/results/trials/s3333_a10_f0.3_seed1.json",
+        "status": "done"
+      },
+      "s3333_a10_f0.3_seed2": {
+        "reason": "ralph/results/trials/s3333_a10_f0.3_seed2.json",
+        "status": "done"
+      },
+      "s3333_a10_f0.5_seed0": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a10_f0.5_seed1": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a10_f0.5_seed2": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a10_f0.8_seed0": {
+        "reason": "ralph/results/trials/s3333_a10_f0.8_seed0.json",
+        "status": "done"
+      },
+      "s3333_a10_f0.8_seed1": {
+        "reason": "ralph/results/trials/s3333_a10_f0.8_seed1.json",
+        "status": "done"
+      },
+      "s3333_a10_f0.8_seed2": {
+        "reason": "ralph/results/trials/s3333_a10_f0.8_seed2.json",
+        "status": "done"
+      },
+      "s3333_a10_f1.2_seed0": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a10_f1.2_seed1": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a10_f1.2_seed2": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a10_f1.8_seed0": {
+        "reason": "ralph/results/trials/s3333_a10_f1.8_seed0.json",
+        "status": "done"
+      },
+      "s3333_a10_f1.8_seed1": {
+        "reason": "ralph/results/trials/s3333_a10_f1.8_seed1.json",
+        "status": "done"
+      },
+      "s3333_a10_f1.8_seed2": {
+        "reason": "ralph/results/trials/s3333_a10_f1.8_seed2.json",
+        "status": "done"
+      },
+      "s3333_a10_f2.5_seed0": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a10_f2.5_seed1": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a10_f2.5_seed2": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a10_f3.5_seed0": {
+        "reason": "ralph/results/trials/s3333_a10_f3.5_seed0.json",
+        "status": "done"
+      },
+      "s3333_a10_f3.5_seed1": {
+        "reason": "ralph/results/trials/s3333_a10_f3.5_seed1.json",
+        "status": "done"
+      },
+      "s3333_a10_f3.5_seed2": {
+        "reason": "ralph/results/trials/s3333_a10_f3.5_seed2.json",
+        "status": "done"
+      },
+      "s3333_a10_f5_seed0": {
+        "reason": "ralph/results/trials/s3333_a10_f5_seed0.json",
+        "status": "done"
+      },
+      "s3333_a10_f5_seed1": {
+        "reason": "ralph/results/trials/s3333_a10_f5_seed1.json",
+        "status": "done"
+      },
+      "s3333_a10_f5_seed2": {
+        "reason": "ralph/results/trials/s3333_a10_f5_seed2.json",
+        "status": "done"
+      },
+      "s3333_a15_f0.3_seed0": {
+        "reason": "ralph/results/trials/s3333_a15_f0.3_seed0.json",
+        "status": "done"
+      },
+      "s3333_a15_f0.3_seed1": {
+        "reason": "ralph/results/trials/s3333_a15_f0.3_seed1.json",
+        "status": "done"
+      },
+      "s3333_a15_f0.3_seed2": {
+        "reason": "ralph/results/trials/s3333_a15_f0.3_seed2.json",
+        "status": "done"
+      },
+      "s3333_a15_f0.5_seed0": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a15_f0.5_seed1": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a15_f0.5_seed2": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a15_f0.8_seed0": {
+        "reason": "ralph/results/trials/s3333_a15_f0.8_seed0.json",
+        "status": "done"
+      },
+      "s3333_a15_f0.8_seed1": {
+        "reason": "ralph/results/trials/s3333_a15_f0.8_seed1.json",
+        "status": "done"
+      },
+      "s3333_a15_f0.8_seed2": {
+        "reason": "ralph/results/trials/s3333_a15_f0.8_seed2.json",
+        "status": "done"
+      },
+      "s3333_a15_f1.2_seed0": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a15_f1.2_seed1": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a15_f1.2_seed2": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a15_f1.8_seed0": {
+        "reason": "ralph/results/trials/s3333_a15_f1.8_seed0.json",
+        "status": "done"
+      },
+      "s3333_a15_f1.8_seed1": {
+        "reason": "ralph/results/trials/s3333_a15_f1.8_seed1.json",
+        "status": "done"
+      },
+      "s3333_a15_f1.8_seed2": {
+        "reason": "ralph/results/trials/s3333_a15_f1.8_seed2.json",
+        "status": "done"
+      },
+      "s3333_a15_f2.5_seed0": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a15_f2.5_seed1": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a15_f2.5_seed2": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a15_f3.5_seed0": {
+        "reason": "ralph/results/trials/s3333_a15_f3.5_seed0.json",
+        "status": "done"
+      },
+      "s3333_a15_f3.5_seed1": {
+        "reason": "ralph/results/trials/s3333_a15_f3.5_seed1.json",
+        "status": "done"
+      },
+      "s3333_a15_f3.5_seed2": {
+        "reason": "ralph/results/trials/s3333_a15_f3.5_seed2.json",
+        "status": "done"
+      },
+      "s3333_a15_f5_seed0": {
+        "reason": "ralph/results/trials/s3333_a15_f5_seed0.json",
+        "status": "done"
+      },
+      "s3333_a15_f5_seed1": {
+        "reason": "ralph/results/trials/s3333_a15_f5_seed1.json",
+        "status": "done"
+      },
+      "s3333_a15_f5_seed2": {
+        "reason": "ralph/results/trials/s3333_a15_f5_seed2.json",
+        "status": "done"
+      },
+      "s3333_a1_f0.3_seed0": {
+        "reason": "ralph/results/trials/s3333_a1_f0.3_seed0.json",
+        "status": "done"
+      },
+      "s3333_a1_f0.3_seed1": {
+        "reason": "ralph/results/trials/s3333_a1_f0.3_seed1.json",
+        "status": "done"
+      },
+      "s3333_a1_f0.3_seed2": {
+        "reason": "ralph/results/trials/s3333_a1_f0.3_seed2.json",
+        "status": "done"
+      },
+      "s3333_a1_f0.5_seed0": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a1_f0.5_seed1": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a1_f0.5_seed2": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a1_f0.8_seed0": {
+        "reason": "ralph/results/trials/s3333_a1_f0.8_seed0.json",
+        "status": "done"
+      },
+      "s3333_a1_f0.8_seed1": {
+        "reason": "ralph/results/trials/s3333_a1_f0.8_seed1.json",
+        "status": "done"
+      },
+      "s3333_a1_f0.8_seed2": {
+        "reason": "ralph/results/trials/s3333_a1_f0.8_seed2.json",
+        "status": "done"
+      },
+      "s3333_a1_f1.2_seed0": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a1_f1.2_seed1": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a1_f1.2_seed2": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a1_f1.8_seed0": {
+        "reason": "ralph/results/trials/s3333_a1_f1.8_seed0.json",
+        "status": "done"
+      },
+      "s3333_a1_f1.8_seed1": {
+        "reason": "ralph/results/trials/s3333_a1_f1.8_seed1.json",
+        "status": "done"
+      },
+      "s3333_a1_f1.8_seed2": {
+        "reason": "ralph/results/trials/s3333_a1_f1.8_seed2.json",
+        "status": "done"
+      },
+      "s3333_a1_f2.5_seed0": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a1_f2.5_seed1": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a1_f2.5_seed2": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a1_f3.5_seed0": {
+        "reason": "ralph/results/trials/s3333_a1_f3.5_seed0.json",
+        "status": "done"
+      },
+      "s3333_a1_f3.5_seed1": {
+        "reason": "ralph/results/trials/s3333_a1_f3.5_seed1.json",
+        "status": "done"
+      },
+      "s3333_a1_f3.5_seed2": {
+        "reason": "ralph/results/trials/s3333_a1_f3.5_seed2.json",
+        "status": "done"
+      },
+      "s3333_a1_f5_seed0": {
+        "reason": "ralph/results/trials/s3333_a1_f5_seed0.json",
+        "status": "done"
+      },
+      "s3333_a1_f5_seed1": {
+        "reason": "ralph/results/trials/s3333_a1_f5_seed1.json",
+        "status": "done"
+      },
+      "s3333_a1_f5_seed2": {
+        "reason": "ralph/results/trials/s3333_a1_f5_seed2.json",
+        "status": "done"
+      },
+      "s3333_a2.5_f0.3_seed0": {
+        "reason": "ralph/results/trials/s3333_a2.5_f0.3_seed0.json",
+        "status": "done"
+      },
+      "s3333_a2.5_f0.3_seed1": {
+        "reason": "ralph/results/trials/s3333_a2.5_f0.3_seed1.json",
+        "status": "done"
+      },
+      "s3333_a2.5_f0.3_seed2": {
+        "reason": "ralph/results/trials/s3333_a2.5_f0.3_seed2.json",
+        "status": "done"
+      },
+      "s3333_a2.5_f0.5_seed0": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a2.5_f0.5_seed1": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a2.5_f0.5_seed2": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a2.5_f0.8_seed0": {
+        "reason": "ralph/results/trials/s3333_a2.5_f0.8_seed0.json",
+        "status": "done"
+      },
+      "s3333_a2.5_f0.8_seed1": {
+        "reason": "ralph/results/trials/s3333_a2.5_f0.8_seed1.json",
+        "status": "done"
+      },
+      "s3333_a2.5_f0.8_seed2": {
+        "reason": "ralph/results/trials/s3333_a2.5_f0.8_seed2.json",
+        "status": "done"
+      },
+      "s3333_a2.5_f1.2_seed0": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a2.5_f1.2_seed1": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a2.5_f1.2_seed2": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a2.5_f1.8_seed0": {
+        "reason": "ralph/results/trials/s3333_a2.5_f1.8_seed0.json",
+        "status": "done"
+      },
+      "s3333_a2.5_f1.8_seed1": {
+        "reason": "ralph/results/trials/s3333_a2.5_f1.8_seed1.json",
+        "status": "done"
+      },
+      "s3333_a2.5_f1.8_seed2": {
+        "reason": "ralph/results/trials/s3333_a2.5_f1.8_seed2.json",
+        "status": "done"
+      },
+      "s3333_a2.5_f2.5_seed0": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a2.5_f2.5_seed1": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a2.5_f2.5_seed2": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a2.5_f3.5_seed0": {
+        "reason": "ralph/results/trials/s3333_a2.5_f3.5_seed0.json",
+        "status": "done"
+      },
+      "s3333_a2.5_f3.5_seed1": {
+        "reason": "ralph/results/trials/s3333_a2.5_f3.5_seed1.json",
+        "status": "done"
+      },
+      "s3333_a2.5_f3.5_seed2": {
+        "reason": "ralph/results/trials/s3333_a2.5_f3.5_seed2.json",
+        "status": "done"
+      },
+      "s3333_a2.5_f5_seed0": {
+        "reason": "ralph/results/trials/s3333_a2.5_f5_seed0.json",
+        "status": "done"
+      },
+      "s3333_a2.5_f5_seed1": {
+        "reason": "ralph/results/trials/s3333_a2.5_f5_seed1.json",
+        "status": "done"
+      },
+      "s3333_a2.5_f5_seed2": {
+        "reason": "ralph/results/trials/s3333_a2.5_f5_seed2.json",
+        "status": "done"
+      },
+      "s3333_a5_f0.3_seed0": {
+        "reason": "ralph/results/trials/s3333_a5_f0.3_seed0.json",
+        "status": "done"
+      },
+      "s3333_a5_f0.3_seed1": {
+        "reason": "ralph/results/trials/s3333_a5_f0.3_seed1.json",
+        "status": "done"
+      },
+      "s3333_a5_f0.3_seed2": {
+        "reason": "ralph/results/trials/s3333_a5_f0.3_seed2.json",
+        "status": "done"
+      },
+      "s3333_a5_f0.5_seed0": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a5_f0.5_seed1": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a5_f0.5_seed2": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a5_f0.8_seed0": {
+        "reason": "ralph/results/trials/s3333_a5_f0.8_seed0.json",
+        "status": "done"
+      },
+      "s3333_a5_f0.8_seed1": {
+        "reason": "ralph/results/trials/s3333_a5_f0.8_seed1.json",
+        "status": "done"
+      },
+      "s3333_a5_f0.8_seed2": {
+        "reason": "ralph/results/trials/s3333_a5_f0.8_seed2.json",
+        "status": "done"
+      },
+      "s3333_a5_f1.2_seed0": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a5_f1.2_seed1": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a5_f1.2_seed2": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a5_f1.8_seed0": {
+        "reason": "ralph/results/trials/s3333_a5_f1.8_seed0.json",
+        "status": "done"
+      },
+      "s3333_a5_f1.8_seed1": {
+        "reason": "ralph/results/trials/s3333_a5_f1.8_seed1.json",
+        "status": "done"
+      },
+      "s3333_a5_f1.8_seed2": {
+        "reason": "ralph/results/trials/s3333_a5_f1.8_seed2.json",
+        "status": "done"
+      },
+      "s3333_a5_f2.5_seed0": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a5_f2.5_seed1": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a5_f2.5_seed2": {
+        "reason": "stage_not_authorized_or_not_yet_run",
+        "status": "skipped_not_authorized"
+      },
+      "s3333_a5_f3.5_seed0": {
+        "reason": "ralph/results/trials/s3333_a5_f3.5_seed0.json",
+        "status": "done"
+      },
+      "s3333_a5_f3.5_seed1": {
+        "reason": "ralph/results/trials/s3333_a5_f3.5_seed1.json",
+        "status": "done"
+      },
+      "s3333_a5_f3.5_seed2": {
+        "reason": "ralph/results/trials/s3333_a5_f3.5_seed2.json",
+        "status": "done"
+      },
+      "s3333_a5_f5_seed0": {
+        "reason": "ralph/results/trials/s3333_a5_f5_seed0.json",
+        "status": "done"
+      },
+      "s3333_a5_f5_seed1": {
+        "reason": "ralph/results/trials/s3333_a5_f5_seed1.json",
+        "status": "done"
+      },
+      "s3333_a5_f5_seed2": {
+        "reason": "ralph/results/trials/s3333_a5_f5_seed2.json",
+        "status": "done"
+      }
+    },
+    "extra_replications": {},
+    "rows": [
+      {
+        "F_max": null,
+        "F_min": null,
+        "a_peak": 1.0,
+        "band_status": "empty",
+        "band_width_n": null,
+        "censored_high": false,
+        "censored_low": false,
+        "interior_failures": [],
+        "sigma_Y": 3333.0
+      },
+      {
+        "F_max": null,
+        "F_min": null,
+        "a_peak": 2.5,
+        "band_status": "empty",
+        "band_width_n": null,
+        "censored_high": false,
+        "censored_low": false,
+        "interior_failures": [],
+        "sigma_Y": 3333.0
+      },
+      {
+        "F_max": null,
+        "F_min": null,
+        "a_peak": 5.0,
+        "band_status": "empty",
+        "band_width_n": null,
+        "censored_high": false,
+        "censored_low": false,
+        "interior_failures": [],
+        "sigma_Y": 3333.0
+      },
+      {
+        "F_max": null,
+        "F_min": null,
+        "a_peak": 10.0,
+        "band_status": "empty",
+        "band_width_n": null,
+        "censored_high": false,
+        "censored_low": false,
+        "interior_failures": [],
+        "sigma_Y": 3333.0
+      },
+      {
+        "F_max": null,
+        "F_min": null,
+        "a_peak": 15.0,
+        "band_status": "empty",
+        "band_width_n": null,
+        "censored_high": false,
+        "censored_low": false,
+        "interior_failures": [],
+        "sigma_Y": 3333.0
+      }
+    ]
+  },
+  "schema": "e1_band.v1"
+}

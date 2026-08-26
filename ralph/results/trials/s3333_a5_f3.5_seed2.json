@@ -64,18 +64,18 @@
     }
   },
   "payload": {
-    "a_peak_cmd_ms2": 2.5,
-    "a_peak_realized_ms2": 2.424013265140436,
-    "cell_color": "drop",
+    "a_peak_cmd_ms2": 5.0,
+    "a_peak_realized_ms2": 4.747980531272127,
+    "cell_color": "damage",
     "damage_after_drop": false,
-    "damage_latch_t": null,
-    "drop_t": 5.43,
-    "f_g_n": 0.8,
-    "f_g_realized_n": 0.811962434385348,
+    "damage_latch_t": 5.3,
+    "drop_t": 5.3,
+    "f_g_n": 3.5,
+    "f_g_realized_n": 2.7671621772495323,
     "health": {
       "clean": true,
       "jp_finite": true,
-      "max_particle_speed_ms": 0.029170911759138107,
+      "max_particle_speed_ms": 0.02937263436615467,
       "n_checks": 9,
       "nan_free": true,
       "sparse_grid_error": "",
@@ -83,22 +83,23 @@
       "speed_limit_ms": 5.0
     },
     "labels": [
+      "damage",
       "drop"
     ],
-    "peak_damage_fraction": 0.04274374109505394,
+    "peak_damage_fraction": 0.12151434968451048,
     "phase_timestamps": {
       "close_hold": 0.5,
-      "final_settle": 3.475,
+      "final_settle": 2.985,
       "lift": 1.0,
       "lift_complete": 1.3,
-      "reversal": 2.6324,
+      "reversal": 2.3886,
       "settle": 0.0,
-      "settle_end": 3.975,
+      "settle_end": 3.485,
       "transport": 1.5
     },
-    "seed": 0,
+    "seed": 2,
     "sigma_y_pa": 3333.0,
-    "wall_time_s": 32.8997437953949
+    "wall_time_s": 30.435153245925903
   },
   "schema": "e1.v1"
 }

@@ -65,13 +65,13 @@
   },
   "payload": {
     "a_peak_cmd_ms2": 2.5,
-    "a_peak_realized_ms2": 2.424013265140436,
-    "cell_color": "drop",
+    "a_peak_realized_ms2": 2.424374711817977,
+    "cell_color": "damage",
     "damage_after_drop": false,
-    "damage_latch_t": null,
-    "drop_t": 5.43,
-    "f_g_n": 0.8,
-    "f_g_realized_n": 0.811962434385348,
+    "damage_latch_t": 5.3,
+    "drop_t": 5.3,
+    "f_g_n": 5.0,
+    "f_g_realized_n": 3.2726672914457167,
     "health": {
       "clean": true,
       "jp_finite": true,
@@ -83,9 +83,10 @@
       "speed_limit_ms": 5.0
     },
     "labels": [
+      "damage",
       "drop"
     ],
-    "peak_damage_fraction": 0.04274374109505394,
+    "peak_damage_fraction": 0.16731121514349684,
     "phase_timestamps": {
       "close_hold": 0.5,
       "final_settle": 3.475,
@@ -98,7 +99,7 @@
     },
     "seed": 0,
     "sigma_y_pa": 3333.0,
-    "wall_time_s": 32.8997437953949
+    "wall_time_s": 32.8918035030365
   },
   "schema": "e1.v1"
 }

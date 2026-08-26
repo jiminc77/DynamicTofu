@@ -65,17 +65,17 @@
   },
   "payload": {
     "a_peak_cmd_ms2": 2.5,
-    "a_peak_realized_ms2": 2.424013265140436,
+    "a_peak_realized_ms2": 2.4246324352108055,
     "cell_color": "drop",
     "damage_after_drop": false,
     "damage_latch_t": null,
-    "drop_t": 5.43,
+    "drop_t": 5.4,
     "f_g_n": 0.8,
-    "f_g_realized_n": 0.811962434385348,
+    "f_g_realized_n": 0.8139558981444149,
     "health": {
       "clean": true,
       "jp_finite": true,
-      "max_particle_speed_ms": 0.029170911759138107,
+      "max_particle_speed_ms": 0.02902808040380478,
       "n_checks": 9,
       "nan_free": true,
       "sparse_grid_error": "",
@@ -85,7 +85,7 @@
     "labels": [
       "drop"
     ],
-    "peak_damage_fraction": 0.04274374109505394,
+    "peak_damage_fraction": 0.04091186647669448,
     "phase_timestamps": {
       "close_hold": 0.5,
       "final_settle": 3.475,
@@ -96,9 +96,9 @@
       "settle_end": 3.975,
       "transport": 1.5
     },
-    "seed": 0,
+    "seed": 1,
     "sigma_y_pa": 3333.0,
-    "wall_time_s": 32.8997437953949
+    "wall_time_s": 32.64926552772522
   },
   "schema": "e1.v1"
 }

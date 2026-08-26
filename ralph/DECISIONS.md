@@ -143,3 +143,7 @@ Recomputed gate outcome under P5, from the persisted trial points (60 dynamic-cr
 ## 2026-08-27 — G-N3 stage-set selection (committed BEFORE the first E1 cell, per protocol)
 
 Measured at G-N3 (reports/logs/gn3-official.json): weighted T = 34.5 s (a=1: 39.4 s, a=15: 29.6 s); T_E2 = 32 s (full E2 config incl. raw-field recording, reports/logs/e2-scratch). Computed by src/budget.py (inputs recorded, never a constant): R_E2 = 360 s → E2_overflow = 0 → E1_budget = 24.0 h → T_A_max = 921.6 s (nominal operating point valid because E2_overflow = 0). Governing rule N·T ≤ 0.8·E1_budget: selected stage set = **A + B(2000) + B(6000) + C(i) + C(ii) = up to 310 trials**, no stages dropped, no escalation (T = 34.5 s ≪ 921.6 s). Guaranteed E2 nine untouched. Stage order remains A → shape checkpoint → B → C with stage-atomic fail-closed semantics.
+
+## 2026-08-27 — Stage-A shape checkpoint: scale_failure; STOPPED pending external review
+
+Stage A complete (75/75, 0 unresolved, health clean; batch row in RESULTS.md). Pre-registered router outcome **scale_failure**: intact bands EMPTY at all five accelerations (all cells drop or damage; seeds unanimous; a_star=1.0 observed trivially on the empty ordering). Per protocol: Stage B/C, E2 mid-band selection, and E3 triplet are HALTED pending external review. Full report: reports/shape_checkpoint.md. Options + recommendation recorded there; no further stage executes until the external decision.

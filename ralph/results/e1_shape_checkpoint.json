@@ -1,0 +1,39 @@
+{
+  "Delta_max": null,
+  "Delta_min": null,
+  "C_max": null,
+  "C_min": null,
+  "U_max_count": 0,
+  "U_min_count": 0,
+  "N_amb": 0,
+  "bands": {
+    "1.0": {
+      "band_status": "empty",
+      "censored_low": false,
+      "censored_high": false
+    },
+    "2.5": {
+      "band_status": "empty",
+      "censored_low": false,
+      "censored_high": false
+    },
+    "5.0": {
+      "band_status": "empty",
+      "censored_low": false,
+      "censored_high": false
+    },
+    "10.0": {
+      "band_status": "empty",
+      "censored_low": false,
+      "censored_high": false
+    },
+    "15.0": {
+      "band_status": "empty",
+      "censored_low": false,
+      "censored_high": false
+    }
+  },
+  "low_confidence": false,
+  "outcome": "scale_failure",
+  "branch": "scale_failure"
+}
