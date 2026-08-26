@@ -108,3 +108,39 @@ class TestSlipDropPrecedenceOrder(unittest.TestCase):
         out = judgment.evaluate(samples, lift_complete=0.0, settle_end=4.0)
         self.assertIn("drop", out["label_set"])
         self.assertNotIn("slip", out["label_set"])
+
+
+class TestCellColorPrecedence(unittest.TestCase):
+    def _jp(self, frac):
+        # 100 particles with `frac` fraction damaged
+        import numpy as np
+        n_bad = int(round(frac * 100))
+        return np.concatenate([np.full(n_bad, 1.2), np.ones(100 - n_bad)])
+
+    def test_damage_after_drop_colors_drop(self):
+        samples = [
+            {"t": 1.0, "jp": self._jp(0.0)},
+            {"t": 1.5, "jp": self._jp(0.0), "relative_displacement_m": 0.03},  # drop at 1.5
+            {"t": 2.0, "jp": self._jp(0.5)},  # damage latches after the drop
+        ]
+        out = judgment.evaluate(samples, lift_complete=0.0, settle_end=3.0)
+        self.assertIn("damage", out["label_set"])
+        self.assertIn("drop", out["label_set"])
+        self.assertTrue(out["damage_after_drop"])
+        self.assertEqual(out["cell_color"], "drop")
+        self.assertEqual(out["drop_t"], 1.5)
+        self.assertEqual(out["damage_latch_t"], 2.0)
+
+    def test_damage_while_grasped_colors_damage(self):
+        samples = [
+            {"t": 1.0, "jp": self._jp(0.5)},  # damage first
+            {"t": 2.0, "jp": self._jp(0.5), "relative_displacement_m": 0.03},  # drop later
+        ]
+        out = judgment.evaluate(samples, lift_complete=0.0, settle_end=3.0)
+        self.assertFalse(out["damage_after_drop"])
+        self.assertEqual(out["cell_color"], "damage")
+
+    def test_intact_color(self):
+        samples = [{"t": 1.0, "jp": self._jp(0.0)}]
+        out = judgment.evaluate(samples, lift_complete=0.0, settle_end=3.0)
+        self.assertEqual(out["cell_color"], "intact")

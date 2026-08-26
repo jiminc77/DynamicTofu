@@ -23,6 +23,8 @@ def evaluate(samples, lift_complete, settle_end, particle_count=None, thresholds
     labels = set()
     peak_damage = 0.0
     loss_start = None
+    damage_latch_t = None
+    drop_t = None
     for s in samples:
         t = float(s["t"])
         if t < lift_complete or t > settle_end:
@@ -43,6 +45,8 @@ def evaluate(samples, lift_complete, settle_end, particle_count=None, thresholds
             peak_damage = max(peak_damage, fraction)
             if fraction > thresholds.damage_frac:
                 labels.add("damage")
+                if damage_latch_t is None:
+                    damage_latch_t = t
         established = bool(s.get("grasp_established", True))
         bilateral = bool(s.get("bilateral_contact", True))
         if established and not bilateral:
@@ -50,10 +54,14 @@ def evaluate(samples, lift_complete, settle_end, particle_count=None, thresholds
                 loss_start = t
             if t - loss_start > thresholds.contact_loss_s:
                 labels.add("drop")
+                if drop_t is None:
+                    drop_t = t
         else:
             loss_start = None
         if float(s.get("relative_displacement_m", 0.0)) > thresholds.rel_disp_m:
             labels.add("drop")
+            if drop_t is None:
+                drop_t = t
         if (float(s.get("slip_net_m", 0.0)) > thresholds.slip_net_m or
                 float(s.get("slip_peak_m", 0.0)) > thresholds.slip_peak_m):
             labels.add("slip")
@@ -61,8 +69,26 @@ def evaluate(samples, lift_complete, settle_end, particle_count=None, thresholds
     # so a drop occurring after a slip event still suppresses slip.
     if "drop" in labels:
         labels.discard("slip")
+    # Pre-registered cell-outcome precedence (external order 2026-08-27, before
+    # Stage A): damage latched AFTER grasp loss attributes the cell to drop
+    # (impact/table compaction, not the grasp); damage while grasped colors as
+    # damage. Raw labels are unchanged either way.
+    damage_after_drop = (
+        damage_latch_t is not None and drop_t is not None and damage_latch_t > drop_t
+    )
+    if "damage" in labels and not damage_after_drop:
+        cell_color = "damage"
+    elif "drop" in labels:
+        cell_color = "drop"
+    elif "slip" in labels:
+        cell_color = "slip"
+    else:
+        cell_color = "intact"
     return {"labels": sorted(labels), "label_set": labels,
-            "peak_damage_fraction": peak_damage}
+            "peak_damage_fraction": peak_damage,
+            "damage_latch_t": damage_latch_t, "drop_t": drop_t,
+            "damage_after_drop": bool(damage_after_drop),
+            "cell_color": cell_color}
 
 
 judge_trial = evaluate

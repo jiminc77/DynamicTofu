@@ -54,6 +54,26 @@ Cross-material at (0.85σ, 0.75): σ=2000 gentle-1.5N fires 0.250 (1.5 N is not 
 
 No sweep or gate-decisive run executes until one option is signed off.
 
+## 2026-08-27 — P2 GO (external): Option 1 authorized in full
+
+The external authority confirmed the earlier sign-off authorizes executing P2 in full — three-material probe re-run, ramp gate, final calibration, and gate media — with no further user gate before those. Adopted protocol constants (src/scene.py, every config block):
+
+- `yield_pressure = 0.85 × σ_Y` (1700 / 2833 / 5100 Pa)
+- `tensile_yield_ratio = 1.0` (tensile yield = yield_pressure)
+- `viscosity = 20 Pa·s`
+
+Condition 3 remains binding: if probe distributions show the |Jp−1| > 0.05 window mis-scaled, submit a follow-up proposal with distributions BEFORE any sweep; never tune silently.
+
+## 2026-08-27 — PRE-REGISTRATION (external order, before any Stage-A data): cell-outcome precedence
+
+Every trial JSON records the TIME of the damage latch (`damage_latch_t`) and of drop/grasp-loss (`drop_t`). Phase-diagram cell attribution (`cell_color`):
+
+- damage latched AFTER grasp loss → cell colors as **drop** (slip side), `damage_after_drop: true` (impact compaction on the table is a fall artifact, not a grasp outcome);
+- damage while still grasped → cell colors as **damage**;
+- both raw judgment-v1 labels remain in the JSON unchanged either way.
+
+Implemented in `src/judgment.py` + `src/trial.py`; covered by 3 unit tests (23 green). The band estimator's intact predicate is untouched.
+
 ## 2026-08-27 — Gentle-grasp force raised to 1.5 N (probe parameter, not protocol)
 
 F_g = 0.5 N cannot statically hold the 0.63 N block at μ = 0.5 (friction capacity = μ·2·F_n = 0.5 N < mg). The gentle-lift probe uses **F_g = 1.5 N** (capacity 1.5 N, margin 2.4×). E1 grid forces are unchanged — trials at low F_g are *expected* to drop/slip; that is the phase diagram working as designed.

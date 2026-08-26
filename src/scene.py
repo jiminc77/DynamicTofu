@@ -93,11 +93,12 @@ def _joint_coord_offsets(builder: newton.ModelBuilder) -> list[int]:
     return offsets
 
 
-# APPROVED material completion (external sign-off 2026-08-27, DECISIONS.md):
-# yield_pressure = 2 x sigma_Y (4.0 / 6.67 / 12.0 kPa). Protocol constant;
-# enters every JSON config block and every gate receipt. Nothing else was
-# approved (no hardening change, no initial-Jp bias).
-YIELD_PRESSURE_FACTOR = 2.0
+# APPROVED material completion P2 (external GO 2026-08-27, DECISIONS.md):
+# yield_pressure = 0.85 x sigma_Y, tensile_yield_ratio = 1.0, viscosity = 20 Pa*s.
+# Protocol constants; enter every JSON config block and every gate receipt.
+YIELD_PRESSURE_FACTOR = 0.85
+TENSILE_YIELD_RATIO = 1.0
+VISCOSITY_PA_S = 20.0
 
 
 def _add_block(builder, lo, res, cell, particle_mass, radius, sigma_y_pa, approved_material: bool):
@@ -109,6 +110,8 @@ def _add_block(builder, lo, res, cell, particle_mass, radius, sigma_y_pa, approv
     }
     if approved_material:
         attrs["mpm:yield_pressure"] = YIELD_PRESSURE_FACTOR * float(sigma_y_pa)
+        attrs["mpm:tensile_yield_ratio"] = TENSILE_YIELD_RATIO
+        attrs["mpm:viscosity"] = VISCOSITY_PA_S
     builder.add_particle_grid(
         pos=wp.vec3(*lo.tolist()),
         rot=wp.quat_identity(),
@@ -270,6 +273,8 @@ def build_scene(sigma_y_pa: float, *, seed: int = 0, pose_jitter_m: float = 0.0,
             "default_shape_mu": 0.5,  # frozen protocol constant (external sign-off 2026-08-27)
             "yield_pressure_pa": YIELD_PRESSURE_FACTOR * float(sigma_y_pa) if material_completion else None,
             "yield_pressure_factor": YIELD_PRESSURE_FACTOR if material_completion else None,
+            "tensile_yield_ratio": TENSILE_YIELD_RATIO if material_completion else None,
+            "viscosity_pa_s": VISCOSITY_PA_S if material_completion else None,
         },
     )
     return model, meta, builder
