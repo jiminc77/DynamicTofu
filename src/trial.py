@@ -29,6 +29,19 @@ from src.coupling import coupling_params_dict
 from scripts.probes.gn2_ar_probe import FRAME_DT, GRASP_QUAT_WXYZ, GRASP_Z, PREGRASP_Z, Rig
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
+
+
+def _realized_bilateral_mean_normal(rig) -> float:
+    from src.coupling import node_reduction_per_body
+
+    bq = rig.state.body_q.numpy()
+    reduced = node_reduction_per_body(rig.mpm, rig.state, bq, rig.model.body_com.numpy(), FRAME_DT)
+    normals = rig.pad_normals_world()
+    vals = []
+    for b in rig.meta.finger_body_indices:
+        F, _T, _n = reduced.get(b, (np.zeros(3), np.zeros(3), 0))
+        vals.append(abs(float(np.dot(F, normals[b]))))
+    return float(np.mean(vals))
 LIFT_M = 0.05
 TRANSPORT_Z = GRASP_Z + LIFT_M
 IMPULSE_EPS = 1e-8
@@ -146,12 +159,15 @@ def run_trial(
     phase_ts["close_hold"] = rig.t - t0
     n_close = int(PHASE_CLOSE_HOLD_S / FRAME_DT)
     n_ramp = int(0.3 / FRAME_DT)
+    hold_normals = []
     for k in range(n_close):
         rig.fingers.apply(rig.control, f_g * min(1.0, (k + 1) / n_ramp))
         rig.step(1)
         tick[0] += 1
         if tick[0] % SAMPLE_EVERY_TICKS == 0:
             rec.sample()
+        if k >= n_ramp and (k % 5 == 0):  # realized force during the steady hold
+            hold_normals.append(_realized_bilateral_mean_normal(rig))
 
     # --- lift 5 cm in 0.3 s (smoothstep) ------------------------------------
     phase_ts["lift"] = rig.t - t0
@@ -222,6 +238,7 @@ def run_trial(
         "a_peak_cmd_ms2": a_peak,
         "a_peak_realized_ms2": a_realized,
         "f_g_n": f_g,
+        "f_g_realized_n": float(np.mean(hold_normals)) if hold_normals else None,
         "seed": seed,
         "labels": labels,
         "cell_color": verdict["cell_color"],

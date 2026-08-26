@@ -37,7 +37,7 @@ def snapshot(rig, outdir, tag, idx):
     np.savez_compressed(
         os.path.join(outdir, f"{tag}_{idx:04d}.npz"),
         particle_q=rig.state.particle_q.numpy().astype(np.float32),
-        jp=rig.state.mpm.particle_Jp.numpy().astype(np.float32),
+        jp=rig.jp().astype(np.float32),  # entry-state Jp (parent buffer is stale)
         body_q=rig.state.body_q.numpy().astype(np.float32),
         t=np.float64(rig.t),
     )

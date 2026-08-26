@@ -1,0 +1,26 @@
+{
+  "fit_range_n": [
+    0.3,
+    0.5,
+    0.8,
+    1.2,
+    1.8,
+    2.5
+  ],
+  "slope": 0.9998405922847575,
+  "intercept_n": 0.00027229689505747,
+  "max_residual_n": 0.00034213200646382447,
+  "hysteresis_n": 0.025439558840982368,
+  "saturation_realized_n": {
+    "3.5": 2.7102919569662305,
+    "5.0": 2.842652718217443
+  },
+  "bearing_capacity_estimate_n": 2.84,
+  "checks_presaturation": {
+    "slope_ok": true,
+    "intercept_ok": true,
+    "residual_ok": true,
+    "monotone_ok": true,
+    "hysteresis_ok": true
+  }
+}

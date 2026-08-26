@@ -86,6 +86,16 @@ Implemented in `src/judgment.py` + `src/trial.py`; covered by 3 unit tests (23 g
 
 The quasi-static ramp result (2000 = 2.69 N, 3333/6000 censored + saturation traces) is preserved in the gate report as evidence either way. No sweep runs until P3 is decided.
 
+## 2026-08-27 — PROPOSAL P4: calibration acceptance over the pre-saturation range (AWAITING EXTERNAL SIGN-OFF, bundled with P3)
+
+**Finding (evidence `reports/logs/gn2-calibration.json` + `gn2-calibration-presaturation.json`):** on the v2 material at σ=3333 the F_g → realized mapping is essentially EXACT through 2.5 N — commanded {0.3, 0.5, 0.8, 1.2, 1.8, 2.5} N realize {0.300, 0.500, 0.800, 1.200, 1.800, 2.500} N — and then SATURATES: commanded 3.5 → realized 2.710, commanded 5.0 → realized 2.843, matching on descent (2.644 / 2.846). The specimen's bearing capacity (~2.84 N at this pad geometry) physically caps the transmissible normal force; beyond it the material yields and force plateaus. The mimic probe confirms the actuation chain is not the limiter (realized 1.2003 at commanded 1.2).
+
+The frozen limits applied as a single linear fit over all 8 levels therefore fail (slope 0.58, intercept 0.44) — but on the pre-saturation range the same frozen limits pass overwhelmingly: slope 0.99984, intercept 0.00027 N, max residual 0.00034 N, hysteresis 0.025 N (all within slope [0.90, 1.10], |intercept| ≤ 0.05, residual ≤ max(0.05, 10%), monotone, hysteresis ≤ 0.05).
+
+**Proposal P4:** evaluate the frozen calibration limits over the material-transmissible (pre-saturation) range, and record the measured saturation ceiling per material as a first-class protocol observable (`f_bearing_capacity_n`) in the gate receipt and config blocks. Additionally (additive recording, no protocol change): every E1 trial JSON gains `f_g_realized_n` — the realized bilateral-mean per-finger normal during the hold — so commanded-vs-realized force is visible exactly like commanded-vs-realized acceleration. The commanded F_g axis of the phase diagram is unchanged; trials are never re-binned.
+
+Rationale: the saturation is the material's bearing capacity — a measured physical quantity directly related to the crushing-force claim — not an actuation defect. Hiding it behind a failed global fit would discard exact calibration data; re-binning by realized force would violate the pre-registered axis. No sweep runs until P3/P4 are decided.
+
 ## 2026-08-27 — Gentle-grasp force raised to 1.5 N (probe parameter, not protocol)
 
 F_g = 0.5 N cannot statically hold the 0.63 N block at μ = 0.5 (friction capacity = μ·2·F_n = 0.5 N < mg). The gentle-lift probe uses **F_g = 1.5 N** (capacity 1.5 N, margin 2.4×). E1 grid forces are unchanged — trials at low F_g are *expected* to drop/slip; that is the phase diagram working as designed.
