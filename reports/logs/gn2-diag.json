@@ -1,0 +1,262 @@
+{
+  "effort_sign": {
+    "positive": {
+      "q_start": [
+        0.0394081249833107,
+        0.039808809757232666
+      ],
+      "q_mid": [
+        0.040371473878622055,
+        0.04041444510221481
+      ],
+      "q_end": [
+        0.04035108909010887,
+        0.04039071872830391
+      ]
+    },
+    "negative": {
+      "q_start": [
+        0.03726035729050636,
+        0.03766104206442833
+      ],
+      "q_mid": [
+        -0.002278111409395933,
+        -0.0022978608030825853
+      ],
+      "q_end": [
+        -0.00040475427522324026,
+        -0.0003653955354820937
+      ]
+    }
+  },
+  "grasp_geometry": {
+    "pad_left_pos": [
+      0.01701798476278782,
+      -0.5189929008483887,
+      0.2572222948074341
+    ],
+    "pad_right_pos": [
+      -0.02119007147848606,
+      -0.4807935953140259,
+      0.25783291459083557
+    ],
+    "block_aabb_lo": [
+      -0.07909183949232101,
+      -0.5691512823104858,
+      0.1985195279121399
+    ],
+    "block_aabb_hi": [
+      0.06060041859745979,
+      -0.42658111453056335,
+      0.2480386346578598
+    ],
+    "block_center_nominal": [
+      0.0,
+      -0.5,
+      0.22
+    ],
+    "block_edge_m": 0.04
+  },
+  "close_trace": [
+    {
+      "t": 3.4,
+      "finger_q": [
+        0.01822851598262787,
+        0.018258869647979736
+      ],
+      "active_nodes_total": 2548,
+      "finger_contact_nodes": 433,
+      "finger_force_sum_n": 2.424715518951416
+    },
+    {
+      "t": 3.5,
+      "finger_q": [
+        0.017989080399274826,
+        0.01802103966474533
+      ],
+      "active_nodes_total": 2668,
+      "finger_contact_nodes": 443,
+      "finger_force_sum_n": 2.450890302658081
+    },
+    {
+      "t": 3.6,
+      "finger_q": [
+        0.017923442646861076,
+        0.01794624514877796
+      ],
+      "active_nodes_total": 2694,
+      "finger_contact_nodes": 444,
+      "finger_force_sum_n": 2.450728416442871
+    },
+    {
+      "t": 3.7,
+      "finger_q": [
+        0.017934266477823257,
+        0.017955899238586426
+      ],
+      "active_nodes_total": 2672,
+      "finger_contact_nodes": 446,
+      "finger_force_sum_n": 2.450012445449829
+    },
+    {
+      "t": 3.8,
+      "finger_q": [
+        0.017919007688760757,
+        0.017938481643795967
+      ],
+      "active_nodes_total": 2704,
+      "finger_contact_nodes": 446,
+      "finger_force_sum_n": 2.4489846229553223
+    },
+    {
+      "t": 3.9,
+      "finger_q": [
+        0.017919590696692467,
+        0.01793707348406315
+      ],
+      "active_nodes_total": 2699,
+      "finger_contact_nodes": 454,
+      "finger_force_sum_n": 2.449118137359619
+    },
+    {
+      "t": 4.0,
+      "finger_q": [
+        0.017916493117809296,
+        0.017932631075382233
+      ],
+      "active_nodes_total": 2722,
+      "finger_contact_nodes": 453,
+      "finger_force_sum_n": 2.4523403644561768
+    },
+    {
+      "t": 4.1,
+      "finger_q": [
+        0.017911413684487343,
+        0.01792760193347931
+      ],
+      "active_nodes_total": 2696,
+      "finger_contact_nodes": 452,
+      "finger_force_sum_n": 2.4548964500427246
+    },
+    {
+      "t": 4.2,
+      "finger_q": [
+        0.017908606678247452,
+        0.017924364656209946
+      ],
+      "active_nodes_total": 2719,
+      "finger_contact_nodes": 452,
+      "finger_force_sum_n": 2.4552831649780273
+    },
+    {
+      "t": 4.3,
+      "finger_q": [
+        0.01789836771786213,
+        0.0179156344383955
+      ],
+      "active_nodes_total": 2728,
+      "finger_contact_nodes": 451,
+      "finger_force_sum_n": 2.4483630657196045
+    },
+    {
+      "t": 4.4,
+      "finger_q": [
+        0.017895208671689034,
+        0.017914339900016785
+      ],
+      "active_nodes_total": 2726,
+      "finger_contact_nodes": 454,
+      "finger_force_sum_n": 2.4491686820983887
+    },
+    {
+      "t": 4.5,
+      "finger_q": [
+        0.01789555884897709,
+        0.017913933843374252
+      ],
+      "active_nodes_total": 2744,
+      "finger_contact_nodes": 453,
+      "finger_force_sum_n": 2.4499804973602295
+    },
+    {
+      "t": 4.6,
+      "finger_q": [
+        0.017894724383950233,
+        0.01791251078248024
+      ],
+      "active_nodes_total": 2743,
+      "finger_contact_nodes": 455,
+      "finger_force_sum_n": 2.451521873474121
+    },
+    {
+      "t": 4.7,
+      "finger_q": [
+        0.017894748598337173,
+        0.017911801114678383
+      ],
+      "active_nodes_total": 2741,
+      "finger_contact_nodes": 455,
+      "finger_force_sum_n": 2.4521470069885254
+    },
+    {
+      "t": 4.8,
+      "finger_q": [
+        0.017894096672534943,
+        0.01791023463010788
+      ],
+      "active_nodes_total": 2750,
+      "finger_contact_nodes": 454,
+      "finger_force_sum_n": 2.4533934593200684
+    },
+    {
+      "t": 4.9,
+      "finger_q": [
+        0.017893897369503975,
+        0.017909573391079903
+      ],
+      "active_nodes_total": 2756,
+      "finger_contact_nodes": 455,
+      "finger_force_sum_n": 2.4543919563293457
+    },
+    {
+      "t": 5.0,
+      "finger_q": [
+        0.017892850562930107,
+        0.017908236011862755
+      ],
+      "active_nodes_total": 2747,
+      "finger_contact_nodes": 456,
+      "finger_force_sum_n": 2.4539954662323
+    },
+    {
+      "t": 5.1,
+      "finger_q": [
+        0.017892951145768166,
+        0.017907846719026566
+      ],
+      "active_nodes_total": 2726,
+      "finger_contact_nodes": 455,
+      "finger_force_sum_n": 2.4547293186187744
+    },
+    {
+      "t": 5.2,
+      "finger_q": [
+        0.017892932519316673,
+        0.01790732331573963
+      ],
+      "active_nodes_total": 2732,
+      "finger_contact_nodes": 462,
+      "finger_force_sum_n": 2.4555094242095947
+    },
+    {
+      "t": 5.3,
+      "finger_q": [
+        0.017892684787511826,
+        0.01790660247206688
+      ],
+      "active_nodes_total": 2746,
+      "finger_contact_nodes": 458,
+      "finger_force_sum_n": 2.455636739730835
+    }
+  ]
+}
