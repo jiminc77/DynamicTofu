@@ -107,3 +107,12 @@ The rigid-only `SolverCoupledProxy` configuration (no proxies) does not forward 
 ## 2026-08-27 — Pad-normal convention frozen
 
 `pad_normal_convention: block_to_pad_outward` — AR-2's compressive-contact predicate is `F_reaction · n_outward > 0` (the harvested wrench is the force ON the finger). Frozen into the config block.
+
+## 2026-08-27 — P3 + P4 EXTERNALLY APPROVED; standing authorization
+
+Both proposals signed off (evidence spot-checked by the external authority against gn2-ramp-gate.json, gn2-calibration*.json, gn2-jp-probe-*.json):
+
+- **P3 official:** the dynamic-ladder onset gate (E1 close profile 0.3 s ramp + 2.0 s hold; ladder {1.8, 2.5, 3.5, 5.0} N × 3 seeds; F_onset interpolated on REALIZED bilateral normal; censoring valid only at the largest σ_Y; rate adequacy = σ=3333 repeated at 0.6 s close, tolerance max(0.05 N, 5%)) is the OFFICIAL σ_Y monotonicity gate. The quasi-static saturation dataset (gn2-ramp-gate.json + gn2-ramp-extended-12n.json) is preserved in the receipt — rate-dependent crushability is a legitimate physical note.
+- **P4 official:** calibration limits evaluated over the pre-saturation range; `f_bearing_capacity_n` is a first-class protocol observable; `f_g_realized_n` recorded in every E1 trial JSON. Commanded F_g remains the axis; trials are never re-binned.
+- **Recording flag (not a condition):** σ=2000's gentle probe peaked at 0.0955 — 0.5 pp under the 10% latch. Stated explicitly in the receipt; a nearly-empty σ=2000 band at a=1 in E1 is a reportable pre-registered outcome, not a failure.
+- **Standing authorization:** once the P3 gate passes → G-N2 receipt (with gentle/crush clips) → G-N3 → E1 Stage A, no further user gates; only NEW protocol changes require sign-off.

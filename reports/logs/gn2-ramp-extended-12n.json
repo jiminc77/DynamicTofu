@@ -1,0 +1,124 @@
+{
+  "description": "Extended-ceiling quasi-static ramps (command to 12 N at the frozen 0.483 N/s) proving saturation for sigma 3333/6000: realized bilateral normal plateaus while damage fraction freezes below threshold. Evidence for proposal P3.",
+  "rate_n_per_s": 0.483,
+  "ceiling_n": 12.0,
+  "runs": [
+    {
+      "sigma": 3333.0,
+      "seed": 0,
+      "ramp_s": 24.43064182194617,
+      "f_onset_n": null,
+      "onset_status": "censored_high",
+      "health_clean": true,
+      "trace_tail": [
+        {
+          "t": 28.28,
+          "f_cmd": 11.927548096602537,
+          "f_real_bilateral": 4.998932289475172,
+          "frac": 0.04946061469570527
+        },
+        {
+          "t": 28.3,
+          "f_cmd": 11.937208350388865,
+          "f_real_bilateral": 5.000677189805087,
+          "frac": 0.04946061469570527
+        },
+        {
+          "t": 28.32,
+          "f_cmd": 11.946868604175195,
+          "f_real_bilateral": 5.001914771046521,
+          "frac": 0.04946061469570527
+        },
+        {
+          "t": 28.34,
+          "f_cmd": 11.956528857961523,
+          "f_real_bilateral": 5.00304923634714,
+          "frac": 0.04946061469570527
+        },
+        {
+          "t": 28.36,
+          "f_cmd": 11.966189111747852,
+          "f_real_bilateral": 5.004503264799317,
+          "frac": 0.04946061469570527
+        },
+        {
+          "t": 28.38,
+          "f_cmd": 11.97584936553418,
+          "f_real_bilateral": 5.006106675841004,
+          "frac": 0.04946061469570527
+        },
+        {
+          "t": 28.4,
+          "f_cmd": 11.985509619320506,
+          "f_real_bilateral": 5.007197578047231,
+          "frac": 0.04946061469570527
+        },
+        {
+          "t": 28.42,
+          "f_cmd": 11.995169873106835,
+          "f_real_bilateral": 5.008130876133285,
+          "frac": 0.04946061469570527
+        }
+      ]
+    },
+    {
+      "sigma": 6000.0,
+      "seed": 0,
+      "ramp_s": 24.43064182194617,
+      "f_onset_n": null,
+      "onset_status": "censored_high",
+      "health_clean": true,
+      "trace_tail": [
+        {
+          "t": 28.28,
+          "f_cmd": 11.927548096602537,
+          "f_real_bilateral": 7.259177747955509,
+          "frac": 0.020557704050478322
+        },
+        {
+          "t": 28.3,
+          "f_cmd": 11.937208350388865,
+          "f_real_bilateral": 7.260224722131927,
+          "frac": 0.020557704050478322
+        },
+        {
+          "t": 28.32,
+          "f_cmd": 11.946868604175195,
+          "f_real_bilateral": 7.26137208921556,
+          "frac": 0.020557704050478322
+        },
+        {
+          "t": 28.34,
+          "f_cmd": 11.956528857961523,
+          "f_real_bilateral": 7.261559633609364,
+          "frac": 0.020557704050478322
+        },
+        {
+          "t": 28.36,
+          "f_cmd": 11.966189111747852,
+          "f_real_bilateral": 7.263277498180787,
+          "frac": 0.020557704050478322
+        },
+        {
+          "t": 28.38,
+          "f_cmd": 11.97584936553418,
+          "f_real_bilateral": 7.26464869765294,
+          "frac": 0.020557704050478322
+        },
+        {
+          "t": 28.4,
+          "f_cmd": 11.985509619320506,
+          "f_real_bilateral": 7.265895059945162,
+          "frac": 0.020557704050478322
+        },
+        {
+          "t": 28.42,
+          "f_cmd": 11.995169873106835,
+          "f_real_bilateral": 7.267331673258962,
+          "frac": 0.020557704050478322
+        }
+      ]
+    }
+  ],
+  "wall_s": 236.80874466896057
+}
