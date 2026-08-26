@@ -1,0 +1,97 @@
+{
+  "config": {
+    "aggregates_derived_from_raw": true,
+    "asset_urdf_sha256": "2a270e19a9b9c7ca5eb62ec9d503d779281605b6bba881f5ac6e8090aa382497",
+    "brief_sha256": "bb41367843d73f070f109954ae674bbc2fcb1d24ff651cac3355a4fdc6f0d6b0",
+    "calibration": {
+      "hysteresis": 0.0,
+      "intercept": 0.0,
+      "residual": 0.0,
+      "slope": 1.0,
+      "status": "scratch"
+    },
+    "contact_params": {
+      "default_shape_mu": 0.5,
+      "impulse_eps": 1e-08,
+      "max_speculative_extension_m": 0.005,
+      "pad_friction_mu": 1.0
+    },
+    "coupled_tick_s": 0.005,
+    "coupling_params": {
+      "composition": "SolverCoupledProxy(mjc: SolverMuJoCo substeps=4; mpm: SolverImplicitMPM in_place)",
+      "frame_dt_s": 0.005,
+      "mass_scale": 1.0,
+      "mpm_max_iterations": 50,
+      "proxy_iterations": 1,
+      "proxy_mode": "lagged",
+      "rigid_substeps": 4,
+      "voxel_size_m": 0.005
+    },
+    "dt": 0.005,
+    "f_g_convention": "per_finger_normal_mean",
+    "f_mid_n": 1.5,
+    "f_mid_selection": "override_shakedown",
+    "impulse_eps": 1e-08,
+    "material": {
+      "sigma_y_pa": 3333.0,
+      "yield_pressure_factor": 0.85,
+      "yield_pressure_pa": 2833.0499999999997
+    },
+    "newton_commit": "b74df534bee62a17e0e57cc9cdfd1a67d91ca817",
+    "pad_frame_convention": "finger body frame; pad-outward normal block_to_pad_outward",
+    "pad_normal_local": [
+      0.0,
+      1.0,
+      0.0
+    ],
+    "particle_count": 4913,
+    "profile_id": "trapz_reversal_default",
+    "raw_field_layout": "concat+offsets",
+    "raw_field_recorded": true,
+    "seed_rng_derivation": "np.random.SeedSequence([1234, seed]) -> xy pose jitter",
+    "signal_source": "solver_collider_impulse",
+    "substeps": 4,
+    "taxel_binning": "post_hoc_out_of_scope",
+    "voxel_size": 0.005,
+    "windows": {
+      "phases_s": {
+        "close_hold": 0.5,
+        "final_settle": 0.5,
+        "lift": 0.3,
+        "postlift_hold": 0.2,
+        "settle": 0.5
+      }
+    }
+  },
+  "payload": {
+    "a_peak_cmd_ms2": 5.0,
+    "checks": {
+      "bitwise_recompute_ok": true,
+      "health_clean": true,
+      "max_nodes_per_sample": 426,
+      "median_dt_s": 0.004999999999999893,
+      "npz_bytes": 3266712,
+      "rate_ok": true,
+      "size_guard_ok": true,
+      "unique_ts_ok": true
+    },
+    "npz": "reports/logs/e2-scratch/e2_a5_seed0.npz",
+    "peak_shear_n": [
+      0.8466620001696976,
+      0.6880954855250471
+    ],
+    "phase_marks": {
+      "close": 4.499999999999926,
+      "final_settle": 6.984999999999873,
+      "lift": 4.999999999999916,
+      "lift_complete": 5.299999999999909,
+      "record_start": 3.999999999999937,
+      "reversal": 6.389999999999886,
+      "settle_end": 7.484999999999863,
+      "transport": 5.499999999999905
+    },
+    "seed": 0,
+    "wall_time_s": 32.4115788936615
+  },
+  "schema": "e2.v1"
+}

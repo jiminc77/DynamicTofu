@@ -125,6 +125,8 @@ def run_trial(
     calibration: dict,
     out_json: str | None = None,
     extra_config: dict | None = None,
+    frames_dir: str | None = None,
+    frame_every_ticks: int = 40,
 ):
     t_wall0 = time.time()
     # seeds are the replication unit: +/-1 mm pose jitter (deterministic per seed)
@@ -141,6 +143,14 @@ def run_trial(
     phase_ts = {}
     t0 = rig.t
     tick = [0]
+    snap_i = [0]
+
+    def maybe_frame(force=False):
+        if frames_dir and (force or tick[0] % frame_every_ticks == 0):
+            from scripts.probes.gn2_lift_jp import snapshot
+
+            snapshot(rig, frames_dir, "trial", snap_i[0])
+            snap_i[0] += 1
 
     def advance(n, on_tick=None):
         for _ in range(n):
@@ -150,6 +160,7 @@ def run_trial(
             tick[0] += 1
             if tick[0] % SAMPLE_EVERY_TICKS == 0:
                 rec.sample()
+            maybe_frame()
 
     # --- settle -------------------------------------------------------------
     phase_ts["settle"] = rig.t - t0
@@ -168,6 +179,8 @@ def run_trial(
             rec.sample()
         if k >= n_ramp and (k % 5 == 0):  # realized force during the steady hold
             hold_normals.append(_realized_bilateral_mean_normal(rig))
+        maybe_frame()
+    maybe_frame(force=True)  # grasp key frame
 
     # --- lift 5 cm in 0.3 s (smoothstep) ------------------------------------
     phase_ts["lift"] = rig.t - t0
@@ -179,8 +192,10 @@ def run_trial(
         tick[0] += 1
         if tick[0] % SAMPLE_EVERY_TICKS == 0:
             rec.sample()
+        maybe_frame()
     phase_ts["lift_complete"] = rig.t - t0
     rec.mark_lift_complete()
+    maybe_frame(force=True)  # lift-complete key frame
 
     # --- post-lift hold ------------------------------------------------------
     advance(int(PHASE_POSTLIFT_HOLD_S / FRAME_DT))
@@ -202,13 +217,16 @@ def run_trial(
         realized_tool.append(rig.realized_tool())
         if tick[0] % SAMPLE_EVERY_TICKS == 0:
             rec.sample()
+        maybe_frame()
     if "reversal_time" in prof.get("phase_timestamps", {}):
         phase_ts["reversal"] = phase_ts["transport"] + prof["phase_timestamps"]["reversal_time"]
+    maybe_frame(force=True)  # transport-end key frame
 
     # --- final settle --------------------------------------------------------
     phase_ts["final_settle"] = rig.t - t0
     advance(int(PHASE_FINAL_SETTLE_S / FRAME_DT))
     phase_ts["settle_end"] = rig.t - t0
+    maybe_frame(force=True)  # settle-end key frame
 
     # --- realized transport acceleration (from realized tool positions) -----
     rt = np.asarray(realized_tool)

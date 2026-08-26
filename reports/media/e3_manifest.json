@@ -1,0 +1,10 @@
+{
+  "scenes": {},
+  "missing": [
+    "i_intact_quasistatic",
+    "ii_slip_same_grip",
+    "iii_damage_raised_grip"
+  ],
+  "f_mid": null,
+  "f_max_a15": null
+}

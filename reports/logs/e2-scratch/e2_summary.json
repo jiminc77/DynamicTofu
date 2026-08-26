@@ -1,0 +1,14 @@
+{
+  "f_mid_n": 1.5,
+  "f_mid_selection": "override_shakedown",
+  "per_seed": {
+    "0": {
+      "a5": {
+        "peak_shear_n": 0.8466620001696976,
+        "max_centroid_excursion_mm": 12.37164647569724,
+        "area_change_m2": 0.01065,
+        "checks_ok": true
+      }
+    }
+  }
+}
