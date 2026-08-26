@@ -159,3 +159,10 @@ Ruling received: the σ=3333 empty-band finding is ACCEPTED as a real, reportabl
 ## 2026-08-27 — Gentle-lift diagnostic result: empty band ROBUST (no option-3 case)
 
 6/6 diagnostic trials (σ=3333, a=1, F∈{1.2,1.8}×3 seeds, lift softened to 1.0 s; reports/logs/diagnostic-gentle-lift/) produced ZERO intact carries: F=1.2 drops (0.056–0.060 fractions), F=1.8 straddles the damage latch (0.090–0.109; 2 damage-while-grasped, 1 drop). Per the external ruling's own criterion, the σ=3333 empty band is a material property, not a lift-transient artifact — the record stands as measured and no protocol-revision case exists. Stage B launches under the frozen protocol.
+
+## 2026-08-27 — EXTERNAL RULINGS: diagnostic acknowledged; O-2 ceiling ACCEPTED; Stage B re-confirmed
+
+1. Gentle-lift diagnostic acknowledged externally: 0/6 intact ⇒ the σ=3333 empty band is a robust material property; option 3 is dead; the lift-duration parameter remains diagnostic-only (never a protocol constant).
+2. O-2 co-decision: the ~6.49 m/s² realized-acceleration ceiling is ACCEPTED for this sprint. No jacobian-velocity switch mid-sprint (doctrine holds; post-sprint backlog item). Stage B runs the FROZEN pre-registered grid unchanged — comparability and a complete coverage map outweigh the ~19 min the two collapsed levels would save. Analysis and figures treat commanded {10, 15} as ONE realized level (~6.5 m/s²) and annotate the commanded axis with realized medians (reports/logs/e1-stageA-tracking.json pattern, to be extended with Stage-B data).
+3. Stage B GO re-confirmed post-diagnostic (was already running under the earlier ruling; 75/150 at re-confirmation). E2/E3 selections stay deferred until Stage-B bands land.
+4. Post-Stage-B deliverable: cross-material band summary (e1_band JSONs for 2000/3333/6000 + realized-accel table) → user storyline decision.
