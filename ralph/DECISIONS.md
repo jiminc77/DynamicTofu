@@ -147,3 +147,7 @@ Measured at G-N3 (reports/logs/gn3-official.json): weighted T = 34.5 s (a=1: 39.
 ## 2026-08-27 — Stage-A shape checkpoint: scale_failure; STOPPED pending external review
 
 Stage A complete (75/75, 0 unresolved, health clean; batch row in RESULTS.md). Pre-registered router outcome **scale_failure**: intact bands EMPTY at all five accelerations (all cells drop or damage; seeds unanimous; a_star=1.0 observed trivially on the empty ordering). Per protocol: Stage B/C, E2 mid-band selection, and E3 triplet are HALTED pending external review. Full report: reports/shape_checkpoint.md. Options + recommendation recorded there; no further stage executes until the external decision.
+
+## 2026-08-27 — O-2 acceleration-tracking escalation trigger FIRED (recorded; co-decision with the scale_failure review)
+
+Full Stage-A per-level analysis (reports/logs/e1-stageA-tracking.json): realized EE acceleration saturates at ≈6.49 m/s² — a_cmd 10 → 6.487 (35.1% err), a_cmd 15 → 6.487 (56.8% err); a_cmd ≤ 5 tracks within 5.1%. The plan's O-2 trigger (>25% median at a=15) fired; per its pre-registered response the jacobian-velocity option is raised externally alongside the shape-checkpoint review (reports/shape_checkpoint.md, corrected — the earlier "~3%" claim was wrong and is retracted there). Commanded axis remains the diagram axis; a_peak_realized_ms2 is in every JSON. No stage executes pending the combined ruling.
