@@ -1,0 +1,487 @@
+{
+  "grid": [
+    {
+      "ypf": 0.6,
+      "tyr": 0.75,
+      "crush": {
+        "sigma_y_pa": 3333.0,
+        "yield_pressure_factor": 0.6,
+        "tensile_yield_ratio": 0.75,
+        "mode": "crush",
+        "frac_hold": 0.2973743130470181,
+        "frac_window_peak": 0.2973743130470181,
+        "jp_final": {
+          "frac_gt_0p05": 0.2973743130470181,
+          "dev_percentiles": {
+            "50": 0.0,
+            "75": 0.14004194736480713,
+            "90": 0.5538332462310791,
+            "95": 0.7955377697944641,
+            "99": 0.9998365044593811
+          },
+          "jp_min": 9.346123079012614e-06,
+          "jp_max": 5.028691291809082
+        },
+        "ext_final": [
+          0.0632,
+          0.0663,
+          0.046
+        ],
+        "rise_mm": 0.3,
+        "health_clean": true
+      },
+      "gentle": {
+        "sigma_y_pa": 3333.0,
+        "yield_pressure_factor": 0.6,
+        "tensile_yield_ratio": 0.75,
+        "mode": "gentle",
+        "frac_hold": 0.11601872582943212,
+        "frac_window_peak": 0.20130266639527783,
+        "jp_final": {
+          "frac_gt_0p05": 0.20130266639527783,
+          "dev_percentiles": {
+            "50": 0.0,
+            "75": 0.0009722709655761719,
+            "90": 0.26203811168670654,
+            "95": 0.5633801221847534,
+            "99": 0.9457734823226929
+          },
+          "jp_min": 0.0010358943836763501,
+          "jp_max": 8.729029655456543
+        },
+        "ext_final": [
+          0.0773,
+          0.1085,
+          0.0878
+        ],
+        "rise_mm": 1.1,
+        "health_clean": true
+      },
+      "window_ok": false,
+      "margin": 0.09607164665174028
+    },
+    {
+      "ypf": 0.6,
+      "tyr": 1.0,
+      "crush": {
+        "sigma_y_pa": 3333.0,
+        "yield_pressure_factor": 0.6,
+        "tensile_yield_ratio": 1.0,
+        "mode": "crush",
+        "frac_hold": 0.29391410543456137,
+        "frac_window_peak": 0.29391410543456137,
+        "jp_final": {
+          "frac_gt_0p05": 0.29391410543456137,
+          "dev_percentiles": {
+            "50": 0.0,
+            "75": 0.1374114751815796,
+            "90": 0.5785287618637085,
+            "95": 0.8013436794281006,
+            "99": 0.9964863061904907
+          },
+          "jp_min": 9.433361810806673e-06,
+          "jp_max": 3.335371971130371
+        },
+        "ext_final": [
+          0.0628,
+          0.0671,
+          0.0467
+        ],
+        "rise_mm": 0.2,
+        "health_clean": true
+      },
+      "gentle": {
+        "sigma_y_pa": 3333.0,
+        "yield_pressure_factor": 0.6,
+        "tensile_yield_ratio": 1.0,
+        "mode": "gentle",
+        "frac_hold": 0.12721351516385102,
+        "frac_window_peak": 0.19845308365560757,
+        "jp_final": {
+          "frac_gt_0p05": 0.19845308365560757,
+          "dev_percentiles": {
+            "50": 0.0,
+            "75": 0.0,
+            "90": 0.2651331126689911,
+            "95": 0.5643161535263062,
+            "99": 0.9196505546569824
+          },
+          "jp_min": 0.002137724542990327,
+          "jp_max": 3.4290409088134766
+        },
+        "ext_final": [
+          0.0744,
+          0.1026,
+          0.0845
+        ],
+        "rise_mm": -1.0,
+        "health_clean": true
+      },
+      "window_ok": false,
+      "margin": 0.0954610217789538
+    },
+    {
+      "ypf": 0.75,
+      "tyr": 0.75,
+      "crush": {
+        "sigma_y_pa": 3333.0,
+        "yield_pressure_factor": 0.75,
+        "tensile_yield_ratio": 0.75,
+        "mode": "crush",
+        "frac_hold": 0.19987787502544271,
+        "frac_window_peak": 0.19987787502544271,
+        "jp_final": {
+          "frac_gt_0p05": 0.19987787502544271,
+          "dev_percentiles": {
+            "50": 0.0,
+            "75": 0.0,
+            "90": 0.3434852957725525,
+            "95": 0.5907151699066162,
+            "99": 0.9838830232620239
+          },
+          "jp_min": 3.6448186619963963e-06,
+          "jp_max": 2.764533519744873
+        },
+        "ext_final": [
+          0.0653,
+          0.0645,
+          0.0466
+        ],
+        "rise_mm": 0.4,
+        "health_clean": true
+      },
+      "gentle": {
+        "sigma_y_pa": 3333.0,
+        "yield_pressure_factor": 0.75,
+        "tensile_yield_ratio": 0.75,
+        "mode": "gentle",
+        "frac_hold": 0.04233665784652962,
+        "frac_window_peak": 0.13698351312843476,
+        "jp_final": {
+          "frac_gt_0p05": 0.13698351312843476,
+          "dev_percentiles": {
+            "50": 0.0,
+            "75": 0.0,
+            "90": 0.11559069156646729,
+            "95": 0.25781407952308655,
+            "99": 0.8860584497451782
+          },
+          "jp_min": 0.0032468352001160383,
+          "jp_max": 6.508599281311035
+        },
+        "ext_final": [
+          0.063,
+          0.11,
+          0.0847
+        ],
+        "rise_mm": -1.1,
+        "health_clean": true
+      },
+      "window_ok": false,
+      "margin": 0.06289436189700795
+    },
+    {
+      "ypf": 0.75,
+      "tyr": 1.0,
+      "crush": {
+        "sigma_y_pa": 3333.0,
+        "yield_pressure_factor": 0.75,
+        "tensile_yield_ratio": 1.0,
+        "mode": "crush",
+        "frac_hold": 0.2021168328923265,
+        "frac_window_peak": 0.2021168328923265,
+        "jp_final": {
+          "frac_gt_0p05": 0.2021168328923265,
+          "dev_percentiles": {
+            "50": 0.0,
+            "75": 0.0,
+            "90": 0.3528600037097931,
+            "95": 0.5796030163764954,
+            "99": 0.9883613586425781
+          },
+          "jp_min": 7.123518116713967e-06,
+          "jp_max": 1.473118543624878
+        },
+        "ext_final": [
+          0.0622,
+          0.0624,
+          0.0474
+        ],
+        "rise_mm": 0.5,
+        "health_clean": true
+      },
+      "gentle": {
+        "sigma_y_pa": 3333.0,
+        "yield_pressure_factor": 0.75,
+        "tensile_yield_ratio": 1.0,
+        "mode": "gentle",
+        "frac_hold": 0.041115408100956645,
+        "frac_window_peak": 0.11866476694484022,
+        "jp_final": {
+          "frac_gt_0p05": 0.11866476694484022,
+          "dev_percentiles": {
+            "50": 0.0,
+            "75": 0.0,
+            "90": 0.09369828552007675,
+            "95": 0.2232932150363922,
+            "99": 0.7867569327354431
+          },
+          "jp_min": 0.0036717408802360296,
+          "jp_max": 2.6323952674865723
+        },
+        "ext_final": [
+          0.0877,
+          0.0917,
+          0.0842
+        ],
+        "rise_mm": -1.1,
+        "health_clean": true
+      },
+      "window_ok": false,
+      "margin": 0.08345206594748626
+    },
+    {
+      "ypf": 0.85,
+      "tyr": 0.75,
+      "crush": {
+        "sigma_y_pa": 3333.0,
+        "yield_pressure_factor": 0.85,
+        "tensile_yield_ratio": 0.75,
+        "mode": "crush",
+        "frac_hold": 0.1532668430694077,
+        "frac_window_peak": 0.1532668430694077,
+        "jp_final": {
+          "frac_gt_0p05": 0.1532668430694077,
+          "dev_percentiles": {
+            "50": 0.0,
+            "75": 0.0,
+            "90": 0.20548981428146362,
+            "95": 0.4873103201389313,
+            "99": 0.9949771165847778
+          },
+          "jp_min": 0.00013379327720031142,
+          "jp_max": 2.1970365047454834
+        },
+        "ext_final": [
+          0.0618,
+          0.062,
+          0.0489
+        ],
+        "rise_mm": 0.7,
+        "health_clean": true
+      },
+      "gentle": {
+        "sigma_y_pa": 3333.0,
+        "yield_pressure_factor": 0.85,
+        "tensile_yield_ratio": 0.75,
+        "mode": "gentle",
+        "frac_hold": 0.035212700997353956,
+        "frac_window_peak": 0.09139018929371057,
+        "jp_final": {
+          "frac_gt_0p05": 0.09139018929371057,
+          "dev_percentiles": {
+            "50": 0.0,
+            "75": 0.0,
+            "90": 0.034481704235076904,
+            "95": 0.21986807882785797,
+            "99": 0.766903817653656
+          },
+          "jp_min": 0.008010461926460266,
+          "jp_max": 2.5995311737060547
+        },
+        "ext_final": [
+          0.0849,
+          0.0848,
+          0.0824
+        ],
+        "rise_mm": -0.9,
+        "health_clean": true
+      },
+      "window_ok": true,
+      "margin": 0.06187665377569712
+    },
+    {
+      "ypf": 0.85,
+      "tyr": 1.0,
+      "crush": {
+        "sigma_y_pa": 3333.0,
+        "yield_pressure_factor": 0.85,
+        "tensile_yield_ratio": 1.0,
+        "mode": "crush",
+        "frac_hold": 0.14756767759006717,
+        "frac_window_peak": 0.14756767759006717,
+        "jp_final": {
+          "frac_gt_0p05": 0.14756767759006717,
+          "dev_percentiles": {
+            "50": 0.0,
+            "75": 0.0,
+            "90": 0.19769155979156494,
+            "95": 0.45481157302856445,
+            "99": 0.9565896987915039
+          },
+          "jp_min": 0.0001789915404515341,
+          "jp_max": 1.2070232629776
+        },
+        "ext_final": [
+          0.0642,
+          0.0627,
+          0.0476
+        ],
+        "rise_mm": 0.5,
+        "health_clean": true
+      },
+      "gentle": {
+        "sigma_y_pa": 3333.0,
+        "yield_pressure_factor": 0.85,
+        "tensile_yield_ratio": 1.0,
+        "mode": "gentle",
+        "frac_hold": 0.030124160390799917,
+        "frac_window_peak": 0.08792998168125382,
+        "jp_final": {
+          "frac_gt_0p05": 0.08792998168125382,
+          "dev_percentiles": {
+            "50": 0.0,
+            "75": 0.0,
+            "90": 0.03745145723223686,
+            "95": 0.1680992841720581,
+            "99": 0.5651135444641113
+          },
+          "jp_min": 0.006170388776808977,
+          "jp_max": 1.8915351629257202
+        },
+        "ext_final": [
+          0.0901,
+          0.0893,
+          0.0833
+        ],
+        "rise_mm": -0.8,
+        "health_clean": true
+      },
+      "window_ok": true,
+      "margin": 0.05963769590881335
+    }
+  ],
+  "best": {
+    "ypf": 0.85,
+    "tyr": 0.75
+  },
+  "cross_material": [
+    {
+      "sigma": 2000.0,
+      "crush": {
+        "sigma_y_pa": 2000.0,
+        "yield_pressure_factor": 0.85,
+        "tensile_yield_ratio": 0.75,
+        "mode": "crush",
+        "frac_hold": 0.3411357622633829,
+        "frac_window_peak": 0.3411357622633829,
+        "jp_final": {
+          "frac_gt_0p05": 0.3411357622633829,
+          "dev_percentiles": {
+            "50": 0.0,
+            "75": 0.24454456567764282,
+            "90": 0.6190866231918335,
+            "95": 0.8392850160598755,
+            "99": 0.9933662414550781
+          },
+          "jp_min": 0.00190215022303164,
+          "jp_max": 5.006227016448975
+        },
+        "ext_final": [
+          0.0574,
+          0.0571,
+          0.0467
+        ],
+        "rise_mm": 0.7,
+        "health_clean": true
+      },
+      "gentle": {
+        "sigma_y_pa": 2000.0,
+        "yield_pressure_factor": 0.85,
+        "tensile_yield_ratio": 0.75,
+        "mode": "gentle",
+        "frac_hold": 0.14349684510482394,
+        "frac_window_peak": 0.2501526562181966,
+        "jp_final": {
+          "frac_gt_0p05": 0.2501526562181966,
+          "dev_percentiles": {
+            "50": 0.0,
+            "75": 0.050006866455078125,
+            "90": 0.3659443259239197,
+            "95": 0.6257965564727783,
+            "99": 0.9943491816520691
+          },
+          "jp_min": 0.0007549644215032458,
+          "jp_max": 4.963842391967773
+        },
+        "ext_final": [
+          0.088,
+          0.0907,
+          0.0838
+        ],
+        "rise_mm": -0.4,
+        "health_clean": true
+      },
+      "ok": false
+    },
+    {
+      "sigma": 6000.0,
+      "crush": {
+        "sigma_y_pa": 6000.0,
+        "yield_pressure_factor": 0.85,
+        "tensile_yield_ratio": 0.75,
+        "mode": "crush",
+        "frac_hold": 0.023407286790148585,
+        "frac_window_peak": 0.023407286790148585,
+        "jp_final": {
+          "frac_gt_0p05": 0.023407286790148585,
+          "dev_percentiles": {
+            "50": 0.0,
+            "75": 0.0,
+            "90": 0.0,
+            "95": 0.0,
+            "99": 0.4076240658760071
+          },
+          "jp_min": 0.003346184501424432,
+          "jp_max": 1.1921879053115845
+        },
+        "ext_final": [
+          0.0636,
+          0.0625,
+          0.0485
+        ],
+        "rise_mm": 0.6,
+        "health_clean": true
+      },
+      "gentle": {
+        "sigma_y_pa": 6000.0,
+        "yield_pressure_factor": 0.85,
+        "tensile_yield_ratio": 0.75,
+        "mode": "gentle",
+        "frac_hold": 0.004477915733767555,
+        "frac_window_peak": 0.015062080195399959,
+        "jp_final": {
+          "frac_gt_0p05": 0.015062080195399959,
+          "dev_percentiles": {
+            "50": 0.0,
+            "75": 0.0,
+            "90": 0.0,
+            "95": 0.0,
+            "99": 0.11230576038360596
+          },
+          "jp_min": 0.326408714056015,
+          "jp_max": 1.5665478706359863
+        },
+        "ext_final": [
+          0.0873,
+          0.0896,
+          0.0893
+        ],
+        "rise_mm": 1.8,
+        "health_clean": true
+      },
+      "ok": false
+    }
+  ],
+  "wall_s": 395.04755187034607
+}

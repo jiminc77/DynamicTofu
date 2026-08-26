@@ -29,6 +29,31 @@ Additionally ordered: contact friction is frozen NOW as a protocol constant in c
 
 Implementation: `src/scene.py` `YIELD_PRESSURE_FACTOR = 2.0`, applied by default to every block; config blocks carry `yield_pressure_pa`, `yield_pressure_factor`, `default_shape_mu`, `pad_friction_mu`.
 
+## 2026-08-27 — FOLLOW-UP PROPOSAL P2 (condition-3 path; AWAITING EXTERNAL SIGN-OFF)
+
+**New root cause found while executing condition 1:** `mpm:tensile_yield_ratio` defaults to **0.0** — tensile yield = ratio × yield_pressure = **zero tensile strength** at any yield_pressure. The material cannot carry tension, so every lift tears the block at the grip plane (window damage fraction 0.90–1.0 at ALL σ_Y and ALL forces — uniformity that flagged the artifact). This held for the pre-sign-off baseline too (0 × 1e15 = 0): the block never had tensile strength.
+
+**Measured landscape (σ=3333, judgment predicate |Jp−1|>0.05, fraction>10%, window = lift-complete→settle-end; full JSONs `reports/logs/gn2-material-window.json`):**
+
+| yield_pressure | tensile ratio | crush 5 N fires | gentle 1.5 N lift clean |
+|---|---|---|---|
+| 2.0σ (signed off) | 0 (default) | 0.83 yes | 0.955 NO (tears) |
+| 2.0σ | 1.0 | 0.010–0.015 **NO** | 0.006 yes |
+| 0.85σ | 0.75–1.0 | **0.148–0.153 yes** | **0.088–0.091 yes** |
+| 0.75σ | 0.75–1.0 | 0.20 yes | 0.119–0.137 NO |
+| 0.6σ | 1.0 | 0.29 yes | 0.198 NO |
+
+Cross-material at (0.85σ, 0.75): σ=2000 gentle-1.5N fires 0.250 (1.5 N is not gentle FOR the softest material); σ=6000 crush-5N only 0.023 (5 N is not a crush FOR the firmest). **The literal condition-1 force pair cannot separate all three materials with one parameter set — material-dependent damage-onset force is the experiment's own headline hypothesis.**
+
+**Carry limitation (physics, not a bug):** with tensile strength restored, gentle lifts no longer tear (fractions 0.005–0.03) but the block is carried only 2–5 mm: at E=7 kPa the pads indent ~1 cm (contact pressure ≈ 0.3–1× σ_Y → strain ~27%), and the 5 cm/0.3 s lift carves the pads up through the material. Real-world correlate: fingertip-pinching silken tofu. The E1 protocol handles this as drop/slip labels; the intact band may be small or empty at low F_g — that is data, and the pre-registered shape checkpoint classifies it.
+
+**Options for sign-off:**
+1. **(Recommended) Material completion v2:** `yield_pressure = 0.85σ_Y`, `tensile_yield_ratio = 1.0`, `viscosity = 20 Pa·s`; damage window unchanged. Condition 1 passes verbatim at σ=3333 (crush 0.148 / gentle 0.088 incl. the 1.5 N lift); for 2000/6000 the probe forces become per-material E1-bracketing pairs (2000: gentle 0.3–0.4 N; 6000: crush at grid-top 5 N registers 0.067 — its damage onset lies above the grid, reported censored_high).
+2. Keep signed-off `yield_pressure = 2σ_Y` + `tensile_yield_ratio = 1.0` and rescale the damage window value (condition-3 clause) — would propose |Jp−1| > ~0.015 from the distribution percentiles; requires one more distribution pass to freeze.
+3. Reduced scope: validate the damage axis on σ=3333 only (Stage-A material), record 2000/6000 damage observables as exploratory.
+
+No sweep or gate-decisive run executes until one option is signed off.
+
 ## 2026-08-27 — Gentle-grasp force raised to 1.5 N (probe parameter, not protocol)
 
 F_g = 0.5 N cannot statically hold the 0.63 N block at μ = 0.5 (friction capacity = μ·2·F_n = 0.5 N < mg). The gentle-lift probe uses **F_g = 1.5 N** (capacity 1.5 N, margin 2.4×). E1 grid forces are unchanged — trials at low F_g are *expected* to drop/slip; that is the phase diagram working as designed.
