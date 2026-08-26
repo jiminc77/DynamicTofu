@@ -30,6 +30,10 @@ from scripts.probes.gn2_ar_probe import FRAME_DT, GRASP_QUAT_WXYZ, GRASP_Z, PREG
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 
+# P4 protocol observable (externally approved): measured realized bilateral-sum
+# normal-force plateaus from the dynamic ladder (reports/logs/gn2-dynamic-ladder.json).
+F_BEARING_CAPACITY_N = {2000: 5.61, 3333: 6.11, 6000: 7.18}
+
 
 def _realized_bilateral_mean_normal(rig) -> float:
     from src.coupling import node_reduction_per_body
@@ -301,6 +305,11 @@ def run_trial(
             "sigma_y_pa": sigma_y, "mpm_damping_s": S.BLOCK_MPM_DAMPING,
             "yield_pressure_pa": S.YIELD_PRESSURE_FACTOR * sigma_y,
             "yield_pressure_factor": S.YIELD_PRESSURE_FACTOR,
+            "tensile_yield_ratio": S.TENSILE_YIELD_RATIO,
+            "viscosity_pa_s": S.VISCOSITY_PA_S,
+            # P4 first-class observable: measured realized bilateral-sum plateau
+            # (gn2-dynamic-ladder.json); per-finger is half the sum.
+            "f_bearing_capacity_n": F_BEARING_CAPACITY_N.get(int(sigma_y)),
         },
     }
     if extra_config:
