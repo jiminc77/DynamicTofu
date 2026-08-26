@@ -1,0 +1,5 @@
+Cloning https://github.com/newton-physics/newton-assets.git (ref: a96f0973b6ae69c90609f9fafef9d2c1db2d6431)...
+Successfully downloaded folder to: /home/simx2204/.cache/newton/newton-assets_manipulation_objects_rubber_duck_5e485544_a96f0973/manipulation_objects/rubber_duck
+/home/simx2204/Workspace/DynamicTofu/newton/newton/_src/utils/mesh.py:445: UserWarning: Detected non-manifold edge
+  self.edge_indices, self.edge_tri_indices, self.tri_edge_indices = self._compute_edge_adjacency(tri_indices)
+softbody_franka wall-clock: 1:38.71

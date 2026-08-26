@@ -1,0 +1,7 @@
+Cloning https://github.com/newton-physics/newton-assets.git (ref: a96f0973b6ae69c90609f9fafef9d2c1db2d6431)...
+Successfully downloaded folder to: /home/simx2204/.cache/newton/newton-assets_franka_emika_panda_cdcfe7a8_a96f0973/franka_emika_panda
+asset dir: /home/simx2204/.cache/newton/newton-assets_franka_emika_panda_cdcfe7a8_a96f0973/franka_emika_panda
+urdf exists: True
+fr3_franka_hand.urdf sha256: 2a270e19a9b9c7ca5eb62ec9d503d779281605b6bba881f5ac6e8090aa382497
+asset repo commit: a96f0973b6ae69c90609f9fafef9d2c1db2d6431
+asset download wall-clock: 0:03.70
