@@ -1,0 +1,43 @@
+{
+  "official_cell": {
+    "labels": [
+      "drop"
+    ],
+    "cell_color": "drop",
+    "peak_damage_fraction": 0.04640749033177285,
+    "a_peak_realized_ms2": 2.423683008209398,
+    "f_g_realized_n": 0.8120770235930534,
+    "wall_time_s": 34.40727210044861
+  },
+  "determinism": {
+    "same_seed_labels": [
+      [
+        "drop"
+      ],
+      [
+        "drop"
+      ]
+    ],
+    "same_seed_label_identical": true,
+    "peakfrac_delta_abs": 0.0038672908609810736,
+    "a_real_rel_delta": 0.0002780505848022298,
+    "diff_seed_differs": false,
+    "diff_seed_peakfrac": [
+      0.04640749033177285,
+      0.038876450234072865
+    ]
+  },
+  "T_weighted_s": 34.5,
+  "T_E2_s": 32.0,
+  "schedule": {
+    "R_E2": 360.0,
+    "E2_overflow": 0.0,
+    "E1_budget": 86400.0,
+    "T_A_max": 921.6,
+    "selected_stage_set": "A+B+C(i)+C(ii)",
+    "selected_trial_count": 310,
+    "dropped_stages": [],
+    "escalate": false,
+    "reserved_e2_trials": 9
+  }
+}

@@ -139,3 +139,7 @@ Both amendments approved (external spot-check against gn2-dynamic-ladder.json co
 - (ii) Rate adequacy re-scoped to a RECORDED rate-sensitivity observable with a monotone-direction requirement (slower close ⇒ lower fractions — holds). E1 close rate is fixed at 0.3 s; cross-cell comparability unaffected.
 
 Recomputed gate outcome under P5, from the persisted trial points (60 dynamic-crush trials, health clean 60/60 incl. extension): onsets 2.43 < 5.57 < censored-above-7.18 N (bilateral sums), separation 3.14 N ≫ max(0.05, 2×0.132) ⇒ **σ_Y monotonicity gate: PASS** — stamped in `reports/logs/gn2-dynamic-ladder-P5.json`. Standing authorization resumes: G-N2 receipt → G-N3 → E1 Stage A; only NEW protocol changes need sign-off.
+
+## 2026-08-27 — G-N3 stage-set selection (committed BEFORE the first E1 cell, per protocol)
+
+Measured at G-N3 (reports/logs/gn3-official.json): weighted T = 34.5 s (a=1: 39.4 s, a=15: 29.6 s); T_E2 = 32 s (full E2 config incl. raw-field recording, reports/logs/e2-scratch). Computed by src/budget.py (inputs recorded, never a constant): R_E2 = 360 s → E2_overflow = 0 → E1_budget = 24.0 h → T_A_max = 921.6 s (nominal operating point valid because E2_overflow = 0). Governing rule N·T ≤ 0.8·E1_budget: selected stage set = **A + B(2000) + B(6000) + C(i) + C(ii) = up to 310 trials**, no stages dropped, no escalation (T = 34.5 s ≪ 921.6 s). Guaranteed E2 nine untouched. Stage order remains A → shape checkpoint → B → C with stage-atomic fail-closed semantics.
