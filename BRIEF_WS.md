@@ -71,11 +71,27 @@ project hit Franka reach limits at +x extremes; verify reach margin at G-N3. The
 tracks, it does not teleport: record commanded AND realized EE acceleration; the
 phase-diagram axis is commanded a_peak, and every JSON carries the realized peak
 (`a_peak_realized_ms2`) so tracking error is visible, never hidden.
-Order: seed 0 full grid first → localize band boundaries → remaining seeds
-prioritizing boundary-adjacent cells → fill as time allows. **Every skipped cell is
-listed in the aggregate JSON coverage map; nothing is silently absent.**
+**Execution order (amended 2026-08-27; the phase diagram is THE deliverable, so a
+complete one exists as early as possible):**
+- **Stage A (guaranteed minimum):** σ_Y=3333 only, 5 accels × 5-grip subset
+  {0.3, 0.8, 1.8, 3.5, 5.0} N × 3 seeds = 75 trials → one complete, publishable
+  phase diagram. Then run the **shape checkpoint**: if band boundaries show no
+  acceleration-dependent structure beyond seed noise, STOP grinding the magnitude
+  axis and report — the swept variable pivots to reversal sharpness or curvature
+  (see profile family below), on external sign-off.
+- **Stage B:** σ_Y=2000 same 5×5×3 (band-vanishing / A* evidence), then σ_Y=6000.
+- **Stage C (as time allows):** densify grip to the full 8-level grid on σ_Y=3333;
+  raise seeds to 5 at boundary-adjacent cells.
+**Profile family (rig requirement, build into the trajectory generator from day 1):**
+(i) default out–stop–back trapezoid; (ii) single-leg no-reversal; (iii)
+sharp-reversal (shorter dwell / larger decel); (iv) 2D constant-speed arc
+(curvature axis, a_c = v²/r). Only (i) runs in Stage A; (ii)–(iv) must be runnable
+without rebuild because they are the pre-committed pivot axes.
+**Every skipped cell is listed in the aggregate JSON coverage map; nothing is
+silently absent.**
 Per-trial JSON (schema `e1.v1`) and per-material aggregate (schema `e1_band.v1`,
-with F_min/F_max per accel by the ≥2/3-seed rule, band widths, a_star or null,
+with F_min/F_max per accel by the **≥2/3-of-seeds-run rule** (⌈2n/3⌉: ≥2/3 at 3
+seeds, ≥4/5 at 5 seeds — ruled 2026-08-27, pre-data), band widths, a_star or null,
 coverage map) go to `ralph/results/`; one row per batch in `ralph/RESULTS.md`.
 The `config` block of every JSON records all protocol constants actually used
 (dt, substeps, particle count, contact params, windows) — the paper's protocol
@@ -83,20 +99,35 @@ sentences are audited against these blocks.
 
 ## E2 — tactile-proxy traces
 
-At per-material fixed mid-band force (declared in the JSON, chosen from E1 seed-0
-at a_peak=1): a_peak ∈ {1, 5, 15}, 3 seeds. Record at ≥200 Hz effective: per-finger
-normal resultant, tangential (shear) resultant, contact centroid in the finger frame,
-left–right normal asymmetry; mark phase timestamps (reversal). Output: npz per trial
-+ `e2_summary.json` (peak-shear ratio a15/a1, max centroid excursion mm, per-seed).
+Matrix (ruled 2026-08-27): **9 trials guaranteed at σ_Y=3333** (mid-band force from
+E1 Stage A at a_peak=1); extend to 27 across materials only if Stage B yields usable
+a_peak=1 bands for 2000/6000 and time allows. a_peak ∈ {1, 5, 15} (low/medium/high),
+3 seeds. **Every npz ALSO stores the raw per-node contact field per finger pad**
+(node positions + 3-axis force per node, per sample): taxel-grid binning for a
+commercial multi-axis tactile array (layout TBD) must be post-hoc processing on
+existing data, with no sim re-runs; full sensor emulation (specific layout, noise,
+hysteresis) stays out of scope. Record aggregates at ≥200 Hz
+effective, in priority order: (1) tangential (shear) resultant per finger, (2)
+contact centroid in the finger frame, (3) contact area estimate (active contact
+node count / area), (4) left–right normal asymmetry, plus per-finger normal
+resultant; mark phase timestamps (reversal). Output: npz per trial +
+`e2_summary.json` (peak-shear ratio a15/a1, max centroid excursion mm, area change,
+per-seed). The claim this data serves: the force command is identical, the contact
+state is not.
 Preferred source: solver collider contact data; if per-collider impulses are not
 exposed, use near-finger particle stress sampling and name it a proxy in the JSON
 (`"signal_source": "particle_proxy"`).
 
-## E3 — renders
+## E3 — renders (amended 2026-08-27: the demo is a specific three-scene story)
 
 (a) One high-quality still of the actual rig (Franka + gripper + block) for the
-paper's setup panel. (b) 2–3 short mp4 clips from real E1 trials (intact vs slip vs
-damage at one accel) for the project record. Renders never substitute for labels.
+paper's setup panel. (b) The **demo triplet**, σ_Y=3333, conditions drawn from the
+E1 grid (re-run with rendering on if needed):
+  (i) quasi-static success — mid-band grip, a_peak=1, labeled intact;
+  (ii) same grip, aggressive motion — identical grip, a_peak=15, labeled slip;
+  (iii) grip raised to suppress slip — near/above F_max, a_peak=15, labeled damage.
+Deliver mp4 clips + extracted key frames (for a possible paper strip). Renders come
+from real labeled trials and never substitute for labels.
 
 ## Deliverable layout (this workspace)
 
