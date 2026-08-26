@@ -36,9 +36,10 @@ F_G_PROBE = 0.5  # gentle probe grasp; crush behaviour is a separate probe
 
 
 class Rig:
-    def __init__(self, include_block: bool, proxy_iterations: int = 1, sigma_y: float = 3333.0, seed: int = 0, material_completion: bool = False):
+    def __init__(self, include_block: bool, proxy_iterations: int = 1, sigma_y: float = 3333.0, seed: int = 0, material_completion: bool = False, pose_jitter_m: float = 0.0):
         self.model, self.meta, _ = build_scene(
-            sigma_y, seed=seed, include_block=include_block, material_completion=material_completion
+            sigma_y, seed=seed, include_block=include_block, material_completion=material_completion,
+            pose_jitter_m=pose_jitter_m,
         )
         assert_control_contract(self.model, self.meta)
         if include_block:

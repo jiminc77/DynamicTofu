@@ -114,9 +114,8 @@ def run_trial(
     extra_config: dict | None = None,
 ):
     t_wall0 = time.time()
-    rig = Rig(include_block=True, sigma_y=sigma_y, seed=seed, material_completion=True)
-    if seed:  # pose jitter enters via build; particle sampling via solver; seed recorded
-        pass
+    # seeds are the replication unit: +/-1 mm pose jitter (deterministic per seed)
+    rig = Rig(include_block=True, sigma_y=sigma_y, seed=seed, material_completion=True, pose_jitter_m=0.001)
     rec = TrialRecorder(rig)
     prof = profiles.generate(profile_id, a_peak, dt=FRAME_DT)
 

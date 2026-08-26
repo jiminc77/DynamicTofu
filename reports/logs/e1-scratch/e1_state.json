@@ -1,0 +1,30 @@
+{
+ "brief_sha256": "bb41367843d73f070f109954ae674bbc2fcb1d24ff651cac3355a4fdc6f0d6b0",
+ "cells": {
+  "s3333_a1_f0.3_seed0": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 39.2
+    }
+   ],
+   "status": "done",
+   "artifact": "reports/logs/e1-scratch/trials/s3333_a1_f0.3_seed0.json"
+  },
+  "s3333_a1_f0.3_seed1": {
+   "attempts": [
+    {
+     "n": 1,
+     "status": "done",
+     "reason": "",
+     "wall_s": 37.1
+    }
+   ],
+   "status": "done",
+   "artifact": "reports/logs/e1-scratch/trials/s3333_a1_f0.3_seed1.json"
+  }
+ },
+ "started": 1787771106.389287
+}
