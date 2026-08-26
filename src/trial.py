@@ -131,6 +131,8 @@ def run_trial(
     extra_config: dict | None = None,
     frames_dir: str | None = None,
     frame_every_ticks: int = 40,
+    lift_duration_s: float = PHASE_LIFT_S,  # protocol constant; override ONLY for
+    # externally-ordered diagnostic probes (never counted as E1 cells)
 ):
     t_wall0 = time.time()
     # seeds are the replication unit: +/-1 mm pose jitter (deterministic per seed)
@@ -188,7 +190,7 @@ def run_trial(
 
     # --- lift 5 cm in 0.3 s (smoothstep) ------------------------------------
     phase_ts["lift"] = rig.t - t0
-    n_lift = int(PHASE_LIFT_S / FRAME_DT)
+    n_lift = int(lift_duration_s / FRAME_DT)
     for k in range(n_lift):
         s = (k + 1) / n_lift
         s = s * s * (3 - 2 * s)

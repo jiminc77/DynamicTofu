@@ -1,0 +1,64 @@
+[
+  {
+    "f": 1.2,
+    "seed": 0,
+    "labels": [
+      "drop"
+    ],
+    "color": "drop",
+    "peak_frac": 0.0556,
+    "f_real": 1.21
+  },
+  {
+    "f": 1.2,
+    "seed": 1,
+    "labels": [
+      "drop"
+    ],
+    "color": "drop",
+    "peak_frac": 0.06,
+    "f_real": 1.211
+  },
+  {
+    "f": 1.2,
+    "seed": 2,
+    "labels": [
+      "drop"
+    ],
+    "color": "drop",
+    "peak_frac": 0.058,
+    "f_real": 1.209
+  },
+  {
+    "f": 1.8,
+    "seed": 0,
+    "labels": [
+      "damage",
+      "drop"
+    ],
+    "color": "damage",
+    "peak_frac": 0.1093,
+    "f_real": 1.799
+  },
+  {
+    "f": 1.8,
+    "seed": 1,
+    "labels": [
+      "drop"
+    ],
+    "color": "drop",
+    "peak_frac": 0.0902,
+    "f_real": 1.798
+  },
+  {
+    "f": 1.8,
+    "seed": 2,
+    "labels": [
+      "damage",
+      "drop"
+    ],
+    "color": "damage",
+    "peak_frac": 0.1036,
+    "f_real": 1.798
+  }
+]
