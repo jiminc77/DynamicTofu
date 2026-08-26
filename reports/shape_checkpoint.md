@@ -16,7 +16,7 @@ Router branch 1 (fixed order): all accels empty ⇒ **scale_failure** — "the l
 
 ## CORRECTION + co-decision: acceleration-tracking saturation (O-2 escalation trigger FIRED)
 
-An earlier draft of this report claimed "a_real within ~3% of commanded" — **that was wrong**; it generalized from the a=2.5 cell. The full Stage-A per-level analysis (`reports/logs/e1-stageA-tracking.json`, 15 trials per level, sd ≤ 0.001):
+An earlier draft of this report claimed "a_real within ~3% of commanded" — **that was wrong**; it generalized from the a=2.5 cell. The full Stage-A per-level analysis (`reports/logs/e1-stageA-tracking.json`, 15 trials per level, sd ≤ 0.0014):
 
 | a_cmd (m/s²) | realized median | relative error |
 |---|---|---|
