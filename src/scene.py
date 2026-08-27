@@ -129,9 +129,18 @@ def _add_block(builder, lo, res, cell, particle_mass, radius, sigma_y_pa, approv
     )
 
 
-def build_scene(sigma_y_pa: float, *, seed: int = 0, pose_jitter_m: float = 0.0, include_block: bool = True, material_completion: bool = True):
+# sensor_format_pad (user ruling 2026-08-27): a tactile-sensor-format flat
+# fingertip face (Paxini-class), 30x30 mm x 3 mm, placed 1 mm inward of the
+# stock pad's innermost face (finger-local +y is the inward contact axis;
+# stock inner face ~= local y 0.026). Diagnostics only.
+SENSOR_PAD_HALF = (0.015, 0.0015, 0.015)
+SENSOR_PAD_LOCAL_P = (0.0, 0.0255, 0.028)
+
+
+def build_scene(sigma_y_pa: float, *, seed: int = 0, pose_jitter_m: float = 0.0, include_block: bool = True, material_completion: bool = True, sensor_pad: bool = False):
     """material_completion=True applies the SIGNED-OFF yield_pressure = 2*sigma_Y;
-    False reproduces the pre-sign-off baseline (archival probes only)."""
+    False reproduces the pre-sign-off baseline (archival probes only).
+    sensor_pad=True adds the diagnostic sensor_format_pad to each finger."""
     """Build the model. Returns (builder-finalized model, SceneMeta, builder)."""
     rng = np.random.default_rng(np.random.SeedSequence([1234, int(seed)]))
 
@@ -196,6 +205,17 @@ def build_scene(sigma_y_pa: float, *, seed: int = 0, pose_jitter_m: float = 0.0,
     if len(ee_matches) != 1:
         raise RuntimeError(f"expected exactly one link7 body, got {ee_matches}: {builder.body_label}")
     ee_body = ee_matches[0]
+
+    # --- sensor_format_pad (diagnostics only) ------------------------------
+    sensor_pad_shapes = []
+    if sensor_pad:
+        for fb in finger_bodies:
+            sid = builder.add_shape_box(
+                fb,
+                xform=wp.transform(SENSOR_PAD_LOCAL_P, wp.quat_identity()),
+                hx=SENSOR_PAD_HALF[0], hy=SENSOR_PAD_HALF[1], hz=SENSOR_PAD_HALF[2],
+            )
+            sensor_pad_shapes.append(sid)
 
     # --- table + ground -----------------------------------------------------
     builder.add_shape_box(
@@ -271,6 +291,8 @@ def build_scene(sigma_y_pa: float, *, seed: int = 0, pose_jitter_m: float = 0.0,
             "arm_target_kd": ARM_TARGET_KD,
             "pad_friction_mu": PAD_FRICTION_MU,
             "default_shape_mu": 0.5,  # frozen protocol constant (external sign-off 2026-08-27)
+            "sensor_format_pad": (dict(half_extents_m=list(SENSOR_PAD_HALF), local_p=list(SENSOR_PAD_LOCAL_P),
+                                       face_mm=[30, 30]) if sensor_pad else None),
             "yield_pressure_pa": YIELD_PRESSURE_FACTOR * float(sigma_y_pa) if material_completion else None,
             "yield_pressure_factor": YIELD_PRESSURE_FACTOR if material_completion else None,
             "tensile_yield_ratio": TENSILE_YIELD_RATIO if material_completion else None,

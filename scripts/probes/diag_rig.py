@@ -57,6 +57,7 @@ class DiagConfig:
     voxel: float = 0.005
     proxy_iterations: int = 4
     control: str = "effort"          # 'effort' | 'lock'
+    pad: str = "stock"               # 'stock' | 'sensor' (sensor_format_pad)
     target_Nf: float = 0.60          # per-finger normal target [N]
     lift_s: float = 1.0
     hold_s: float = 5.0
@@ -79,7 +80,8 @@ class DiagRig:
         self.cfg = cfg
         _patch(cfg)
         self.model, self.meta, _ = S.build_scene(cfg.sigma_y, seed=cfg.seed, include_block=True,
-                                                  material_completion=True)
+                                                  material_completion=True,
+                                                  sensor_pad=(cfg.pad == "sensor"))
         assert_control_contract(self.model, self.meta)
         # also set the block's own mpm:friction to mu (Coulomb oracle needs it)
         self.solver = build_coupled_solver(self.model, self.meta, voxel_size=cfg.voxel,
