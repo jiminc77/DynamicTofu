@@ -1,0 +1,71 @@
+Warp 1.17.0.dev20260807 initialized:
+   CUDA Toolkit 12.9, Driver 13.1
+   Devices:
+     "cpu"      : "x86_64"
+     "cuda:0"   : "NVIDIA RTX PRO 6000 Blackwell Workstation Edition" (95 GiB, sm_120, mempool enabled)
+   Kernel cache:
+     /home/simx2204/.cache/warp/1.17.0.dev20260807
+Module warp._src.coloring 0a2f0aa load on device 'cpu' took 0.94 ms  (cached)
+Module newton._src.utils.mesh 3a50b9a load on device 'cpu' took 0.23 ms  (cached)
+Module validate_and_correct_inertia_kernel_5e18b3cd 5e18b3c load on device 'cuda:0' took 0.42 ms  (cached)
+Module newton._src.geometry.bvh 519a3cd load on device 'cuda:0' took 0.64 ms  (cached)
+Module newton._src.sim.articulation 9be914f load on device 'cuda:0' took 4.25 ms  (cached)
+Module newton._src.solvers.coupled.model_view 399a588 load on device 'cuda:0' took 0.54 ms  (cached)
+Module newton._src.solvers.coupled.solver_coupled 0778c6b load on device 'cuda:0' took 0.64 ms  (cached)
+Module newton._src.solvers.mujoco.kernels 9bf0320 load on device 'cuda:0' took 7.79 ms  (cached)
+Module mujoco_warp._src.io b4940be load on device 'cuda:0' took 1.89 ms  (cached)
+Module mujoco_warp._src.smooth c4020f1 load on device 'cuda:0' took 2.19 ms  (cached)
+Module _tile_cholesky_factorize_block__locals__kernel_64809444 19e2b53 load on device 'cuda:0' took 13.82 ms  (cached)
+Module _tile_cholesky_solve_block__locals__kernel_062c0507 22e05d6 load on device 'cuda:0' took 14.12 ms  (cached)
+Module newton._src.solvers.vbd.rigid_vbd_kernels 87e3500 load on device 'cpu' took 0.24 ms  (cached)
+Module newton._src.solvers.vbd.rigid_vbd_kernels ad8ab2a load on device 'cuda:0' took 3.27 ms  (cached)
+Module newton._src.solvers.solver db37500 load on device 'cuda:0' took 0.48 ms  (cached)
+Module newton._src.solvers.coupled.interface 2c6462c load on device 'cuda:0' took 0.35 ms  (cached)
+Module src.vbd_rig ed0ad2a load on device 'cuda:0' took 0.22 ms  (cached)
+Module newton._src.sim.collide 7328fa3 load on device 'cuda:0' took 0.36 ms  (cached)
+Module newton._src.geometry.broad_phase_nxn a474f53 load on device 'cuda:0' took 0.28 ms  (cached)
+Module narrow_phase_primitive_write_contact_False_False_False 60c6491 load on device 'cuda:0' took 0.44 ms  (cached)
+Module narrow_phase_gjk_mpr_True_False_write_contact_support_map_lean_post_process_minkowski_only e4334c3 load on device 'cuda:0' took 1.48 ms  (cached)
+Module newton._src.geometry.narrow_phase 85093bd load on device 'cuda:0' took 0.58 ms  (cached)
+Module newton._src.geometry.kernels 16409c5 load on device 'cuda:0' took 2.10 ms  (cached)
+Module newton._src.solvers.vbd.vbd_coupling_kernels 0311e69 load on device 'cuda:0' took 0.46 ms  (cached)
+Module mujoco_warp._src.constraint 36c8060 load on device 'cuda:0' took 0.23 ms  (cached)
+Module _friction_dof__locals__kernel_a6ed3529 a6ed352 load on device 'cuda:0' took 0.30 ms  (cached)
+Module _limit_slide_hinge__locals__kernel_56cb53b3 56cb53b load on device 'cuda:0' took 0.30 ms  (cached)
+Module mujoco_warp._src.forward bfd9fb5 load on device 'cuda:0' took 0.82 ms  (cached)
+Module mujoco_warp._src.passive d8c18c6 load on device 'cuda:0' took 1.00 ms  (cached)
+Module mujoco_warp._src.forward b068ad6 load on device 'cuda:0' took 0.73 ms  (cached)
+Module _qfrc_smooth__locals__kernel_b98573a2 b98573a load on device 'cuda:0' took 0.30 ms  (cached)
+Module mujoco_warp._src.support ca784c5 load on device 'cuda:0' took 0.25 ms  (cached)
+Module _tile_cholesky_factorize_solve_block__locals__kernel_42133307 deac1f0 load on device 'cuda:0' took 21.89 ms  (cached)
+Module _solve_init_dof__locals__kernel_befe379c befe379 load on device 'cuda:0' took 0.24 ms  (cached)
+Module mujoco_warp._src.solver 3a105a0 load on device 'cuda:0' took 1.07 ms  (cached)
+Module _solve_init_jaref_kernel__locals__kernel_b9fbfe47 b9fbfe4 load on device 'cuda:0' took 0.24 ms  (cached)
+Module mul_m_kernel__locals___mul_m_dc7994af dc7994a load on device 'cuda:0' took 0.30 ms  (cached)
+Module _update_constraint_efc__locals__kernel_64b75440 64b7544 load on device 'cuda:0' took 0.26 ms  (cached)
+Module _update_constraint_init_qfrc_constraint_dense__locals__kernel_88a8869f 88a8869 load on device 'cuda:0' took 0.25 ms  (cached)
+Module _update_gradient_zero_grad_dot__locals__kernel_817148e6 817148e load on device 'cuda:0' took 0.23 ms  (cached)
+Module _update_gradient_grad__locals__kernel_00c9ca8d 00c9ca8 load on device 'cuda:0' took 0.23 ms  (cached)
+Module _update_gradient_JTDAJ_dense_tiled__locals__kernel_0af2da2c 62ccca6 load on device 'cuda:0' took 0.48 ms  (cached)
+Module _update_gradient_cholesky__locals__kernel_cbf4228e cae2b18 load on device 'cuda:0' took 21.60 ms  (cached)
+Module _linesearch_iterative_kernel__locals__kernel_2e1c0e7d 2e65bde load on device 'cuda:0' took 0.39 ms  (cached)
+Module _update_constraint_efc__locals__kernel_dc2dbb33 dc2dbb3 load on device 'cuda:0' took 0.26 ms  (cached)
+Module _update_constraint_init_qfrc_constraint_dense__locals__kernel_175b3165 175b316 load on device 'cuda:0' took 0.26 ms  (cached)
+Module _update_gradient_zero_grad_dot__locals__kernel_932c92ad 932c92a load on device 'cuda:0' took 0.24 ms  (cached)
+Module _update_gradient_grad__locals__kernel_4c37eb70 4c37eb7 load on device 'cuda:0' took 0.23 ms  (cached)
+Module _update_gradient_cholesky__locals__kernel_b9f9385b 1021734 load on device 'cuda:0' took 21.55 ms  (cached)
+Module mujoco_warp._src.derivative 833f5d0 load on device 'cuda:0' took 0.59 ms  (cached)
+Module _next_time_builder__locals___next_time_a67f49d6 a67f49d load on device 'cuda:0' took 0.27 ms  (cached)
+Module newton._src.solvers.coupled.proxy_utils 4cd7148 load on device 'cuda:0' took 0.36 ms  (cached)
+Module newton._src.solvers.coupled.solver_coupled_proxy 603a9ab load on device 'cuda:0' took 0.27 ms  (cached)
+Module newton._src.solvers.xpbd.kernels 0721ed5 load on device 'cuda:0' took 4.95 ms  (cached)
+Module newton._src.solvers.vbd.particle_vbd_kernels 78ac8a5 load on device 'cuda:0' took 1.50 ms  (cached)
+F5_mu0.5_lift1s: peak=31.9mm hold_min=4.6mm bbox_growth=0.01 held=False finite=True
+F8_mu1_lift1s: peak=56.7mm hold_min=4.4mm bbox_growth=0.60 held=False finite=True
+F2_mu1_lift1s: peak=31.9mm hold_min=4.6mm bbox_growth=0.01 held=False finite=True
+F1.2_mu0.7_lift3s: peak=17.4mm hold_min=4.6mm bbox_growth=0.38 held=False finite=True
+F2_mu0.7_lift3s: peak=17.4mm hold_min=11.5mm bbox_growth=0.44 held=False finite=True
+F2_mu2_lift1s: peak=17.4mm hold_min=4.6mm bbox_growth=0.01 held=False finite=True
+F1.2_mu2_lift1s: peak=17.4mm hold_min=4.6mm bbox_growth=0.03 held=False finite=True
+
+any_held_5s: False -> reports/logs/vbd/v2_extended.json
