@@ -101,11 +101,15 @@
       "wall": 153
     }
   },
-  "yield_bracket_verdict": "Among VALID cells (C-base cap 5.1kPa and C-asym cap 15kPa/tensile 3kPa) the outcome is invariant (drop, block not lifted, finFn ~0.606-0.607) -> yield-surface shape is NOT the gating factor. C-cap-off (deviatoric-dominated, cap ~100kPa) BLEW UP (health=False, INVALID) -> that limit is numerically unstable and untested.",
+  "yield_bracket_verdict": "INCONCLUSIVE: 2 of 3 yield-surface cells health-FAILED (C-cap-off deviatoric-dominated AND C-asym both blew up), leaving only C-base valid. With a single valid cell there is NO valid comparison -> whether yield-surface shape gates the outcome is UNRESOLVED (the alternative surfaces are numerically unstable in this stack).",
   "wall_s": 2054.2435047626495,
   "stable_cells": [
     "it1_h5.0mm",
     "it1_h2.5mm",
     "it4_h5.0mm"
-  ]
+  ],
+  "valid_yield_cells": [
+    "C-base"
+  ],
+  "auto_verdict_note": "Auto-verdict wrongly reported 'labels invariant' from a single valid yield cell; corrected: bracket is INCONCLUSIVE (needs >=2 valid cells)."
 }
