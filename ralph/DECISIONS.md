@@ -187,3 +187,9 @@ Ordering unchanged: audit → Gate A → Gate B.
 ## 2026-08-27 — Item-2 drop-window audit COMPLETE: PASS (0 violations / 225)
 
 Full non-mutating re-run audit (reports/logs/drop-window-audit.json): 225/225 coordinates re-run, every trial carries a drop label, ALL drop_evidence_in_window=True, 0 violations → verdict PASS (fail-closed check clears). Confirms the drop_t=5.3 observation was the absolute-vs-relative frame reporting artifact, not an out-of-window labeling bug. run_trial now hard-asserts the invariant; JSONs are self-verifying going forward.
+
+## 2026-08-27 — Gate B GO (Option a): constant-effort primary + position-lock as labeled diagnostic
+
+External ruling: Gate A purpose achieved (contact stack validated by matched-config isolation: elastic block lifts+holds under effort at exact A4 params, finalFn 0.454, +3.42 cm, 65 nodes). Do NOT redesign the Gate A oracle. Proceed to Gate B on σ_Y=6000 tofu (E=7 kPa), target realized 0.60±0.05 N/finger, 1.0 s lift + 10 s hold, no transport, h=5 mm, it=4, μ=1. Factorial: pad (stock 17.5×18.5 vs sensor_format_pad 30×30 mm r3) × control (constant_effort vs position_lock) × viscosity (20 vs 2e5). KEEP lock arms on tofu: at E=7 kPa a 0.6 N preload indents many mm, so sub-mm lock drift does NOT collapse Fn as it did on the stiff E=70 kPa oracle → lock is a valid H6 jaw-advance isolator for soft material.
+SAFEGUARDS: (1) log/report per-arm Fn(t); if a lock arm loses Fn like the oracle → mark that arm INVALID, don't interpret. (2) all 6 arms at it=4; carry the H5 flag; if cheap, duplicate the single most decisive contrast at it=8. (3) any health blowup invalidates a run → rerun/flag, never interpret. (4) v2 closed-loop force controller stays design-only; Gate A evidence (position-lock unsuitable on stiff / effort sound) feeds its design notes.
+Deliverables: gateB.json, short report, one holding + one dropping clip; then STOP at the human-blocked terminus with the cross-gate synthesis.
