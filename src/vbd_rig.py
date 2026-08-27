@@ -50,6 +50,7 @@ class VbdConfig:
     soft_contact_ke: float = 5.0e4
     soft_contact_kd: float = 1.0e-3
     soft_contact_kf: float = 1.0e3   # tangential stiffness (consult placeholder); kf-ladder variable
+    particle_radius: float = 0.007   # soft-body surface resolution (tunneling suspect)
     target_ke: float = 2.0e4
     target_kd: float = 200.0
     # state-machine phase end times [s]
@@ -90,7 +91,7 @@ class VbdTofuRig:
         builder = newton.ModelBuilder(gravity=(0.0, 0.0, -9.81))
         SolverMuJoCo.register_custom_attributes(builder)
         SolverVBD.register_custom_attributes(builder)
-        builder.default_particle_radius = 0.007
+        builder.default_particle_radius = cfg.particle_radius
 
         self.soft_start = builder.particle_count
         builder.add_soft_grid(
@@ -99,7 +100,7 @@ class VbdTofuRig:
             dim_x=BLOCK_DIM, dim_y=BLOCK_DIM, dim_z=BLOCK_DIM,
             cell_x=BLOCK_CELL, cell_y=BLOCK_CELL, cell_z=BLOCK_CELL,
             density=cfg.density, k_mu=k_mu, k_lambda=k_lambda, k_damp=cfg.k_damp,
-            particle_radius=0.007, label="tofu",
+            particle_radius=cfg.particle_radius, label="tofu",
         )
         self.soft_end = builder.particle_count
 
