@@ -56,5 +56,7 @@
       "final_rise_mm": 19.4
     }
   },
-  "hard_gate_verdict": "FAIL: neither E=100 nor 200 kPa holds <2mm slip over 5s. Recipe force 0.45N fully drops (50mm, pads hover in 10mm margin); 2N + eps 2e-4 gives the best partial hold (~17mm slip, ~33mm lift). Architecture (pure VBD, full-surface, force-control, correct sign) is correct and ejection is GONE; friction_epsilon 2e-4 helps (50->17mm) and is optimal; but <2mm is not reached. STOP + escalate, do not touch tofu."
+  "hard_gate_verdict": "FAIL: neither E=100 nor 200 kPa holds <2mm slip over 5s. Recipe force 0.45N fully drops (50mm, pads hover in 10mm margin); 2N + eps 2e-4 gives the best partial hold (~17mm slip, ~33mm lift). Architecture (pure VBD, full-surface, force-control, correct sign) is correct and ejection is GONE; friction_epsilon 2e-4 helps (50->17mm) and is optimal; but <2mm is not reached. STOP + escalate, do not touch tofu.",
+  "reproducible_runner": "scripts/vbd/p1_oracle.py -> reports/logs/vbd/p1_oracle_full.json (full series + pre-lift excursion + substep-doubling)",
+  "unresolved_acceptance": "per-pad Fn (0.45+/-10%), max penetration/margin-hover, body-proxy-only P0 discriminator NOT measured"
 }
