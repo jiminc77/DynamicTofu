@@ -56,6 +56,14 @@ def _sha256_file(path: str) -> str:
     return hashlib.sha256(open(path, "rb").read()).hexdigest()
 
 
+def _git_sha() -> str:
+    import subprocess
+    try:
+        return subprocess.check_output(["git", "-C", ROOT, "rev-parse", "HEAD"], text=True).strip()
+    except Exception:
+        return "unknown"
+
+
 def _quat_conj_rotate(q_xyzw, v):
     x, y, z, w = q_xyzw
     u = np.array([-x, -y, -z])
@@ -310,6 +318,16 @@ def run_trial(
             "pad_friction_mu": S.PAD_FRICTION_MU,
             "impulse_eps": IMPULSE_EPS,
             "max_speculative_extension_m": 0.005,
+        },
+        "provenance": {
+            # consult item 4/5 + item 10: lift height is 5 cm (code + brief);
+            # the "10 cm" in an external description was wrong.
+            "lift_height_m": LIFT_M,
+            "pad_collision_face_mm": [17.5, 18.5],
+            "pad_collision_boxes_urdf_mm": ["22x15x20", "17.5x7x23.5"],
+            "git_sha": _git_sha(),
+            "controller_mode": "effort_controlled_open_loop",
+            "closure_terminology": "effort-controlled (open-loop joint effort, EFFORT mode, zero finger stiffness) - NOT closed-loop force control",
         },
         "windows": {
             "judgment": "lift_complete..settle_end inclusive",
