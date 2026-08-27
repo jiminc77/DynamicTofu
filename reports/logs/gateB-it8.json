@@ -1,0 +1,23 @@
+{
+  "B1_it8": {
+    "pad": "stock",
+    "outcome": "drop",
+    "health": false,
+    "preFn": 0.6480271338760365,
+    "finFn": 0.0,
+    "z_max": 0.3657,
+    "nodes": 0,
+    "wall": 524
+  },
+  "B4_it8": {
+    "pad": "sensor",
+    "outcome": "drop",
+    "health": false,
+    "preFn": 0.6380137475477601,
+    "finFn": 0.0,
+    "z_max": 0.4074,
+    "nodes": 0,
+    "wall": 521
+  },
+  "iteration_robustness_verdict": "NOT robust: both valid effort arms BLOW UP at it=8 (health=False, block ejected to z~0.37-0.41) where it=4 ran clean. The coupling has an iteration-dependent STABILITY sensitivity (H5) beyond a mere outcome shift. Consequence: the Gate B 'no hold / material-limited' conclusion holds AT it=4 but is NOT confirmed iteration-robust; convergence/stability (proxy-iteration x h) must be resolved in Gate C before firm quasi-static claims."
+}
