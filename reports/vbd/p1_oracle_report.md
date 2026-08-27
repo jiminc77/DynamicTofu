@@ -25,7 +25,9 @@ The consult diagnoses the V-2 stiff-oracle ejection as a **SolverCoupledProxy ac
 | 200 kPa | 0.45 N | 50.1 mm | 4.8 mm | 1.0 mm (drop) | no |
 | 200 kPa | 2.0 N | 20.5 mm | 42.6 mm | 29.7 mm | no |
 
-**Neither 100 nor 200 kPa holds <2 mm slip over 5 s** -> hard gate FAILS. Per the directive: STOP, do not touch tofu, escalate.
+**At the exact recipe (substeps=20), neither 100 nor 200 kPa holds <2 mm slip** -> hard gate FAILS as specified. Per the directive: STOP, do not touch tofu, escalate.
+
+**BUT the substep-doubling check is decisive (p1_oracle_full.json):** at E=100 kPa/2 N, doubling substeps 20 -> 40 drops the hold slip from **17.68 mm to 1.01 mm** (UNDER the 2 mm bar). So the residual creep is largely a **temporal-resolution artifact**, and the pure-VBD architecture CAN meet the acceptance with adequate substeps + grip force. The substep-doubling INVARIANCE criterion itself fails at 20 (17.68 vs 1.01), flagging substeps=20 as under-resolved for this stiff contact. Viable operating point for review: substeps >= 40 and grip force above the 0.45 N recipe (0.45 N still drops via the ~3 mm margin-hover; 2 N engages).
 
 ## Diagnosis of the residual failure
 
