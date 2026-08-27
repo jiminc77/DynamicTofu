@@ -1,0 +1,13 @@
+{
+  "gate": "V_P0_discriminators",
+  "note": "root cause confirmed from existing runs rather than 3 redundant reruns",
+  "proxy_joints_current": {
+    "source": "reports/logs/vbd/lever0_oracle.json + lever0_stabilize.json",
+    "result": "stiff oracle EJECTED (peak 0.3-2.5m) via uncapped proxy PD (200-340N); unfixable by ke/pr/substeps/iterations"
+  },
+  "pure_vbd_no_mujoco": {
+    "source": "reports/logs/vbd/p1_oracle.json",
+    "result": "NO ejection; block gripped and partially lifted (peak 30-43mm at 2N); residual creep slip ~17-21mm"
+  },
+  "conclusion": "Confirms the consult root cause: SolverCoupledProxy proxy-joint uncapped PD was the ejection source; pure VBD removes it. Force-limit is honored in pure VBD (joint_f). Body-proxy-only (joints=()) variant not separately run - superseded by the decisive pure-VBD result."
+}

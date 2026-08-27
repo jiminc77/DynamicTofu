@@ -1,0 +1,39 @@
+{
+  "gate": "V_lever0_kf_ladder_on_clean_E100kPa_oracle",
+  "note": "E=100kPa stiff oracle slips cleanly (no ejection); test if tangential stiffness kf restores Coulomb hold. 0.45N mu1.0.",
+  "runs": {
+    "kf1000": {
+      "kf": 1000.0,
+      "peak_mm": 46.8,
+      "hold_min_mm": 4.9,
+      "ejected": false,
+      "finite": true,
+      "held_5s": false
+    },
+    "kf10000": {
+      "kf": 10000.0,
+      "peak_mm": 46.8,
+      "hold_min_mm": 4.9,
+      "ejected": false,
+      "finite": true,
+      "held_5s": false
+    },
+    "kf100000": {
+      "kf": 100000.0,
+      "peak_mm": 46.8,
+      "hold_min_mm": 4.9,
+      "ejected": false,
+      "finite": true,
+      "held_5s": false
+    },
+    "kf1e+06": {
+      "kf": 1000000.0,
+      "peak_mm": 46.8,
+      "hold_min_mm": 4.9,
+      "ejected": false,
+      "finite": true,
+      "held_5s": false
+    }
+  },
+  "kf_restores": null
+}

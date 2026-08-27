@@ -1,0 +1,34 @@
+{
+  "gate": "V_lever0_shape_mu_test",
+  "note": "E=100kPa clean oracle; vary the ACTUAL friction knob (finger_shape_mu -> avg_mu) which soft_contact_mu does NOT control. 0.45N.",
+  "runs": {
+    "shape_mu0.7": {
+      "finger_shape_mu": 0.7,
+      "avg_mu_pad_tofu": 0.592,
+      "peak_mm": 46.8,
+      "hold_min_mm": 4.9,
+      "ejected": false,
+      "finite": true,
+      "held_5s": false
+    },
+    "shape_mu1.5": {
+      "finger_shape_mu": 1.5,
+      "avg_mu_pad_tofu": 0.866,
+      "peak_mm": 46.8,
+      "hold_min_mm": 4.9,
+      "ejected": false,
+      "finite": true,
+      "held_5s": false
+    },
+    "shape_mu3.0": {
+      "finger_shape_mu": 3.0,
+      "avg_mu_pad_tofu": 1.225,
+      "peak_mm": 46.8,
+      "hold_min_mm": 4.9,
+      "ejected": false,
+      "finite": true,
+      "held_5s": false
+    }
+  },
+  "shape_mu_holds": false
+}

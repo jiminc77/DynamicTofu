@@ -1,0 +1,88 @@
+{
+  "gate": "V_lever0_stabilization_ladder",
+  "git_sha": "3f1eb88710d4e15e8e272583c2e96e4155c95bc9",
+  "baseline": "ke5e4/pr007/sub12/it30 EJECTS (y-ext 0.155) and slips",
+  "runs": {
+    "ke5e5": {
+      "label": "ke5e5",
+      "ke": 500000.0,
+      "particle_radius": 0.007,
+      "substeps": 12,
+      "vbd_iterations": 30,
+      "peak_com_rise_m": 0.3301,
+      "post_lift_hold_min_com_rise_m": 0.005,
+      "max_y_extent_m": 0.0676,
+      "ejected": false,
+      "finite_all": true,
+      "held_5s": false
+    },
+    "pr012": {
+      "label": "pr012",
+      "ke": 50000.0,
+      "particle_radius": 0.012,
+      "substeps": 12,
+      "vbd_iterations": 30,
+      "peak_com_rise_m": 1.1653,
+      "post_lift_hold_min_com_rise_m": 0.01,
+      "max_y_extent_m": 0.118,
+      "ejected": true,
+      "finite_all": true,
+      "held_5s": false
+    },
+    "sub24": {
+      "label": "sub24",
+      "ke": 50000.0,
+      "particle_radius": 0.007,
+      "substeps": 24,
+      "vbd_iterations": 30,
+      "peak_com_rise_m": 1.0353,
+      "post_lift_hold_min_com_rise_m": 0.0063,
+      "max_y_extent_m": 0.069,
+      "ejected": false,
+      "finite_all": true,
+      "held_5s": false
+    },
+    "it60": {
+      "label": "it60",
+      "ke": 50000.0,
+      "particle_radius": 0.007,
+      "substeps": 12,
+      "vbd_iterations": 60,
+      "peak_com_rise_m": 0.2981,
+      "post_lift_hold_min_com_rise_m": 0.005,
+      "max_y_extent_m": 0.2946,
+      "ejected": true,
+      "finite_all": true,
+      "held_5s": false
+    },
+    "combo": {
+      "label": "combo",
+      "ke": 500000.0,
+      "particle_radius": 0.01,
+      "substeps": 24,
+      "vbd_iterations": 60,
+      "peak_com_rise_m": 1.5732,
+      "post_lift_hold_min_com_rise_m": 0.008,
+      "max_y_extent_m": 0.0599,
+      "ejected": false,
+      "finite_all": true,
+      "held_5s": false
+    },
+    "combo_max": {
+      "label": "combo_max",
+      "ke": 1000000.0,
+      "particle_radius": 0.012,
+      "substeps": 24,
+      "vbd_iterations": 60,
+      "peak_com_rise_m": 2.5,
+      "post_lift_hold_min_com_rise_m": 0.01,
+      "max_y_extent_m": 0.0678,
+      "ejected": false,
+      "finite_all": true,
+      "held_5s": false
+    }
+  },
+  "stabilizing_configs": [],
+  "coulomb_restored": false,
+  "wall_s": 2092.274427652359
+}

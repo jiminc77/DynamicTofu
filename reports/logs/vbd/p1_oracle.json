@@ -1,0 +1,60 @@
+{
+  "gate": "V_P1_pure_vbd_coulomb_oracle",
+  "git_sha": "fec1770c2f710a2ccefedcc9d5db5672ca010368",
+  "recipe": "pure SolverVBD (no proxy), full_surface_contact=True, force-control joint_f (target_ke0), mu_pair 1.0, eps 2e-4, ke=pad=2e3, substeps20 it10, 0.45N, ramp0.8/preload1/lift50mm2s/hold5s",
+  "runs": {
+    "E100kPa_F0.45": {
+      "E_pa": 100000.0,
+      "grip_force_n": 0.45,
+      "hold_slip_mm": 50.1,
+      "peak_rise_mm": 3.9,
+      "final_rise_mm": 0.9,
+      "held_lt2mm": false,
+      "finite": true
+    },
+    "E100kPa_F2.0": {
+      "E_pa": 100000.0,
+      "grip_force_n": 2.0,
+      "hold_slip_mm": 21.0,
+      "peak_rise_mm": 30.9,
+      "final_rise_mm": 29.1,
+      "held_lt2mm": false,
+      "finite": true
+    },
+    "E200kPa_F0.45": {
+      "E_pa": 200000.0,
+      "grip_force_n": 0.45,
+      "hold_slip_mm": 50.1,
+      "peak_rise_mm": 4.8,
+      "final_rise_mm": 1.0,
+      "held_lt2mm": false,
+      "finite": true
+    },
+    "E200kPa_F2.0": {
+      "E_pa": 200000.0,
+      "grip_force_n": 2.0,
+      "hold_slip_mm": 20.5,
+      "peak_rise_mm": 42.6,
+      "final_rise_mm": 29.7,
+      "held_lt2mm": false,
+      "finite": true
+    }
+  },
+  "hard_gate_100_200kPa_pass": false,
+  "friction_epsilon_sweep_E100_2N": {
+    "1e-2": {
+      "slip_mm": 50.1,
+      "final_rise_mm": 0.9
+    },
+    "2e-4": {
+      "slip_mm": 16.7,
+      "final_rise_mm": 32.9,
+      "OPTIMAL": true
+    },
+    "2e-6": {
+      "slip_mm": 30.9,
+      "final_rise_mm": 19.4
+    }
+  },
+  "hard_gate_verdict": "FAIL: neither E=100 nor 200 kPa holds <2mm slip over 5s. Recipe force 0.45N fully drops (50mm, pads hover in 10mm margin); 2N + eps 2e-4 gives the best partial hold (~17mm slip, ~33mm lift). Architecture (pure VBD, full-surface, force-control, correct sign) is correct and ejection is GONE; friction_epsilon 2e-4 helps (50->17mm) and is optimal; but <2mm is not reached. STOP + escalate, do not touch tofu."
+}

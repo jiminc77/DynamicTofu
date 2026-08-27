@@ -1,0 +1,34 @@
+{
+  "gate": "V_lever0_moderate_stiffness_oracle",
+  "note": "baseline contact params (ke5e4/pr007/sub12/it30, = tofu setup); vary E only; 0.45N mu1.0",
+  "runs": {
+    "E100kPa": {
+      "E_pa": 100000.0,
+      "peak_mm": 46.8,
+      "hold_min_mm": 4.8,
+      "max_y_m": 0.06,
+      "ejected": false,
+      "finite": true,
+      "held_5s": false
+    },
+    "E200kPa": {
+      "E_pa": 200000.0,
+      "peak_mm": 110.4,
+      "hold_min_mm": 5.0,
+      "max_y_m": 0.1045,
+      "ejected": true,
+      "finite": true,
+      "held_5s": false
+    },
+    "E500kPa": {
+      "E_pa": 500000.0,
+      "peak_mm": 630.6,
+      "hold_min_mm": 5.0,
+      "max_y_m": 0.0666,
+      "ejected": false,
+      "finite": true,
+      "held_5s": false
+    }
+  },
+  "any_moderate_holds": false
+}
