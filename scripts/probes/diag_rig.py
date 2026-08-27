@@ -218,7 +218,17 @@ class DiagRig:
         return rec
 
 
-def run_diag(cfg: DiagConfig, frames_dir: str | None = None):
+def _snap(rig, snap_dir, idx):
+    import numpy as _np
+    os.makedirs(snap_dir, exist_ok=True)
+    _np.savez_compressed(os.path.join(snap_dir, f"trial_{idx:04d}.npz"),
+                         particle_q=rig.state.particle_q.numpy().astype(_np.float32),
+                         jp=rig.jp().astype(_np.float32),
+                         body_q=rig.state.body_q.numpy().astype(_np.float32),
+                         t=_np.float64(rig.t))
+
+
+def run_diag(cfg: DiagConfig, frames_dir: str | None = None, snap_dir: str | None = None, snap_every: int = 30):
     rig = DiagRig(cfg)
     log = []
     # approach + servo to grasp pose
@@ -253,16 +263,23 @@ def run_diag(cfg: DiagConfig, frames_dir: str | None = None):
         return pq - bq[:3]
 
     ref = None
+    snap_i = [0]
+    if snap_dir:
+        _snap(rig, snap_dir, snap_i[0]); snap_i[0] += 1
     for k in range(n_lift):
         s = (k + 1) / n_lift; s = s * s * (3 - 2 * s)
         rig.move_ee((S.BLOCK_CENTER[0], S.BLOCK_CENTER[1], z0 + 0.05 * s), FRAME_DT)
         if ref is None:
             ref = grip_frame_disp()
         rec = rig.log_tick(); rec["phase"] = "lift"; log.append(rec)
+        if snap_dir and k % 6 == 0:
+            _snap(rig, snap_dir, snap_i[0]); snap_i[0] += 1
 
     n_hold = int(cfg.hold_s / FRAME_DT)
     for k in range(n_hold):
         rig.apply_fingers(); rig.step(1)
+        if snap_dir and k % snap_every == 0:
+            _snap(rig, snap_dir, snap_i[0]); snap_i[0] += 1
         if k % 2 == 0:
             rec = rig.log_tick(); rec["phase"] = "hold"; log.append(rec)
             # drop detection

@@ -1,0 +1,143 @@
+{
+  "gate": "B_H1_H2_H6_factorial_sigma6000",
+  "base": {
+    "sigma_y": 6000.0,
+    "mu": 1.0,
+    "target_Nf": 0.6,
+    "voxel": 0.005,
+    "proxy_iterations": 4,
+    "lift_s": 1.0,
+    "hold_s": 10.0,
+    "transport": false
+  },
+  "arms": {
+    "B1": {
+      "cfg": {
+        "pad": "stock",
+        "control": "effort",
+        "viscosity": 20.0
+      },
+      "outcome": "drop",
+      "drop_cause": "gripper_frame_disp>2cm",
+      "health_clean": true,
+      "valid": true,
+      "invalid_reason": null,
+      "preload_Fn_L": 0.6409548140289658,
+      "final_Fn_L": 0.5950958575241859,
+      "block_z_start": 0.2199,
+      "block_z_max": 0.2229,
+      "block_z_end": 0.2228,
+      "final_nodes_L": 95,
+      "n_log": 1200,
+      "frames": "reports/media/frames/gateB_B1"
+    },
+    "B2": {
+      "cfg": {
+        "pad": "stock",
+        "control": "lock",
+        "viscosity": 20.0
+      },
+      "outcome": "drop",
+      "drop_cause": "gripper_frame_disp>2cm",
+      "health_clean": true,
+      "valid": false,
+      "invalid_reason": "lock_Fn_collapse_to_zero_like_oracle (finFn=0, nodes=0, block never lifts) - position-lock is not a valid isolator on this stack even for soft tofu, contra the a-priori expectation",
+      "preload_Fn_L": 0.64021908184752,
+      "final_Fn_L": 0.0,
+      "block_z_start": 0.2199,
+      "block_z_max": 0.2201,
+      "block_z_end": 0.22,
+      "final_nodes_L": 0,
+      "n_log": 1200,
+      "frames": "reports/media/frames/gateB_B2"
+    },
+    "B3": {
+      "cfg": {
+        "pad": "stock",
+        "control": "lock",
+        "viscosity": 200000.0
+      },
+      "outcome": "drop",
+      "drop_cause": "gripper_frame_disp>2cm",
+      "health_clean": true,
+      "valid": false,
+      "invalid_reason": "lock_Fn_collapse_to_zero_like_oracle (finFn=0, nodes=0, block never lifts) - position-lock is not a valid isolator on this stack even for soft tofu, contra the a-priori expectation",
+      "preload_Fn_L": 0.6367955243499059,
+      "final_Fn_L": 0.0,
+      "block_z_start": 0.2199,
+      "block_z_max": 0.2201,
+      "block_z_end": 0.22,
+      "final_nodes_L": 0,
+      "n_log": 1200,
+      "frames": "reports/media/frames/gateB_B3"
+    },
+    "B4": {
+      "cfg": {
+        "pad": "sensor",
+        "control": "effort",
+        "viscosity": 20.0
+      },
+      "outcome": "drop",
+      "drop_cause": "gripper_frame_disp>2cm",
+      "health_clean": true,
+      "valid": true,
+      "invalid_reason": null,
+      "preload_Fn_L": 0.6381687222080895,
+      "final_Fn_L": 0.6106981274182641,
+      "block_z_start": 0.2199,
+      "block_z_max": 0.2226,
+      "block_z_end": 0.2224,
+      "final_nodes_L": 80,
+      "n_log": 1200,
+      "frames": "reports/media/frames/gateB_B4"
+    },
+    "B5": {
+      "cfg": {
+        "pad": "sensor",
+        "control": "lock",
+        "viscosity": 20.0
+      },
+      "outcome": "drop",
+      "drop_cause": "gripper_frame_disp>2cm",
+      "health_clean": true,
+      "valid": false,
+      "invalid_reason": "lock_Fn_collapse_to_zero_like_oracle (finFn=0, nodes=0, block never lifts) - position-lock is not a valid isolator on this stack even for soft tofu, contra the a-priori expectation",
+      "preload_Fn_L": 0.6383535687392387,
+      "final_Fn_L": 0.0,
+      "block_z_start": 0.2199,
+      "block_z_max": 0.2202,
+      "block_z_end": 0.2201,
+      "final_nodes_L": 0,
+      "n_log": 1200,
+      "frames": "reports/media/frames/gateB_B5"
+    },
+    "B6": {
+      "cfg": {
+        "pad": "sensor",
+        "control": "lock",
+        "viscosity": 200000.0
+      },
+      "outcome": "drop",
+      "drop_cause": "gripper_frame_disp>2cm",
+      "health_clean": true,
+      "valid": false,
+      "invalid_reason": "lock_Fn_collapse_to_zero_like_oracle (finFn=0, nodes=0, block never lifts) - position-lock is not a valid isolator on this stack even for soft tofu, contra the a-priori expectation",
+      "preload_Fn_L": 0.6388722773981251,
+      "final_Fn_L": 0.0,
+      "block_z_start": 0.2199,
+      "block_z_max": 0.2202,
+      "block_z_end": 0.22,
+      "final_nodes_L": 0,
+      "n_log": 1200,
+      "frames": "reports/media/frames/gateB_B6"
+    }
+  },
+  "signatures_fired": [],
+  "any_hold": false,
+  "wall_s": 1276.3542654514313,
+  "valid_arms": [
+    "B1",
+    "B4"
+  ],
+  "conclusion": "All 6 arms DROP; only the constant-effort arms (B1 stock, B4 sensor) are valid isolators (lock arms B2/B3/B5/B6 collapsed Fn to 0 -> INVALID per safeguard 1). Under effort, BOTH pads maintain ~0.6 N and 80-95 contact nodes yet the block does NOT lift (z_max ~0.2226 vs 0.22 rest): the sigma6000 tofu SHEARS/EXTRUDES at the pad interface under lift load, so holdable tangential load is limited by the material shear-yield, NOT by mu*Fn (H8/H9). The sensor_format_pad (larger area, ~H1) does NOT change the outcome (B4 finFn 0.611 ~ B1 0.595, same z_max) -> pad pressure alone is not the dominant lever. B6 does NOT hold -> quasi-static grasp is NOT demonstrated possible in this stack at 0.6 N. Consistent with the empty-band being a MATERIAL yield/extrusion effect, robust to pad area and controller."
+}
