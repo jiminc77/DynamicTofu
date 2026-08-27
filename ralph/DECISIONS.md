@@ -183,3 +183,7 @@ Ruling received: the σ=3333 empty-band finding is ACCEPTED as a real, reportabl
 4. **Tofu stays 4×4×4 cm** for now — reducing mass would further weaken the acceleration axis; size is a second-order lever pending gate results.
 
 Ordering unchanged: audit → Gate A → Gate B.
+
+## 2026-08-27 — Item-2 drop-window audit COMPLETE: PASS (0 violations / 225)
+
+Full non-mutating re-run audit (reports/logs/drop-window-audit.json): 225/225 coordinates re-run, every trial carries a drop label, ALL drop_evidence_in_window=True, 0 violations → verdict PASS (fail-closed check clears). Confirms the drop_t=5.3 observation was the absolute-vs-relative frame reporting artifact, not an out-of-window labeling bug. run_trial now hard-asserts the invariant; JSONs are self-verifying going forward.
