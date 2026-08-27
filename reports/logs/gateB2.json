@@ -1,0 +1,87 @@
+{
+  "gate": "B2_viscosity_isolation_constant_effort",
+  "high_visc_effort_arms": {
+    "B3prime": {
+      "pad": "stock",
+      "viscosity": 200000.0,
+      "control": "effort",
+      "it": 4,
+      "outcome": "drop",
+      "drop_cause": "gripper_frame_disp>2cm",
+      "health_clean": false,
+      "valid": false,
+      "invalid_reason": "health_blowup (eta=2e5 numerically unstable under effort at h=5mm/it=4)",
+      "preload_Fn_L": 0.6367618545259404,
+      "final_Fn_L": 0.0,
+      "block_z_start": 0.2199,
+      "block_z_max": 0.3991,
+      "block_z_end": -126.6532,
+      "final_nodes_L": 0,
+      "wall": 264
+    },
+    "B6prime": {
+      "pad": "sensor",
+      "viscosity": 200000.0,
+      "control": "effort",
+      "it": 4,
+      "outcome": "drop",
+      "drop_cause": "gripper_frame_disp>2cm",
+      "health_clean": false,
+      "valid": false,
+      "invalid_reason": "health_blowup (eta=2e5 numerically unstable under effort at h=5mm/it=4)",
+      "preload_Fn_L": 0.6388699770726689,
+      "final_Fn_L": 0.0,
+      "block_z_start": 0.2199,
+      "block_z_max": 0.4273,
+      "block_z_end": -142.1811,
+      "final_nodes_L": 0,
+      "wall": 535
+    }
+  },
+  "eta20_effort_baseline": {
+    "B1_stock_eta20": {
+      "cfg": {
+        "pad": "stock",
+        "control": "effort",
+        "viscosity": 20.0
+      },
+      "outcome": "drop",
+      "drop_cause": "gripper_frame_disp>2cm",
+      "health_clean": true,
+      "valid": true,
+      "invalid_reason": null,
+      "preload_Fn_L": 0.6409548140289658,
+      "final_Fn_L": 0.5950958575241859,
+      "block_z_start": 0.2199,
+      "block_z_max": 0.2229,
+      "block_z_end": 0.2228,
+      "final_nodes_L": 95,
+      "n_log": 1200,
+      "frames": "reports/media/frames/gateB_B1"
+    },
+    "B4_sensor_eta20": {
+      "cfg": {
+        "pad": "sensor",
+        "control": "effort",
+        "viscosity": 20.0
+      },
+      "outcome": "drop",
+      "drop_cause": "gripper_frame_disp>2cm",
+      "health_clean": true,
+      "valid": true,
+      "invalid_reason": null,
+      "preload_Fn_L": 0.6381687222080895,
+      "final_Fn_L": 0.6106981274182641,
+      "block_z_start": 0.2199,
+      "block_z_max": 0.2226,
+      "block_z_end": 0.2224,
+      "final_nodes_L": 80,
+      "n_log": 1200,
+      "frames": "reports/media/frames/gateB_B4"
+    }
+  },
+  "H2_verdict": "INCONCLUSIVE (not refuted): both eta=2e5 constant-effort arms BLOW UP (health=False, block ejected to z~0.40-0.43, Fn->0) at baseline h=5mm/it=4 - the SAME numerical-instability class as the it=8 blowups. A health blowup is INVALID per safeguard, so H2 cannot be isolated at baseline settings: the high-viscosity regime the consult flags as physically realistic (literature tofu creep 1e5-1e7 Pa.s) is exactly where the current coupled stack becomes numerically unstable under effort. Consequence: whether literature-calibrated rheology REOPENS the band is UNTESTED - it requires first stabilizing the coupling (smaller coupled dt / implicit viscosity / the Gate C convergence regime). The eta=20 constant-effort material-limit result (B1/B4: force maintained, block not lifted, ductile necking) stands independently; H2's additional contribution remains open. Re-test eta=2e5 in any stable (it,h) regime Gate C identifies.",
+  "any_high_visc_hold": false,
+  "wall_s": 534.5661380290985,
+  "auto_verdict_note": "The initial auto-verdict ('H2 not dominant, still drops') was WRONG: it mis-read health-blowup drops as clean drops. Corrected above."
+}

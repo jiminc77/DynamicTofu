@@ -43,3 +43,16 @@ Duplicating the valid effort arms at it=8 (reports/logs/gateB-it8.json): **both 
 ## Clips
 - Holding run: reports/media/gateB_holding_run.mp4 (Gate A elastic effort-it4 — the validated hold; block rises and is held).
 - Dropping run: reports/media/gateB_dropping_run.mp4 (Gate B sigma6000 tofu, stock effort — the empty-band drop; pads rise, block shears and stays).
+
+## Gate B2 — viscosity axis under constant-effort (H2 isolation)
+
+eta=2e5 only ran under position-lock in Gate B (invalid), so H2 was unisolated. Re-run under the valid constant-effort closure (reports/logs/gateB2.json; frames gateB2_B{3,6}prime):
+
+| arm | pad | control | eta | it | outcome | health | preFn | finFn | z_max | valid |
+|---|---|---|---|---|---|---|---|---|---|---|
+| B3prime | stock  | effort | 2e5 | 4 | drop | **False (blowup)** | 0.637 | 0.000 | 0.399 | no |
+| B6prime | sensor | effort | 2e5 | 4 | drop | **False (blowup)** | 0.639 | 0.000 | 0.427 | no |
+| (B1 baseline) | stock  | effort | 20 | 4 | drop | True | 0.641 | 0.595 | 0.223 | yes |
+| (B4 baseline) | sensor | effort | 20 | 4 | drop | True | 0.638 | 0.611 | 0.223 | yes |
+
+**H2 verdict: INCONCLUSIVE (not refuted).** Both eta=2e5 effort arms **blow up** (health=False, block ejected to z~0.40-0.43) at baseline h=5 mm/it=4 — the same numerical-instability class as the it=8 blowups. Per safeguard a blowup is INVALID, so H2 cannot be isolated at baseline: the physically realistic high-viscosity regime (literature tofu creep 1e5-1e7 Pa·s) is exactly where the current coupled stack becomes unstable under effort. Whether literature-calibrated rheology REOPENS the band is therefore **UNTESTED**; it requires first stabilizing the coupling (smaller coupled dt / implicit viscosity / the Gate C regime). The eta=20 effort material-limit result stands independently. **Action:** re-test eta=2e5 in any stable (it,h) regime that Gate C identifies before drawing an H2 conclusion.
