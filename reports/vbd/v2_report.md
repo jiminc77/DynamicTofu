@@ -1,6 +1,6 @@
 # V-2 VBD tofu prototype — force sweep + hard-milestone result
 
-Rig: src/vbd_rig.py (4x4x4 cm VBD tofu, E=25 kPa nu=0.45 -> k_mu 8.6e3 k_lambda 77.6e3, density 1000, k_damp 1.0; floating 3-DOF gripper world->Z-prismatic->palm->2 finger prismatics; gravity -9.81 + ground; SolverCoupledProxy MuJoCo+VBD; VBD it=30 substeps 12; contact ke5e4 kd1e-3 kf1e3). Controller: force-limited effort on the prismatic fingers (effort_limit = per-finger grip force). Artifacts (all persisted): reports/logs/vbd/v2_sweep.json (the 5 prescribed forces at mu=0.5, full traces), reports/logs/vbd/v2_extended.json (the extended force/friction/lift-speed variants, full time series + per-run config + provenance), clip reports/media/v2_slip_2N.mp4.
+Rig: src/vbd_rig.py (4x4x4 cm VBD tofu, E=25 kPa nu=0.45 -> k_mu 8.6e3 k_lambda 77.6e3, density 1000, k_damp 1.0; floating 3-DOF gripper world->Z-prismatic->palm->2 finger prismatics; gravity -9.81 + ground; SolverCoupledProxy MuJoCo+VBD; VBD it=30 substeps 12; contact ke5e4 kd1e-3 kf1e3). Controller: force-limited effort on the prismatic fingers (effort_limit = per-finger grip force). Artifacts (all persisted): reports/logs/vbd/v2_sweep.json (the 5 prescribed forces at mu=0.5, per-run summary metrics + 6-sample tail), reports/logs/vbd/v2_extended.json (the extended force/friction/lift-speed variants, full time series + per-run config + provenance), clip reports/media/v2_slip_2N.mp4.
 
 ## HARD MILESTONE: NOT MET (tofu lifts but does not hold >= 5 s)
 
