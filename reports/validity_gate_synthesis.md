@@ -31,7 +31,7 @@ The E1 "empty band" (no intact grasp-and-carry region for silken-tofu-stiffness 
 
 ## Defensible paper wording (unchanged from the consult, now evidence-backed)
 
-> "Under the stock Franka fingertip geometry (and a sensor-format flat fingertip) and the current von-Mises/capped-viscoplastic MPM model, no intact transport region was observed; the material fails by ductile shear/extrusion necking. The result is robust to pad area within the numerically stable regime; closure-controller and yield-surface-shape robustness could not be established (alternative controllers and yield surfaces were numerically unstable). Quasi-static grasp validity remains contingent on **rheology calibration** (high-viscosity creep could not be tested — numerically unstable) and on **proxy-coupling / grid convergence** (high-fidelity runs are unstable), which are open."
+> "Under the stock Franka fingertip geometry (and a sensor-format flat fingertip) and the current von-Mises/capped-viscoplastic MPM model, no intact transport region was observed; the material fails by ductile shear/extrusion necking. The result is robust to pad area within the numerically stable regime; closure-controller and yield-surface-shape robustness could not be established (the alternative position-lock controller was invalid via grip-force collapse, and the alternative yield surfaces were numerically unstable). Quasi-static grasp validity remains contingent on **rheology calibration** (high-viscosity creep could not be tested — numerically unstable) and on **proxy-coupling / grid convergence** (high-fidelity runs are unstable), which are open."
 
 **Avoid:** "Real silken tofu has no feasible grasp-force band" (unscoped).
 
