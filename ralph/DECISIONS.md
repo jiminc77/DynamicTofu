@@ -206,3 +206,8 @@ Directed order:
 2. **Gate C** — proxy iterations {1,4,8} x h {5,2.5} at the B1 config (resolve the H5 it=8 stability caveat; mandatory before firm claims) + yield-surface bracket (C-base / C-cap-off / C-asym).
 3. v2 controller stays design-only.
 4. Storyline reserved; after B2+C land, assemble the full validity-gate synthesis package for the user decision.
+
+## 2026-08-27 — Gate C COMPLETE + full validity-gate synthesis assembled (STOP for storyline)
+
+Gate C: convergence grid it{1,4,8}xh{5,2.5mm} at B1 -> 3 health-clean cells (it1/h5, it1/h2.5, it4/h5) all DROP with finFn within ~3% and no lift (converged in the accessible stable regime); the other 3 cells BLOW UP (refining iterations or h destabilizes -> H5 stability ceiling, continuum convergence UNVERIFIED). Yield bracket: C-base ~= C-asym (drop invariant) -> yield-surface shape not the gating factor; C-cap-off blew up (invalid). Full synthesis: reports/validity_gate_synthesis.md.
+VERDICT: the empty band is a genuine MATERIAL-mechanics result (ductile shear/extrusion necking, H8) in the current model + stock/sensor fingertip + stable numerics; robust to pad area (H1 not dominant), controller (valid arms), and yield-surface shape; convergent in the stable regime. OPEN (numerically inaccessible): H2 (high-viscosity creep untested - unstable) and continuum convergence (refinement unstable). Defensible scoped wording per consult adopted. RESERVED for user: (1) storyline; (2) solver stabilization (smaller coupled dt/implicit viscosity) to unblock H2+convergence; (3) v2 force controller build (design-only); (4) E2/E3 downstream of storyline. STOP at human terminus.

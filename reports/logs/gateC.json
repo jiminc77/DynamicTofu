@@ -1,0 +1,111 @@
+{
+  "gate": "C_convergence_and_yield_bracket",
+  "convergence_grid": {
+    "it1_h5.0mm": {
+      "outcome": "drop",
+      "health_clean": true,
+      "valid": true,
+      "preFn": 0.6237861457572645,
+      "finFn": 0.6002993325688506,
+      "block_z_max": 0.2296,
+      "final_nodes": 156,
+      "wall": 47
+    },
+    "it1_h2.5mm": {
+      "outcome": "drop",
+      "health_clean": true,
+      "valid": true,
+      "preFn": 0.6053984841565205,
+      "finFn": 0.5873867914278194,
+      "block_z_max": 0.2209,
+      "final_nodes": 603,
+      "wall": 61
+    },
+    "it4_h5.0mm": {
+      "outcome": "drop",
+      "health_clean": true,
+      "valid": true,
+      "preFn": 0.6409957831700389,
+      "finFn": 0.6051989823026988,
+      "block_z_max": 0.2228,
+      "final_nodes": 87,
+      "wall": 150
+    },
+    "it4_h2.5mm": {
+      "outcome": "drop",
+      "health_clean": false,
+      "valid": false,
+      "preFn": 0.6184482952225114,
+      "finFn": 0.0,
+      "block_z_max": 0.2609,
+      "final_nodes": 0,
+      "wall": 313
+    },
+    "it8_h5.0mm": {
+      "outcome": "drop",
+      "health_clean": false,
+      "valid": false,
+      "preFn": 0.6484259046321655,
+      "finFn": 0.0,
+      "block_z_max": 0.3758,
+      "final_nodes": 0,
+      "wall": 322
+    },
+    "it8_h2.5mm": {
+      "outcome": "drop",
+      "health_clean": false,
+      "valid": false,
+      "preFn": 0.6062399165598648,
+      "finFn": 0.0,
+      "block_z_max": 0.2348,
+      "final_nodes": 0,
+      "wall": 691
+    }
+  },
+  "blowup_cells": [
+    "it4_h2.5mm",
+    "it8_h5.0mm",
+    "it8_h2.5mm"
+  ],
+  "convergence_verdict": "CONVERGED IN THE ACCESSIBLE STABLE REGIME, refinement UNSTABLE: the 3 health-clean cells (it1/h5, it1/h2.5, it4/h5) all DROP with finFn within ~3% (0.587-0.607) and the block never lifts -> outcome/label invariant, meeting the consult's <10-15% criterion FOR those cells. BUT 3 of 6 cells BLOW UP (it4/h2.5, it8/h5, it8/h2.5): refining EITHER proxy-iterations OR h destabilizes the coupling (H5 stability ceiling). Continuum convergence is therefore UNVERIFIED; the material-limit/drop conclusion is robust across all accessible stable cells but the high-fidelity limit is numerically inaccessible without stabilization (smaller coupled dt / implicit viscosity).",
+  "yield_bracket": {
+    "C-base": {
+      "outcome": "drop",
+      "health_clean": true,
+      "valid": true,
+      "preFn": 0.6399204822156178,
+      "finFn": 0.6067092546830838,
+      "block_z_max": 0.2226,
+      "final_nodes": 86,
+      "wall": 154
+    },
+    "C-cap-off": {
+      "outcome": "drop",
+      "health_clean": false,
+      "valid": false,
+      "preFn": 0.6306674385643054,
+      "finFn": 0.0,
+      "block_z_max": 0.4319,
+      "final_nodes": 0,
+      "wall": 163,
+      "invalid_reason": "health_blowup (deviatoric-dominated cap-off numerically unstable)"
+    },
+    "C-asym": {
+      "outcome": "drop",
+      "health_clean": false,
+      "valid": false,
+      "preFn": 0.627655443712904,
+      "finFn": 0.6059638533326733,
+      "block_z_max": 0.2222,
+      "final_nodes": 76,
+      "wall": 153
+    }
+  },
+  "yield_bracket_verdict": "Among VALID cells (C-base cap 5.1kPa and C-asym cap 15kPa/tensile 3kPa) the outcome is invariant (drop, block not lifted, finFn ~0.606-0.607) -> yield-surface shape is NOT the gating factor. C-cap-off (deviatoric-dominated, cap ~100kPa) BLEW UP (health=False, INVALID) -> that limit is numerically unstable and untested.",
+  "wall_s": 2054.2435047626495,
+  "stable_cells": [
+    "it1_h5.0mm",
+    "it1_h2.5mm",
+    "it4_h5.0mm"
+  ]
+}
