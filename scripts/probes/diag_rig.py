@@ -35,8 +35,13 @@ GRASP_QUAT_WXYZ = (1.0, 0.0, 0.0, 0.0)
 PREGRASP_Z = 0.32
 GRASP_Z = 0.22
 FRAME_DT = 0.005  # 200 Hz top-level tick (>=100 Hz logging)
-LOCK_KP = 3000.0
-LOCK_KD = 30.0
+# Position-lock is an effort-space PD holding the preload jaw gap. The Franka
+# finger is ~15 g, so at dt=5 ms stability needs KP < 4*m/dt^2 ~ 2400 N/m; a
+# stiff KP=3000 blew the fingers up. Use a conservative critically-damped PD
+# with a force clamp (the preload forces are <1 N; a few-N clamp is ample).
+LOCK_KP = 1500.0  # just below the dt=5ms/15g finger stability limit (~2400)
+LOCK_KD = 10.0    # ~critically damped for the finger inertia
+LOCK_FORCE_CLAMP_N = 12.0
 
 
 @dataclass
@@ -149,7 +154,8 @@ class DiagRig:
             jf = self.control.joint_f.numpy(); jf[:] = 0.0
             q = self.state.joint_q.numpy(); qd = self.state.joint_qd.numpy()
             for d, c in zip(self.meta.finger_dof_indices, self.meta.finger_coord_indices):
-                jf[d] = -LOCK_KP * (q[c] - self.q_lock[c]) - LOCK_KD * qd[d]
+                f = -LOCK_KP * (q[c] - self.q_lock[c]) - LOCK_KD * qd[d]
+                jf[d] = float(np.clip(f, -LOCK_FORCE_CLAMP_N, LOCK_FORCE_CLAMP_N))
             self.control.joint_f.assign(jf)
         else:
             self.fingers.apply(self.control, self.cfg.target_Nf)
