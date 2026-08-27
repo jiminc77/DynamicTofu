@@ -47,6 +47,9 @@ class VbdConfig:
     density: float = 1000.0
     vbd_iterations: int = 30
     substeps: int = 12               # 8-16 per spec
+    soft_contact_ke: float = 5.0e4
+    soft_contact_kd: float = 1.0e-3
+    soft_contact_kf: float = 1.0e3   # tangential stiffness (consult placeholder); kf-ladder variable
     target_ke: float = 2.0e4
     target_kd: float = 200.0
     # state-machine phase end times [s]
@@ -108,9 +111,9 @@ class VbdTofuRig:
         self.model = builder.finalize()
         newton.eval_fk(self.model, self.model.joint_q, self.model.joint_qd, self.model)
 
-        self.model.soft_contact_ke = 5.0e4
-        self.model.soft_contact_kd = 1.0e-3
-        self.model.soft_contact_kf = 1.0e3
+        self.model.soft_contact_ke = cfg.soft_contact_ke
+        self.model.soft_contact_kd = cfg.soft_contact_kd
+        self.model.soft_contact_kf = cfg.soft_contact_kf
         self.model.soft_contact_mu = cfg.soft_contact_mu
 
         self.state_0 = self.model.state()
