@@ -197,3 +197,12 @@ Deliverables: gateB.json, short report, one holding + one dropping clip; then ST
 ## 2026-08-27 — Gate B COMPLETE + cross-gate synthesis (STOP at human terminus)
 
 All 6 arms drop. Lock arms INVALID (Fn→0 collapse, safeguard 1); valid effort arms (B1 stock, B4 sensor) maintain ~0.6 N + 80-95 nodes but block never lifts → tofu shear/extrusion limits hold (H8/H9), sensor pad doesn't rescue (H1 not dominant), no quasi-static hold (B6). it=8 duplicate: both effort arms BLOW UP (health=False) → coupling iteration-stability sensitivity (H5), conclusion valid at it=4 but not iteration-robust → Gate C convergence needed. Cross-gate: contact stack FUNCTIONAL (Gate A elastic holds under effort); empty band is a MATERIAL yield/extrusion effect (H8/H9, scoped to clean it=4 effort arms B1/B4; robust to pad area within effort (sensor~=stock), NOT established controller-robust since lock arms INVALID; H2 unisolated), NOT a contact bug; position-lock unsuitable (both gates) → motivates v2 force controller (design-only). Full report reports/gateB_report.md; clips gateB_holding_run.mp4 + gateB_dropping_run.mp4. STOP at human-blocked terminus per directive.
+
+## 2026-08-27 — Gate B reviewed/verified; ORDER: B2 (viscosity axis) -> C (convergence+yield bracket) -> synthesis
+
+External review verified Gate B (report, JSON spot-checks, clip frames consistent; lock invalidation + it=8 caveat correct). Note for record: the dropping-run frames show classic DUCTILE NECKING (pads carry a neck of material upward while the bulk stays grounded; damage particles concentrated in the neck) — consistent with H8 (ductile extrusion instead of fracture), to be discriminated from H2 by Gate B2.
+Directed order:
+1. **Gate B2** — restore the lost viscosity axis (eta=2e5 only ever ran under position-lock, so H2 was never isolated). Run B3prime = stock + constant-effort + eta 2e5, and B6prime = sensor_format_pad + constant-effort + eta 2e5; both it=4, sigma6000, mu=1, target 0.60 N/finger, 1 s lift + 10 s hold. Decisive: high-viscosity HOLD -> H2 dominant (literature rheology 1e5-1e7 Pa·s plausibly reopens the band); still DROPS via necking -> material-limit conclusion stands. Deliver gateB2.json + updated report section.
+2. **Gate C** — proxy iterations {1,4,8} x h {5,2.5} at the B1 config (resolve the H5 it=8 stability caveat; mandatory before firm claims) + yield-surface bracket (C-base / C-cap-off / C-asym).
+3. v2 controller stays design-only.
+4. Storyline reserved; after B2+C land, assemble the full validity-gate synthesis package for the user decision.
