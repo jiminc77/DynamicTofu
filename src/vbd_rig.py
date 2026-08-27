@@ -51,6 +51,8 @@ class VbdConfig:
     soft_contact_kd: float = 1.0e-3
     soft_contact_kf: float = 1.0e3   # tangential stiffness (consult placeholder); kf-ladder variable
     particle_radius: float = 0.007   # soft-body surface resolution (tunneling suspect)
+    finger_shape_mu: float = 0.7     # ACTUAL Coulomb friction for the VBD ALM rigid-particle
+    # contact (avg_mu = sqrt(shape_mu0*shape_mu1)); soft_contact_mu is NOT used by this path.
     target_ke: float = 2.0e4
     target_kd: float = 200.0
     # state-machine phase end times [s]
@@ -167,7 +169,7 @@ class VbdTofuRig:
         )
 
     def _emit_gripper(self, builder):
-        cfg = newton.ModelBuilder.ShapeConfig(density=800.0, ke=8.0e4, kd=1.0e-4, kf=1.0e3, mu=0.7)
+        cfg = newton.ModelBuilder.ShapeConfig(density=800.0, ke=8.0e4, kd=1.0e-4, kf=1.0e3, mu=self.cfg.finger_shape_mu)
         palm_pos = wp.vec3(PALM_X, 0.0, GRASP_Z)
         palm = builder.add_link(xform=wp.transform(p=palm_pos, q=wp.quat_identity()), label="palm")
         left = builder.add_link(xform=wp.transform(p=wp.vec3(0.0, FINGER_OPEN_Y, GRASP_Z), q=wp.quat_identity()), label="left_finger")
