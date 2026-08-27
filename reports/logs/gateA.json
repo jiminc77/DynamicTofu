@@ -475,7 +475,31 @@
       "finalNodes": 95,
       "note": "SAME material/friction/force under constant-effort HOLDS: block rises 3.4 cm, clean contact"
     },
-    "corrected_verdict": "CONTACT STACK VALID. A4/A5 drop is a POSITION-LOCK controller artifact, not a contact-stack failure. The elastic (non-yielding) block holds cleanly under force/effort-maintaining closure. Implication: (i) the real-tofu empty band is driven by the MATERIAL yielding/extruding (deviatoric plastic flow, consult H8/H2), not a contact bug; (ii) position-lock is unsuitable for compliant grasp; (iii) this directly motivates the user-ordered v2 closed-loop FORCE controller.",
+    "corrected_verdict": "CONTACT STACK FUNCTIONAL (block lifts under effort at the exact A4/A5 config). A4/A5 drop is dominated by the position-lock controller artifact; a secondary coupling-iteration sensitivity (H5) makes the A4/A5 force marginal even under effort (it4 hold vs it8 slip-after-lift). Not 'contact stack invalid'.",
     "hard_gate_directive_status": "A4/A5 dropped -> per directive STOP + escalate. Escalated as a FALSE ALARM with the disambiguating evidence above; Gate B halted pending user direction."
+  },
+  "matched_config_isolation": {
+    "purpose": "Isolate CONTROL at the exact A4/A5 config (E=70kPa, mu=1.0, N=0.45) - only control differs vs the position-lock A4/A5 runs.",
+    "artifact": "reports/logs/gateA-matched-effort.json + reports/media/frames/gateA_effort_it{4,8}/log.npz",
+    "effort_it4": {
+      "outcome": "hold",
+      "health": true,
+      "block_z_start": 0.22,
+      "block_z_max": 0.2542,
+      "finalFn": 0.454,
+      "finalNodes": 65,
+      "vs_lock_A4": "A4 position-lock DROPPED, block never left 0.22"
+    },
+    "effort_it8": {
+      "outcome": "drop",
+      "health": true,
+      "block_z_start": 0.22,
+      "block_z_max": 0.2416,
+      "block_z_end": 0.232,
+      "finalFn": 0.447,
+      "finalNodes": 31,
+      "note": "partial lift +2.2cm then slip; vs A5 lock never lifted"
+    },
+    "refined_verdict": "CONTACT STACK FUNCTIONAL, NOT invalid: under constant-effort the block LIFTS off the table (+3.4cm it=4; +2.2cm then slip it=8), whereas position-lock never lifts it. The raw 'A4/A5 drop -> contact stack invalid' signature is refuted. BUT the grasp at the A4/A5 force (N=0.45, mu=1.0, E=70kPa) is MARGINAL and CONVERGENCE-SENSITIVE: effort holds at it=4 and slips-after-lift at it=8 -> a real coupling-iteration (H5) traction sensitivity to flag. Position-lock is confirmed unsuitable for compliant grasp (motivates the v2 force controller)."
   }
 }

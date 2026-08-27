@@ -1,0 +1,26 @@
+{
+  "effort_it4": {
+    "outcome": "hold",
+    "cause": null,
+    "health": true,
+    "preloadFn": 0.5291473051358879,
+    "finalFn": 0.45408288152070553,
+    "finalNodes": 65,
+    "block_z_start": 0.22,
+    "block_z_max": 0.2542,
+    "block_z_end": 0.2542,
+    "wall": 149
+  },
+  "effort_it8": {
+    "outcome": "drop",
+    "cause": "gripper_frame_disp>2cm",
+    "health": true,
+    "preloadFn": 0.5233109992380583,
+    "finalFn": 0.44696039372862745,
+    "finalNodes": 31,
+    "block_z_start": 0.22,
+    "block_z_max": 0.2416,
+    "block_z_end": 0.232,
+    "wall": 289
+  }
+}

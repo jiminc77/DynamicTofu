@@ -32,3 +32,16 @@ Implications:
 
 ## Hard-gate handling
 A4/A5 dropped → per the directive I STOP and escalate. Escalated as a **false alarm** with the disambiguating evidence; **Gate B is halted pending user direction** on whether to (a) proceed to Gate B using constant-effort/force closure as the primary and position-lock as a labeled diagnostic, or (b) redesign Gate A's oracle to a force-maintaining clamp.
+
+## Matched-config control isolation (addressing the review: only CONTROL differs)
+
+At the EXACT A4/A5 parameters (E=70 kPa, μ=1.0, N=0.45) — changing ONLY the controller from position-lock to constant-effort (artifacts: `reports/logs/gateA-matched-effort.json`, `reports/media/frames/gateA_effort_it{4,8}/log.npz`):
+
+| it | control | outcome | block_z start→max | finalFn | nodes |
+|---|---|---|---|---|---|
+| 4 | position-lock (A4) | drop | 0.22 → 0.22 (never lifts) | 0 | 0 |
+| 4 | **constant-effort** | **hold** | 0.22 → **0.2542 (+3.4 cm)** | 0.454 | 65 |
+| 8 | position-lock (A5) | drop | 0.22 → 0.22 (never lifts) | 0 | 0 |
+| 8 | constant-effort | drop | 0.22 → 0.2416 (+2.2 cm) then slip | 0.447 | 31 |
+
+**Refined verdict: CONTACT STACK FUNCTIONAL, not invalid.** Under force/effort-maintaining closure the block LIFTS off the table at the exact A4/A5 config (it=4 holds; it=8 lifts then slips) — position-lock never lifts it. The raw hard-gate signature is refuted. Two residual, genuine effects: (i) position-lock is unsuitable for compliant grasp (grip force collapses on a shifting near-rigid block) → motivates the v2 force controller; (ii) at the A4/A5 force the grasp is MARGINAL and coupling-iteration-sensitive (effort it=4 hold vs it=8 slip-after-lift) → a real H5 traction/convergence concern to carry into Gate B/C.
