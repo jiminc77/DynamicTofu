@@ -1,0 +1,34 @@
+Warp 1.17.0.dev20260807 initialized:
+   CUDA Toolkit 12.9, Driver 13.1
+   Devices:
+     "cpu"      : "x86_64"
+     "cuda:0"   : "NVIDIA RTX PRO 6000 Blackwell Workstation Edition" (95 GiB, sm_120, mempool enabled)
+   Kernel cache:
+     /home/simx2204/.cache/warp/1.17.0.dev20260807
+Module warp._src.coloring 0a2f0aa load on device 'cpu' took 0.94 ms  (cached)
+Module newton._src.utils.mesh 3a50b9a load on device 'cpu' took 0.27 ms  (cached)
+Module validate_and_correct_inertia_kernel_5e18b3cd 5e18b3c load on device 'cuda:0' took 0.42 ms  (cached)
+/home/simx2204/Workspace/DynamicTofu/newton/../scripts/vbd/../../src/vbd_rig2.py:96: UserWarning: Inertia validation corrected 1 bodies. Set validate_inertia_detailed=True for detailed per-body warnings.
+  self.model = builder.finalize()
+Module newton._src.geometry.bvh 519a3cd load on device 'cuda:0' took 0.56 ms  (cached)
+Module newton._src.sim.articulation 9be914f load on device 'cuda:0' took 4.29 ms  (cached)
+Module newton._src.solvers.vbd.rigid_vbd_kernels 87e3500 load on device 'cpu' took 0.27 ms  (cached)
+Module newton._src.solvers.vbd.rigid_vbd_kernels ad8ab2a load on device 'cuda:0' took 4.93 ms  (cached)
+Module newton._src.solvers.solver db37500 load on device 'cuda:0' took 0.48 ms  (cached)
+Module newton._src.sim.collide 7328fa3 load on device 'cuda:0' took 0.52 ms  (cached)
+Module newton._src.geometry.broad_phase_nxn a474f53 load on device 'cuda:0' took 0.32 ms  (cached)
+Module narrow_phase_primitive_write_contact_False_False_False 60c6491 load on device 'cuda:0' took 0.46 ms  (cached)
+Module narrow_phase_gjk_mpr_True_False_write_contact_support_map_lean_post_process_minkowski_only e4334c3 load on device 'cuda:0' took 1.52 ms  (cached)
+Module newton._src.geometry.narrow_phase 85093bd load on device 'cuda:0' took 0.56 ms  (cached)
+Module newton._src.geometry.kernels 16409c5 load on device 'cuda:0' took 2.21 ms  (cached)
+Module newton._src.geometry.soft_contacts_sdf ddf9714 load on device 'cuda:0' took 2.77 ms  (cached)
+Module newton._src.solvers.xpbd.kernels 0721ed5 load on device 'cuda:0' took 5.55 ms  (cached)
+Module newton._src.solvers.vbd.particle_vbd_kernels 78ac8a5 load on device 'cuda:0' took 1.36 ms  (cached)
+Module newton._src.solvers.vbd.particle_vbd_kernels e341387 load on device 'cuda:0' took 1.26 ms  (cached)
+E=100kPa F=0.45N: slip=50.12mm peak=3.9mm final=0.9mm held<2mm=False
+E=100kPa F=2.0N: slip=17.68mm peak=45.8mm final=32.1mm held<2mm=False
+E=200kPa F=0.45N: slip=50.13mm peak=4.8mm final=1.0mm held<2mm=False
+E=200kPa F=2.0N: slip=20.23mm peak=42.5mm final=30.0mm held<2mm=False
+E=500kPa F=0.45N: slip=50.18mm peak=5.7mm final=1.0mm held<2mm=False
+E=1000kPa F=0.45N: slip=50.2mm peak=5.7mm final=1.0mm held<2mm=False
+hard_gate_pass: False -> reports/logs/vbd/p1_oracle_full.json
