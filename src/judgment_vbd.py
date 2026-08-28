@@ -12,7 +12,11 @@ SLIP_START_K = 44640
 SLIP_END_K = 55680
 SLIP_THRESHOLD_MM = 2.0
 DAMAGE_DVF_THRESHOLD = 0.005
-LIFT_END = 4.30
+# Damage-window start (external ruling fallback 2026-08-28): latch from GRIP-COMPLETION
+# (preload-end, 1.80s) rather than lift-end. Excludes the seed-unstable first-contact impact
+# spike (ramp/early-preload) but keeps the sustained preload/lift crush that persists past grip
+# completion. LIFT_END=4.30 threw away real crush (E7/F2.0 flipped damage->intact); 1.80 restores it.
+LIFT_END = 1.80
 
 PHASE_WINDOWS = (
     ("ramp", 0, 3840, False),
