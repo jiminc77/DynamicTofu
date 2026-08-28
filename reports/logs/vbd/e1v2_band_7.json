@@ -44,7 +44,9 @@
       "2": "damage"
     },
     "20": {
-      "0.4": "slip"
+      "0.4": "slip",
+      "0.6": "slip",
+      "0.8": "slip"
     },
     "5": {
       "0.4": "slip",
@@ -716,6 +718,66 @@
       "ejected": false,
       "finite": true,
       "certified": false
+    },
+    "a20_F0.6": {
+      "label": "slip",
+      "realized_accel_m_s2": 12.8892,
+      "realized_source": "axis_map",
+      "hold_slip_z_mm": 3.005964681506157,
+      "transport_slip_xz_mm": null,
+      "transport_x_res_mm": null,
+      "transport_z_res_mm": null,
+      "transport_y_res_mm": null,
+      "grasp_frame_y_res_mm": null,
+      "assembly_drift_mm": null,
+      "escape_mode": null,
+      "slip_perm_tangential_mm": null,
+      "x_res_mm": null,
+      "z_res_mm": null,
+      "y_res_mm": null,
+      "slip_perm_x_mm": null,
+      "slip3d_max_mm": 16.96288424486339,
+      "yz_residual_mm": null,
+      "dvf": 0.0019531248777019867,
+      "dvf_wholetrial": 0.0032552082127700437,
+      "damage_window": "grip_completion_preload_end",
+      "lift_end_s": 1.8,
+      "damage_latch_t": null,
+      "drop_t": 5.616666666666652,
+      "damage_after_drop": false,
+      "ejected": true,
+      "finite": true,
+      "certified": false
+    },
+    "a20_F0.8": {
+      "label": "slip",
+      "realized_accel_m_s2": 12.87843883037503,
+      "realized_source": "cell",
+      "hold_slip_z_mm": 2.0220205187797546,
+      "transport_slip_xz_mm": null,
+      "transport_x_res_mm": null,
+      "transport_z_res_mm": null,
+      "transport_y_res_mm": null,
+      "grasp_frame_y_res_mm": null,
+      "assembly_drift_mm": null,
+      "escape_mode": null,
+      "slip_perm_tangential_mm": null,
+      "x_res_mm": null,
+      "z_res_mm": null,
+      "y_res_mm": null,
+      "slip_perm_x_mm": null,
+      "slip3d_max_mm": 19.85176192428232,
+      "yz_residual_mm": null,
+      "dvf": 0.0039062498664262832,
+      "dvf_wholetrial": 0.00520833320149434,
+      "damage_window": "grip_completion_preload_end",
+      "lift_end_s": 1.8,
+      "damage_latch_t": null,
+      "drop_t": 9.1166666666667,
+      "damage_after_drop": false,
+      "ejected": true,
+      "finite": true,
+      "certified": false
     }
   },
   "coverage": {
@@ -807,6 +869,14 @@
       [
         5.0,
         2.0
+      ],
+      [
+        20.0,
+        0.6
+      ],
+      [
+        20.0,
+        0.8
       ]
     ],
     "failed": []
