@@ -162,6 +162,10 @@ def update_band(band, receipt):
             receipt.get("validity_gate") or {}).get("certified"),
     }
     pair = [float(a), float(F)]
+    # Robust to a band reloaded with a different/legacy coverage schema.
+    cov = band.setdefault("coverage", {})
+    cov.setdefault("completed", [])
+    cov.setdefault("failed", [])
     target = "failed" if receipt["status"] == "error" else "completed"
     other = "completed" if target == "failed" else "failed"
     band["coverage"][other] = [item for item in band["coverage"][other] if item != pair]
