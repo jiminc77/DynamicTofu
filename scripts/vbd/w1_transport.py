@@ -109,7 +109,8 @@ def run_transport_cell(E, F, a_peak, seed, substeps=80, cell_m=0.005,
         lt = GRAB_Z + cfg.lift_height_m * lift_fraction
         active = TRANSPORT_START <= t <= T_END and profile is not None
         rig.step(cf, lt, x_target=profile.x_cmd(t) if active else 0.0,
-                 x_vel=profile.v_cmd(t) if active else 0.0)
+                 x_vel=profile.v_cmd(t) if active else 0.0,
+                 x_accel=profile.a_cmd(t) if active else 0.0)  # D3-C accel feed-forward
         validity.fold_frame()
         m = rig.metrics()
         m["phase"] = phase_for_time(m["t"])

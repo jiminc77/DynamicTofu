@@ -174,6 +174,14 @@ class Vbd2Rig:
         self.tet_poses = self.model.tet_poses.numpy()   # Dm^-1 per tet
         self.tet_rest_vol = 1.0 / (6.0 * np.abs(np.linalg.det(self.tet_poses)) + 1e-30)
         self._weight_n = 9.81 * float(self.model.particle_mass.numpy()[self.soft_start:self.soft_end].sum())
+        # D3-C acceleration feed-forward masses (external ruling 2026-08-28). Convention: transported
+        # rigid gripper (carriage+palm+fingers). Fallback convention adds the grasped block. a_cmd=0
+        # in all quasi-static phases => zero feed-forward there, so the G0'-prime equivalence receipt
+        # remains valid without re-running.
+        self.m_gripper_rigid = float(mass[self.b_carriage] + mass[self.b_palm]
+                                     + mass[self.b_left] + mass[self.b_right])
+        self.m_block = float(self.model.particle_mass.numpy()[self.soft_start:self.soft_end].sum())
+        self.transport_ff_mass = self.m_gripper_rigid
 
     def strain_stats(self, threshold):
         """Per-tet max principal Green-Lagrange strain, volume-weighted P99, and
@@ -274,7 +282,7 @@ class Vbd2Rig:
     def _palm_z(self):
         return float(self.state_0.body_q.numpy()[self.b_palm][2])
 
-    def set_control(self, close_force, lift_target, x_target=None, x_vel=0.0):
+    def set_control(self, close_force, lift_target, x_target=None, x_vel=0.0, x_accel=0.0):
         jf = self.control.joint_f.numpy(); jf[:] = 0.0
         # closing: left axis (0,-1,0) closes toward -y -> +force along axis; right (0,+1,0) toward +y.
         # both fingers move inward with POSITIVE joint_f along their inward axes.
@@ -282,6 +290,8 @@ class Vbd2Rig:
         # the fingers onto the block; -joint_f opens them.
         jf[self.l_dof] = close_force
         jf[self.r_dof] = close_force
+        # D3-C: acceleration feed-forward effort on the transport axis (zero when x_accel==0).
+        jf[self.x_dof] = self.transport_ff_mass * x_accel
         self.control.joint_f.assign(jf)
         tq = self.control.joint_target_q.numpy()
         tq[self.x_ti] = 0.0 if x_target is None else x_target
@@ -294,8 +304,8 @@ class Vbd2Rig:
     def add_substep_hook(self, fn):
         self._substep_hooks.append(fn)
 
-    def step(self, close_force, lift_target, x_target=None, x_vel=0.0):
-        self.set_control(close_force, lift_target, x_target=x_target, x_vel=x_vel)
+    def step(self, close_force, lift_target, x_target=None, x_vel=0.0, x_accel=0.0):
+        self.set_control(close_force, lift_target, x_target=x_target, x_vel=x_vel, x_accel=x_accel)
         for k in range(self.sim_substeps):
             self.state_0.clear_forces()
             self.collision_pipeline.collide(self.state_0, self.contacts)

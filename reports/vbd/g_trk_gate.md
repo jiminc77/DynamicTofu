@@ -25,3 +25,23 @@ D3-C (locked-decisions of the approved plan, "requires sign-off before use"): ad
 
 ## STOP
 Per E-1, no production screen (P4) or further gate runs proceed until D3-C is signed off and G-TRK re-passes (max plateau error <=5% at every a in {1,2.5,5,10,20,30}, plus the zero-command noise floor <=0.01 m/s^2). Awaiting external sign-off on D3-C and the m_tot convention.
+
+## UPDATE — D3-C (feed-forward effort) confirmed ineffective on the position-controlled j_x
+
+D3-C authorized (gripper-rigid m_tot=0.146 kg) and implemented (control.joint_f[x_dof]+=m_tot*a_cmd; CPU-verified: 0 force at a=0, 0.73 N at a=5). Re-smoke at a=5: NO improvement (realized 3.05-3.28, max 39%, essentially identical to no-D3-C).
+
+Decisive isolating test (FREE carriage, no grasp, driven through the transport profile; realized plateau accel at commanded a=5):
+- feed-forward 0.00 N  -> 3.311 m/s^2
+- feed-forward 0.73 N  -> 3.301 m/s^2
+- feed-forward 25.0 N  -> 2.986 m/s^2
+
+A 34x feed-forward increase does not raise realized accel (slightly lowers it). CONCLUSION: the j_x position PD (target_ke=1e4, target_kd=2e2) clamps any feed-forward effort to the commanded trajectory x_cmd, so D3-C cannot work at ANY mass convention (the pre-authorized gripper+block fallback is futile). The ~34% shortfall is NOT block coupling (a free carriage under-tracks identically); it is the overdamped PD + VBD solver failing to track the commanded acceleration within the 0.10 s plateau. Realized accel is a deterministic ~66% of commanded at a=5, independent of applied force.
+
+## STOP + ESCALATE — options for external ruling
+The pre-registered D3-C mechanism is architecturally ineffective for a position-controlled joint. Options:
+A. (RECOMMENDED) Use REALIZED acceleration as the effective axis: keep commanded a as the pre-registered grid label but characterize the band vs the measured realized a (record both per cell); re-operationalize G-TRK from "realized within 5% of commanded" to "realized accel deterministic + 3-seed reproducible + recorded". Physically honest (the block experiences realized accel), matches the plan's "record commanded AND realized" design and the MPM O-2 precedent (realized ceiling accepted, commanded axis kept). No frozen param change; G0' unaffected (actuation unchanged).
+B. Increase j_x drive resolution (VBD iterations / j_x ke / penalty ramp) to track commanded within 5% -- touches frozen solver/gain params; requires a new G0' equivalence.
+C. Pre-scale the commanded profile (higher a_peak / shorter T_j) so realized hits target levels -- changes the pre-registered profile + exposure; confounds the science.
+D. Lengthen the accel plateau (larger T_a) so the overdamped PD settles -- changes profile/timebase + per-cell cost.
+
+Recommendation A: realized-accel axis. No sweep proceeds until the axis/gate operationalization is signed off.
