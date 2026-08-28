@@ -13,6 +13,7 @@ import json
 import os
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 import numpy as np
@@ -35,6 +36,90 @@ PLATEAU_WINDOWS = {
     "accel_back": {"start": 10.15, "end": 10.25, "a_cmd": 0.0},
     "decel_back": {"start": 10.45, "end": 10.55, "a_cmd": 0.0},
 }
+MATERIAL_ORDER_KPA = (7, 25, 15)
+SCREEN_FORCES = (0.4, 0.6, 0.8, 1.0, 1.2, 1.5, 2.0)
+SCREEN_A_ORDER = (1, 5, 10, 20, 30, 2.5)
+
+
+def screen_grid(material=None):
+    """Return the pre-registered screen order as (E_kPa, a, F, seed)."""
+    materials = (int(material),) if material is not None else MATERIAL_ORDER_KPA
+    return [(E, a, F, 0) for E in materials
+            for a in SCREEN_A_ORDER for F in SCREEN_FORCES]
+
+
+def pending_screen_cells(grid, receipt_dir, resume):
+    """Filter already persisted cells only when idempotent resume is requested."""
+    receipt_dir = Path(receipt_dir)
+    return [cell for cell in grid if not (
+        resume and (receipt_dir / screen_receipt_name(*cell)).exists()
+    )]
+
+
+def screen_receipt_name(E_kpa, a, F, seed=0):
+    return f"E{E_kpa}_F{F:g}_a{a:g}_s{seed}.json"
+
+
+def load_axis_map(path):
+    data = json.loads(Path(path).read_text())
+    if data.get("result") != "PASS":
+        raise RuntimeError("G-TRK realized-axis gate has not passed")
+    return {float(row["commanded_a_peak"]): float(row["realized_median_m_s2"])
+            for row in data["axis_map_commanded_to_realized"]}
+
+
+def screen_cell_receipt(cell, axis_map):
+    """Project a full runner receipt onto the stable W1 screen contract."""
+    commanded = float(cell["commanded_a_peak_m_s2"])
+    measured = (realized_from_fits(cell["tracking"]["plateaus"])
+                if cell.get("tracking") else None)
+    realized = measured if measured is not None else float(axis_map[commanded])
+    return {
+        "schema": "w1_screen_cell.v1", "status": cell.get("status", "ok"),
+        "E_pa": cell["E_pa"], "grip_force_n": cell["grip_force_n"],
+        "seed": cell["seed"], "commanded_a_peak_m_s2": commanded,
+        "realized_accel_m_s2": realized,
+        "realized_source": "cell" if measured is not None else "axis_map",
+        "axis_map_realized_accel_m_s2": float(axis_map[commanded]),
+        "slip3d_mm": cell.get("slip3d_mm"), "legacy_hold_slip_mm": cell.get("legacy_hold_slip_mm"),
+        "label": cell.get("label", "error"), "dvf": cell.get("dvf"),
+        "p99_strain": cell.get("p99_strain"), "peak_strain": cell.get("peak_strain"),
+        "validity_gate": cell.get("validity_gate"), "ejected": cell.get("ejected", False),
+        "per_phase_strain_maxima": cell.get("per_phase_strain_maxima"),
+        "health": cell.get("health", {"finite": False}), "git_sha": cell.get("git_sha"),
+        "prereg_sha256": cell.get("prereg_sha256"),
+        "frozen_config": cell.get("frozen_config"), "frozen_check": cell.get("frozen_check"),
+        "rig_pre_edit_sha256": cell.get("rig_pre_edit_sha256"),
+        "newton_commit": cell.get("newton_commit"), "msg": cell.get("msg"),
+    }
+
+
+def update_band(band, receipt):
+    """Incrementally add/replace one cell in an e1v2 material band."""
+    if band is None:
+        band = {"schema": "e1v2_band.v1", "E_kPa": int(receipt["E_pa"] / 1000),
+                "a_order": list(SCREEN_A_ORDER), "F_order_N": list(SCREEN_FORCES),
+                "realized_accel_by_commanded": {}, "label_matrix": {}, "cells": {},
+                "coverage": {"completed": [], "failed": []}}
+    a = f"{receipt['commanded_a_peak_m_s2']:g}"
+    F = f"{receipt['grip_force_n']:g}"
+    key = f"a{a}_F{F}"
+    band["realized_accel_by_commanded"][a] = receipt["axis_map_realized_accel_m_s2"]
+    band["label_matrix"].setdefault(a, {})[F] = receipt["label"]
+    band["cells"][key] = {
+        "label": receipt["label"], "realized_accel_m_s2": receipt["realized_accel_m_s2"],
+        "realized_source": receipt["realized_source"], "slip3d_mm": receipt["slip3d_mm"],
+        "dvf": receipt["dvf"], "ejected": receipt["ejected"],
+        "finite": receipt["health"].get("finite"), "certified": (
+            receipt.get("validity_gate") or {}).get("certified"),
+    }
+    pair = [float(a), float(F)]
+    target = "failed" if receipt["status"] == "error" else "completed"
+    other = "completed" if target == "failed" else "failed"
+    band["coverage"][other] = [item for item in band["coverage"][other] if item != pair]
+    if pair not in band["coverage"][target]:
+        band["coverage"][target].append(pair)
+    return band
 
 
 def phase_timestamp_table(series, expected):
@@ -307,14 +392,54 @@ def _print_tracking(receipt):
     print(json.dumps(receipt["tracking"], indent=2))
 
 
+def run_screen(material=None, resume=False):
+    axis_path = ROOT / "reports/logs/vbd/g_trk_axis.json"
+    if not axis_path.exists():
+        print(f"STOP: missing passed G-TRK axis map: {axis_path}")
+        return 1
+    try:
+        axis_map = load_axis_map(axis_path)
+    except (OSError, KeyError, ValueError, RuntimeError) as exc:
+        print(f"STOP: invalid G-TRK axis map: {exc}")
+        return 1
+    receipt_dir = ROOT / "reports/logs/vbd/w1_screen"
+    receipt_dir.mkdir(parents=True, exist_ok=True)
+    grid = screen_grid(material)
+    pending = pending_screen_cells(grid, receipt_dir, resume)
+    done = len(grid) - len(pending)
+    started = time.monotonic()
+    for E_kpa, acceleration, force, seed in pending:
+        raw = run_cell_isolated(E_kpa * 1000, force, acceleration, seed)
+        receipt = screen_cell_receipt(raw, axis_map)
+        receipt_path = receipt_dir / screen_receipt_name(E_kpa, acceleration, force, seed)
+        receipt_path.write_text(json.dumps(_json_safe(receipt), indent=2, allow_nan=False) + "\n")
+        band_path = ROOT / f"reports/logs/vbd/e1v2_band_{E_kpa}.json"
+        band = json.loads(band_path.read_text()) if band_path.exists() else None
+        band = update_band(band, receipt)
+        band_path.write_text(json.dumps(_json_safe(band), indent=2, allow_nan=False) + "\n")
+        done += 1
+        elapsed = time.monotonic() - started
+        cert = (receipt.get("validity_gate") or {}).get("certified")
+        realized = receipt["realized_accel_m_s2"]
+        print(f"E{E_kpa} a{acceleration:g} F{force:g} -> {receipt['label']} "
+              f"realized={realized:.4g} slip={receipt['slip3d_mm']} dvf={receipt['dvf']} "
+              f"ejected={receipt['ejected']} cert={cert} ({done}cells done, {elapsed:.1f}s)")
+    return 0
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser()
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--smoke", action="store_true")
     mode.add_argument("--tracking-ladder", action="store_true")
     mode.add_argument("--cell", nargs=4, metavar=("E_KPA", "F_N", "A", "SEED"))
+    mode.add_argument("--screen", action="store_true")
     parser.add_argument("--noise-floor", action="store_true")
+    parser.add_argument("--material", type=int, choices=(7, 15, 25))
+    parser.add_argument("--resume", action="store_true")
     args = parser.parse_args(argv)
+    if args.screen:
+        return run_screen(args.material, args.resume)
     if args.cell:
         E, F, a, seed = args.cell
         receipt = run_transport_cell(float(E) * 1000, float(F), float(a), int(seed))
