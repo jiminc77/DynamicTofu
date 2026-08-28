@@ -50,3 +50,20 @@ Three compounding problems:
 Plus VBD run-to-run non-determinism near the boundary (F0.8 z_res was 0.69 in the v2.1 run, 2.51 here).
 
 Per the ruling, STOP with the per-axis residual table. Decision needed: (a) measure the quasi-static (hold) z-creep and the transport (post-9.30) x-z slip SEPARATELY (hold-window z + transport-window x-z, each vs its own reference) rather than a single whole-trial residual -- this would restore the frozen band at a=1; (b) how to treat the 25mm permanent y-extrusion (real slip vs demoted artifact); (c) F2.0 damage-vs-drop precedence under transport. This may warrant reconsidering the transport-slip measurement design.
+
+## v2.3-final validation + two remaining methodology decisions (a=1 E7, seed 0 unless noted)
+
+v2.3 items 1/2/3 IMPLEMENTED and largely validated:
+- ITEM 2 CONFIRMED (rig artifact): grasp_frame_y_res = 0.0 mm on every cell while palm-frame assembly_drift = 1.8/-0.6/7.0/26.9 mm. The block stays centered between the fingers; the 21-27 mm is common-mode finger+block drift with grasp intact (force-controlled fingers have no common-mode y restoring force). escape_mode=None everywhere. Demoted as assembly_drift, per ruling.
+- ITEM 3 (timestamp precedence) works structurally: F2.0 -> damage (dvf 0.0426), F1.0-1.5 intact.
+- ITEM 1 (separate windows) restores the band STRUCTURE: F0.4 slip (hold_z 12.31), F0.6 slip (3.01), F1.0-1.5 intact (1.78/1.60/1.59), F2.0 damage.
+
+Row: | F | 0.4 | 0.6 | 0.8 | 1.0 | 1.2 | 1.5 | 2.0 |
+     | label | slip | slip | SLIP | intact | intact | intact | damage |
+     | hold_z_mm | 12.31 | 3.01 | 2.02 | 1.78 | 1.60 | 1.59 | 1.73 |
+
+TWO REMAINING DECISIONS (screen stays stopped):
+1. F0.8 BOUNDARY SHIFT. F0.8 hold_z = 2.02/2.01/2.06 mm across seeds 0/1/2 (REPRODUCIBLE, right on the 2 mm line) -> slip. The frozen quasi-static band had E7/F0.8 = intact (hold slip 1.32 mm). So the transport rig's E7 slip/intact boundary is ~1 F-level higher (intact starts at F1.0, not F0.8). Not non-determinism (tight 3-seed). Decision: accept the shift (resume; two-thirds/3-seed confirmation handles boundaries in P5) OR investigate why the transport-rig hold creep (2.0) exceeds the frozen rig (1.32) at E7/F0.8.
+2. DAMAGE-DVF CONTACT-TRANSIENT INFLATION (affects the whole screen). damage_latch_t fires during the RAMP: F0.8 seed1 dmg_t=0.033s (dvf 0.00716>0.005 -> spurious damage), F2.0 dmg_t=0.55s. The DVF temporal-max is catching finger-contact indentation strain (>0.15 local) during preload, not transport damage. E7/F0.8 DVF straddles 0.005 (0.0013-0.00716) -> intact/damage flip. The frozen band used the whole-trial DVF and labeled E7/F0.8 intact, so this contact-transient inflation is new/amplified in the transport rig. Decision: restrict the DVF/damage-latch to post-lift (exclude preload contact transients) -- a pre-registered damage-window change needing sign-off; damage threshold 0.005 unchanged.
+
+VBD non-determinism confirmed (F0.8 seed1 dvf 0.00716 vs seed0/2 ~0.0013) -> 3-seed/two-thirds mandatory as ruled.
