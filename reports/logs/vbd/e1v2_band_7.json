@@ -20,7 +20,8 @@
   ],
   "realized_accel_by_commanded": {
     "1": 0.681,
-    "5": 3.1825
+    "5": 3.1825,
+    "10": 6.4019
   },
   "label_matrix": {
     "1": {
@@ -35,7 +36,14 @@
     "5": {
       "0.4": "slip",
       "0.6": "slip",
-      "0.8": "slip"
+      "0.8": "slip",
+      "1": "damage",
+      "1.2": "damage",
+      "1.5": "damage",
+      "2": "damage"
+    },
+    "10": {
+      "0.4": "slip"
     }
   },
   "cells": {
@@ -338,6 +346,156 @@
       "ejected": false,
       "finite": true,
       "certified": false
+    },
+    "a5_F1": {
+      "label": "damage",
+      "realized_accel_m_s2": 3.2458096210444056,
+      "realized_source": "cell",
+      "hold_slip_z_mm": 1.7911586910486221,
+      "transport_slip_xz_mm": 6.641164860362433,
+      "transport_x_res_mm": -2.409538409738035,
+      "transport_z_res_mm": -6.188634369108413,
+      "transport_y_res_mm": 1.6382505598762478,
+      "grasp_frame_y_res_mm": 0.00323064604243781,
+      "assembly_drift_mm": 4.633637645499217,
+      "escape_mode": null,
+      "slip_perm_tangential_mm": 8.337592964150565,
+      "x_res_mm": -2.410035649008238,
+      "z_res_mm": -7.9816780570480566,
+      "y_res_mm": 4.633637645499217,
+      "slip_perm_x_mm": 2.409538409738035,
+      "slip3d_max_mm": 9.215316117560414,
+      "yz_residual_mm": 6.401801328645299,
+      "dvf": 0.016927083328129162,
+      "dvf_wholetrial": 0.01757812500954098,
+      "damage_window": "grip_completion_preload_end",
+      "lift_end_s": 1.8,
+      "damage_latch_t": 9.550000000000054,
+      "drop_t": null,
+      "damage_after_drop": false,
+      "ejected": false,
+      "finite": true,
+      "certified": false
+    },
+    "a5_F1.2": {
+      "label": "damage",
+      "realized_accel_m_s2": 3.2551446663480226,
+      "realized_source": "cell",
+      "hold_slip_z_mm": 1.5998519957065582,
+      "transport_slip_xz_mm": 4.998261395768619,
+      "transport_x_res_mm": -1.3849591198717486,
+      "transport_z_res_mm": -4.802551948361926,
+      "transport_y_res_mm": 1.6532633942010098,
+      "grasp_frame_y_res_mm": 0.004376192615988354,
+      "assembly_drift_mm": 5.160167080879889,
+      "escape_mode": null,
+      "slip_perm_tangential_mm": 6.551112897560306,
+      "x_res_mm": -1.3844032014528944,
+      "z_res_mm": -6.403163903289371,
+      "y_res_mm": 5.160167080879889,
+      "slip_perm_x_mm": 1.3849591198717486,
+      "slip3d_max_mm": 7.769870750570676,
+      "yz_residual_mm": 5.079152002777626,
+      "dvf": 0.05143228653101747,
+      "dvf_wholetrial": 0.05208332821242929,
+      "damage_window": "grip_completion_preload_end",
+      "lift_end_s": 1.8,
+      "damage_latch_t": 9.500000000000052,
+      "drop_t": null,
+      "damage_after_drop": false,
+      "ejected": false,
+      "finite": true,
+      "certified": false
+    },
+    "a5_F1.5": {
+      "label": "damage",
+      "realized_accel_m_s2": 3.2120659947393726,
+      "realized_source": "cell",
+      "hold_slip_z_mm": 1.598833128809929,
+      "transport_slip_xz_mm": 2.750640371882183,
+      "transport_x_res_mm": -0.06113649783953987,
+      "transport_z_res_mm": -2.749960869550705,
+      "transport_y_res_mm": -1.5491189583649485,
+      "grasp_frame_y_res_mm": 0.0012055356140510615,
+      "assembly_drift_mm": -26.303715188590942,
+      "escape_mode": null,
+      "slip_perm_tangential_mm": 4.349392227232783,
+      "x_res_mm": -0.06040053172126944,
+      "z_res_mm": -4.34897281229496,
+      "y_res_mm": -26.303715188590942,
+      "slip_perm_x_mm": 0.06113649783953987,
+      "slip3d_max_mm": 4.67265641032399,
+      "yz_residual_mm": 3.156272220710022,
+      "dvf": 0.08626301394691435,
+      "dvf_wholetrial": 0.08756509714320451,
+      "damage_window": "grip_completion_preload_end",
+      "lift_end_s": 1.8,
+      "damage_latch_t": 9.466666666666717,
+      "drop_t": null,
+      "damage_after_drop": false,
+      "ejected": false,
+      "finite": true,
+      "certified": false
+    },
+    "a5_F2": {
+      "label": "damage",
+      "realized_accel_m_s2": 3.192349842616331,
+      "realized_source": "cell",
+      "hold_slip_z_mm": 1.7352625727653503,
+      "transport_slip_xz_mm": 1.2308102926920608,
+      "transport_x_res_mm": 0.29740830185550254,
+      "transport_z_res_mm": -1.1943375898732078,
+      "transport_y_res_mm": -0.9530276758445545,
+      "grasp_frame_y_res_mm": 0.003243453951048044,
+      "assembly_drift_mm": -0.5576077411366244,
+      "escape_mode": null,
+      "slip_perm_tangential_mm": 2.9449718456541882,
+      "x_res_mm": 0.2980230586520823,
+      "z_res_mm": -2.9298534823788533,
+      "y_res_mm": -0.5576077411366244,
+      "slip_perm_x_mm": 0.29740830185550254,
+      "slip3d_max_mm": 3.2403053415321743,
+      "yz_residual_mm": 1.5279738314218003,
+      "dvf": 0.21191404702409714,
+      "dvf_wholetrial": 0.21647133921031353,
+      "damage_window": "grip_completion_preload_end",
+      "lift_end_s": 1.8,
+      "damage_latch_t": 1.816666666666665,
+      "drop_t": null,
+      "damage_after_drop": false,
+      "ejected": false,
+      "finite": true,
+      "certified": false
+    },
+    "a10_F0.4": {
+      "label": "slip",
+      "realized_accel_m_s2": 6.481134678635955,
+      "realized_source": "cell",
+      "hold_slip_z_mm": 12.309448793530464,
+      "transport_slip_xz_mm": null,
+      "transport_x_res_mm": null,
+      "transport_z_res_mm": null,
+      "transport_y_res_mm": null,
+      "grasp_frame_y_res_mm": null,
+      "assembly_drift_mm": null,
+      "escape_mode": null,
+      "slip_perm_tangential_mm": null,
+      "x_res_mm": null,
+      "z_res_mm": null,
+      "y_res_mm": null,
+      "slip_perm_x_mm": null,
+      "slip3d_max_mm": 21.309069943712586,
+      "yz_residual_mm": null,
+      "dvf": 0.0071614586065523,
+      "dvf_wholetrial": 0.008463541941620356,
+      "damage_window": "grip_completion_preload_end",
+      "lift_end_s": 1.8,
+      "damage_latch_t": 9.416666666666714,
+      "drop_t": 4.316666666666657,
+      "damage_after_drop": true,
+      "ejected": true,
+      "finite": true,
+      "certified": false
     }
   },
   "coverage": {
@@ -381,6 +539,26 @@
       [
         5.0,
         0.8
+      ],
+      [
+        5.0,
+        1.0
+      ],
+      [
+        5.0,
+        1.2
+      ],
+      [
+        5.0,
+        1.5
+      ],
+      [
+        5.0,
+        2.0
+      ],
+      [
+        10.0,
+        0.4
       ]
     ],
     "failed": []
