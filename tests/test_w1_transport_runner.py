@@ -16,6 +16,8 @@ phase_timestamp_table = RUNNER.phase_timestamp_table
 tracking_receipt = RUNNER.tracking_receipt
 summarize_level = RUNNER.summarize_level
 ladder_shape_gate = RUNNER.ladder_shape_gate
+gross_slip_mm = RUNNER.gross_slip_mm
+realized_from_fits = RUNNER.realized_from_fits
 
 
 def test_phase_timestamp_table_reports_first_hit_and_missing():
@@ -41,7 +43,7 @@ def test_tracking_receipt_from_exact_synthetic_velocity():
 def _cell(realized, r2=0.995):
     signs = (1, -1, -1, 1)
     return {"tracking": {"plateaus": {
-        str(index): {"a_fit": sign * realized, "r2": r2}
+        str(index): {"a_fit": sign * realized, "r2": r2, "n_samples": 6}
         for index, sign in enumerate(signs)
     }}}
 
@@ -62,3 +64,23 @@ def test_shape_gate_rejects_nonmonotone_and_insufficient_separation():
     lower = summarize_level(5.0, [_cell(0.9), _cell(0.9), _cell(0.9)])
     assert ladder_shape_gate([first, close]) == (True, False)
     assert ladder_shape_gate([first, lower]) == (False, False)
+
+
+def test_gross_slip_and_partial_plateau_median():
+    reference = np.array([0.0, 0.0, 0.0])
+    frame = {"com": [0.016, 0.0, 0.0], "palm_pos": [0.0, 0.0, 0.0]}
+    assert gross_slip_mm(frame, reference) == 16.0
+    fits = {
+        "done_a": {"a_fit": -3.0, "n_samples": 6},
+        "thin": {"a_fit": 100.0, "n_samples": 4},
+        "done_b": {"a_fit": 5.0, "n_samples": 5},
+        "missing": {"a_fit": float("nan"), "n_samples": 0},
+    }
+    assert realized_from_fits(fits) == 4.0
+
+
+def test_level_with_fewer_than_two_usable_cells_is_insufficient():
+    level = summarize_level(10, [_cell(6.0), {"status": "error", "seed": 1},
+                                 {"status": "error", "seed": 2}])
+    assert level["status"] == "insufficient"
+    assert level["level_pass"] is False

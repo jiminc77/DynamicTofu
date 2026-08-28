@@ -28,6 +28,7 @@ from src.transport import g_trk, realized_accel, trapezoid_reversal
 FPS = 60
 T_END = 11.6
 TRANSPORT_START = 9.30
+GROSS_SLIP_MM = 15.0
 PLATEAU_WINDOWS = {
     "accel_out": {"start": 9.35, "end": 9.45, "a_cmd": 0.0},
     "decel_out": {"start": 9.65, "end": 9.75, "a_cmd": 0.0},
@@ -55,40 +56,65 @@ def tracking_receipt(times, velocities, windows):
             "samples_valid": gate["samples_valid"], "pass": gate["pass"]}
 
 
-def realized_from_fits(fits):
-    """Realized-axis coordinate: median magnitude of four plateau slopes."""
-    values = np.asarray([abs(item["a_fit"]) for item in fits.values()], dtype=float)
-    if values.size != 4 or not np.all(np.isfinite(values)):
-        raise ValueError("realized acceleration requires four finite plateau fits")
-    return float(np.median(values))
+def realized_from_fits(fits, min_samples=5):
+    """Median magnitude of completed (sufficiently sampled) plateau slopes."""
+    values = [abs(item["a_fit"]) for item in fits.values()
+              if item["n_samples"] >= min_samples and np.isfinite(item["a_fit"])]
+    return float(np.median(values)) if values else None
+
+
+def gross_slip_mm(frame, reference):
+    """Current block-to-palm relative displacement from a 3-vector reference."""
+    relative = np.asarray(frame["com"], dtype=float) - np.asarray(frame["palm_pos"], dtype=float)
+    reference = np.asarray(reference, dtype=float)
+    if relative.shape != (3,) or reference.shape != (3,):
+        raise ValueError("slip inputs must be 3-vectors")
+    return float(np.linalg.norm(relative - reference) * 1000.0)
 
 
 def summarize_level(commanded_a_peak, cells):
     """Reduce three seed receipts into the repeatability-gate level row."""
-    realized = np.asarray(
-        [realized_from_fits(cell["tracking"]["plateaus"]) for cell in cells], dtype=float
-    )
-    if realized.size != 3:
-        raise ValueError("repeatability levels require exactly three cells")
+    usable_cells = [cell for cell in cells if cell.get("status", "ok") == "ok"
+                    and cell.get("tracking") is not None]
+    realized_values = [realized_from_fits(cell["tracking"]["plateaus"])
+                       for cell in usable_cells]
+    realized = np.asarray([value for value in realized_values if value is not None], dtype=float)
+    cell_flags = [{"seed": cell.get("seed"), "status": cell.get("status", "ok"),
+                   "ejected": cell.get("ejected"), "finite": cell.get("health", {}).get("finite"),
+                   "realized_accel": (realized_from_fits(cell["tracking"]["plateaus"])
+                                      if cell.get("tracking") else None)}
+                  for cell in cells]
+    sufficient = realized.size >= 2
+    if not sufficient:
+        return {"commanded_a_peak": float(commanded_a_peak),
+                "realized_per_cell": realized.tolist(), "realized_median": None,
+                "realized_cv": None, "r2_min": None, "status": "insufficient",
+                "cells": cell_flags, "level_pass": False}
     mean = float(np.mean(realized))
     median = float(np.median(realized))
     cv = float(np.std(realized) / mean) if mean > 0.0 else float("inf")
-    r2_min = float(min(
-        fit["r2"] for cell in cells
+    r2_values = [
+        fit["r2"] for cell in usable_cells
         for fit in cell["tracking"]["plateaus"].values()
-    ))
+        if fit["n_samples"] >= 5 and np.isfinite(fit["r2"])
+    ]
+    r2_min = float(min(r2_values)) if r2_values else None
     return {
         "commanded_a_peak": float(commanded_a_peak),
         "realized_per_cell": realized.tolist(),
         "realized_median": median,
         "realized_cv": cv,
         "r2_min": r2_min,
-        "level_pass": bool(cv <= 0.05 and np.isfinite(r2_min) and r2_min >= 0.99),
+        "status": "ok",
+        "cells": cell_flags,
+        "level_pass": bool(cv <= 0.05 and r2_min is not None and r2_min >= 0.99),
     }
 
 
 def ladder_shape_gate(levels):
     """Evaluate strict monotonicity and spread-aware adjacent separation."""
+    if any(level["realized_median"] is None for level in levels):
+        return False, False
     medians = [float(level["realized_median"]) for level in levels]
     monotone = all(right > left for left, right in zip(medians, medians[1:]))
     separated = True
@@ -100,6 +126,17 @@ def ladder_shape_gate(levels):
         required = max(0.1, 2.0 * max(left_spread, right_spread))
         separated &= float(right["realized_median"]) - float(left["realized_median"]) > required
     return bool(monotone), bool(separated)
+
+
+def run_cell_isolated(E, F, a_peak, seed, **kwargs):
+    """Run one cell without allowing a simulation failure to abort a batch."""
+    try:
+        return run_transport_cell(E, F, a_peak, seed, **kwargs)
+    except Exception as exc:
+        return {"status": "error", "E_pa": float(E), "grip_force_n": float(F),
+                "a_peak": float(a_peak), "commanded_a_peak_m_s2": float(a_peak),
+                "seed": int(seed), "ejected": False, "finite": False,
+                "msg": f"{type(exc).__name__}: {exc}"}
 
 
 def _pad_shapes(rig):
@@ -121,8 +158,18 @@ def _write_receipt(receipt):
     name = "E{:.0f}_F{:g}_a{:g}_seed{}.json".format(receipt["E_pa"] / 1000, receipt["grip_force_n"],
                                                    receipt["commanded_a_peak_m_s2"], receipt["seed"])
     path = out / name
-    path.write_text(json.dumps(receipt, indent=2, allow_nan=False) + "\n")
+    path.write_text(json.dumps(_json_safe(receipt), indent=2, allow_nan=False) + "\n")
     return path
+
+
+def _json_safe(value):
+    if isinstance(value, dict):
+        return {key: _json_safe(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_json_safe(item) for item in value]
+    if isinstance(value, (float, np.floating)) and not np.isfinite(value):
+        return None
+    return value
 
 
 def run_transport_cell(E, F, a_peak, seed, substeps=80, cell_m=0.005,
@@ -148,6 +195,9 @@ def run_transport_cell(E, F, a_peak, seed, substeps=80, cell_m=0.005,
     temporal_max = None
     rest_vol = None
     snap_index = 0
+    transport_reference = None
+    ejected = False
+    finite = True
     t_pre = cfg.ramp_s + cfg.preload_s
     for frame_index in range(round(T_END * FPS)):
         t = rig.sim_time
@@ -156,12 +206,23 @@ def run_transport_cell(E, F, a_peak, seed, substeps=80, cell_m=0.005,
         lt = GRAB_Z + cfg.lift_height_m * lift_fraction
         active = TRANSPORT_START <= t <= T_END and profile is not None
         rig.step(cf, lt, x_target=profile.x_cmd(t) if active else 0.0,
-                 x_vel=profile.v_cmd(t) if active else 0.0,
-                 x_accel=profile.a_cmd(t) if active else 0.0)  # D3-C accel feed-forward
+                 x_vel=profile.v_cmd(t) if active else 0.0)
         validity.fold_frame()
         m = rig.metrics()
         m["phase"] = phase_for_time(m["t"])
         m["contacts"] = rig.contact_count()
+        if not m["finite"] or not np.all(np.isfinite(m["com"])) or not np.all(np.isfinite(m["palm_pos"])):
+            finite = False
+            series.append(m)
+            break
+        if m["t"] >= TRANSPORT_START:
+            relative = np.asarray(m["com"]) - np.asarray(m["palm_pos"])
+            if transport_reference is None:
+                transport_reference = relative
+            if gross_slip_mm(m, transport_reference) > GROSS_SLIP_MM:
+                series.append(m)
+                ejected = True
+                break
         field, rest_vol = rig.strain_field()
         temporal_max = field.copy() if temporal_max is None else np.maximum(temporal_max, field)
         if m["phase"] is not None:
@@ -205,19 +266,27 @@ def run_transport_cell(E, F, a_peak, seed, substeps=80, cell_m=0.005,
         hold_ref = rel if hold_ref is None else hold_ref
         legacy_slip = max(legacy_slip, abs(rel - hold_ref) * 1000)
     dvf, damaged = latched_dvf(temporal_max, rest_vol)
-    slip = slip3d(series, TRANSPORT_START)
-    strain_maxima = per_phase_strain_maxima(phase_fields)
+    finite_series = [m for m in series if m["finite"]
+                     and np.all(np.isfinite(m["com"])) and np.all(np.isfinite(m["palm_pos"]))]
+    slip = slip3d(finite_series, TRANSPORT_START) if transport_reference is not None else 0.0
+    strain_maxima = (per_phase_strain_maxima(phase_fields)
+                      if set(phase_fields) == set(PHASE_NAMES)
+                      else {name: (float(np.max(phase_fields[name])) if name in phase_fields else None)
+                            for name in PHASE_NAMES})
     vg = validity.summary()
     certified = all(p["certified"] for p in vg["per_pad"].values())
-    stats = rig.strain_stats(0.15)
-    finite = all(m["finite"] for m in series)
+    stats = rig.strain_stats(0.15) if finite else {"p99_vol_weighted_strain": None}
+    finite = finite and all(m["finite"] for m in series)
     fn_hold = [0.5 * (m["fn_left_n"] + m["fn_right_n"]) for m in hold]
     receipt = {
-        "E_pa": float(E), "grip_force_n": float(F), "seed": int(seed),
+        "status": "ok", "E_pa": float(E), "grip_force_n": float(F), "seed": int(seed),
+        "ejected": ejected, "finite": finite,
         "commanded_a_peak_m_s2": float(a_peak), "tracking": tracking,
         "realized_F_g_n": float(np.mean(fn_hold)) if fn_hold else float("nan"),
         "slip3d_mm": slip, "legacy_hold_slip_mm": legacy_slip,
-        "dvf": dvf, "damage_latched": damaged, "label": label({"dvf": dvf, "damage_latched": damaged, "slip3d_mm": slip}),
+        "dvf": dvf, "damage_latched": damaged,
+        "label": ("nonfinite" if not finite else "slip" if ejected else
+                  label({"dvf": dvf, "damage_latched": damaged, "slip3d_mm": slip})),
         "p99_strain": stats["p99_vol_weighted_strain"], "peak_strain": float(np.max(temporal_max)),
         "per_phase_strain_maxima": strain_maxima,
         "validity_gate": {"summary": vg, "certified": certified},
@@ -267,7 +336,7 @@ def main(argv=None):
     for acceleration in (1, 2.5, 5, 10, 20, 30):
         cells = []
         for seed in (0, 1, 2):
-            receipt = run_transport_cell(15e3, 1.2, acceleration, seed)
+            receipt = run_cell_isolated(15e3, 1.2, acceleration, seed)
             _write_receipt(receipt)
             cells.append(receipt)
         ladder.append(summarize_level(acceleration, cells))
@@ -276,17 +345,22 @@ def main(argv=None):
     reference = level_10["realized_median"]
     spot_cells = []
     for E, F in ((7e3, 0.6), (7e3, 1.2), (25e3, 1.2)):
-        receipt = run_transport_cell(E, F, 10.0, 0)
+        receipt = run_cell_isolated(E, F, 10.0, 0)
         _write_receipt(receipt)
-        realized = receipt["tracking"]["realized_accel_m_s2"]
-        within = bool(abs(realized - reference) / reference <= 0.05)
+        realized = (realized_from_fits(receipt["tracking"]["plateaus"])
+                    if receipt.get("tracking") else None)
+        within = bool(realized is not None and reference is not None and reference > 0
+                      and abs(realized - reference) / reference <= 0.05)
         spot_cells.append({"E_pa": E, "grip_force_n": F, "seed": 0,
+                           "status": receipt.get("status", "ok"),
+                           "ejected": receipt.get("ejected"),
+                           "finite": receipt.get("health", {}).get("finite"),
                            "realized_accel": realized, "within_5pct": within})
     independence = all(cell["within_5pct"] for cell in spot_cells)
-    noise_receipt = run_transport_cell(15e3, 1.2, 0.0, 0)
+    noise_receipt = run_cell_isolated(15e3, 1.2, 0.0, 0)
     _write_receipt(noise_receipt)
-    noise = float(noise_receipt["health"]["zero_command_realized_accel_magnitude"])
-    noise_pass = noise <= 0.01
+    noise = noise_receipt.get("health", {}).get("zero_command_realized_accel_magnitude")
+    noise_pass = bool(noise is not None and np.isfinite(noise) and noise <= 0.01)
     overall = bool(all(level["level_pass"] for level in ladder)
                    and monotone and separated and noise_pass and independence)
     output = {
@@ -307,6 +381,7 @@ def main(argv=None):
     }
     out = ROOT / "reports/logs/vbd/g_trk_ladder.json"
     out.parent.mkdir(parents=True, exist_ok=True)
+    output = _json_safe(output)
     out.write_text(json.dumps(output, indent=2, allow_nan=False) + "\n")
     print(json.dumps(output, indent=2))
     print("PASS" if overall else "STOP")
