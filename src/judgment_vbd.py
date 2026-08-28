@@ -138,6 +138,74 @@ def z_res_mm(series: Sequence[Mapping], t_grip: float = 1.80,
     return float(_grip_settle_residual(series, t_grip, settle_lo, settle_hi)[2] * 1000.0)
 
 
+def hold_slip_z_mm(series: Sequence[Mapping], t_grip: float = 1.80,
+                   hold_lo: float = 4.30, hold_hi: float = 9.30) -> float:
+    """Maximum suspended-hold vertical creep from the preload-end grip state."""
+    frames = list(series)
+    if not frames:
+        raise ValueError("series must not be empty")
+    reference_frame = min(frames, key=lambda frame: abs(float(frame["t"]) - t_grip))
+    if abs(float(reference_frame["t"]) - t_grip) > 0.0500001:
+        raise ValueError("series contains no frame near t_grip")
+    reference = float(reference_frame["com"][2]) - float(reference_frame["palm_pos"][2])
+    hold = [
+        float(frame["com"][2]) - float(frame["palm_pos"][2])
+        for frame in frames if hold_lo <= float(frame["t"]) <= hold_hi
+    ]
+    if not np.isfinite(reference) or not hold or not np.all(np.isfinite(hold)):
+        raise ValueError("hold window must contain finite frames")
+    return float(max(abs(value - reference) for value in hold) * 1000.0)
+
+
+def _transport_settle_residual(series, t_ref=9.30, settle_lo=11.30, settle_hi=11.60):
+    return _permanent_residual(series, t_ref, settle_lo, settle_hi)
+
+
+def transport_slip_xz_mm(series: Sequence[Mapping], t_ref: float = 9.30,
+                         settle_lo: float = 11.30,
+                         settle_hi: float = 11.60) -> float:
+    residual = _transport_settle_residual(series, t_ref, settle_lo, settle_hi)
+    return float(np.linalg.norm(residual[[0, 2]]) * 1000.0)
+
+
+def transport_x_res_mm(series: Sequence[Mapping], t_ref: float = 9.30,
+                       settle_lo: float = 11.30, settle_hi: float = 11.60) -> float:
+    return float(_transport_settle_residual(series, t_ref, settle_lo, settle_hi)[0] * 1000.0)
+
+
+def transport_y_res_mm(series: Sequence[Mapping], t_ref: float = 9.30,
+                       settle_lo: float = 11.30, settle_hi: float = 11.60) -> float:
+    return float(_transport_settle_residual(series, t_ref, settle_lo, settle_hi)[1] * 1000.0)
+
+
+def transport_z_res_mm(series: Sequence[Mapping], t_ref: float = 9.30,
+                       settle_lo: float = 11.30, settle_hi: float = 11.60) -> float:
+    return float(_transport_settle_residual(series, t_ref, settle_lo, settle_hi)[2] * 1000.0)
+
+
+def grasp_frame_y_res_mm(series: Sequence[Mapping], t_grip: float = 1.80,
+                         settle_lo: float = 11.30,
+                         settle_hi: float = 11.60) -> float:
+    """Permanent block displacement relative to the finger-pair midpoint."""
+    frames = list(series)
+    if not frames:
+        raise ValueError("series must not be empty")
+    reference_frame = min(frames, key=lambda frame: abs(float(frame["t"]) - t_grip))
+    if abs(float(reference_frame["t"]) - t_grip) > 0.0500001:
+        raise ValueError("series contains no frame near t_grip")
+
+    def relative_y(frame):
+        midpoint = 0.5 * (float(frame["left_y"]) + float(frame["right_y"]))
+        return float(frame["com"][1]) - midpoint
+
+    reference = relative_y(reference_frame)
+    settled = [relative_y(frame) for frame in frames
+               if settle_lo <= float(frame["t"]) <= settle_hi]
+    if not np.isfinite(reference) or not settled or not np.all(np.isfinite(settled)):
+        raise ValueError("settle window must contain finite finger-frame positions")
+    return float(abs(np.mean(settled) - reference) * 1000.0)
+
+
 def slip_perm_x_mm(series: Sequence[Mapping], t_ref: float = 9.30,
                    settle_lo: float = 11.30, settle_hi: float = 11.60) -> float:
     """Permanent transport-axis residual after settling, in millimetres."""
@@ -239,3 +307,22 @@ def label_v22(cell: Mapping[str, object]) -> str:
         cell.get("latched", float(cell.get("dvf", 0.0)) >= DAMAGE_DVF_THRESHOLD),
     ))
     return "damage" if damage else "intact"
+
+
+def label_v23(cell: Mapping[str, object]) -> str:
+    """Classify timestamped damage before separate-window slip/drop criteria."""
+    damage_latch_t = cell.get("damage_latch_t")
+    drop_t = cell.get("drop_t")
+    if damage_latch_t is not None and (
+        drop_t is None or float(damage_latch_t) < float(drop_t)
+    ):
+        return "damage"
+    hold = cell.get("hold_slip_z_mm")
+    transport = cell.get("transport_slip_xz_mm")
+    lateral = cell.get("grasp_frame_y_res_mm")
+    if (bool(cell.get("dropped", cell.get("ejected", False)))
+            or (hold is not None and float(hold) > SLIP_THRESHOLD_MM)
+            or (transport is not None and float(transport) > SLIP_THRESHOLD_MM)
+            or (lateral is not None and float(lateral) > 10.0)):
+        return "slip"
+    return "intact"

@@ -18,6 +18,12 @@ def _receipt(realized=None):
     return {
         "status": "ok", "E_pa": 7000.0, "grip_force_n": 0.4, "seed": 0,
         "commanded_a_peak_m_s2": 10.0, "tracking": tracking,
+        "hold_slip_z_mm": 0.2, "transport_slip_xz_mm": 0.1,
+        "transport_x_res_mm": 0.1, "transport_z_res_mm": 0.0,
+        "transport_y_res_mm": 0.0,
+        "grasp_frame_y_res_mm": 0.0, "assembly_drift_mm": 0.1,
+        "escape_mode": None, "damage_latch_t": None, "drop_t": None,
+        "damage_after_drop": False,
         "slip_perm_tangential_mm": 0.2, "x_res_mm": 0.1, "z_res_mm": 0.1,
         "y_res_mm": 0.1, "slip_perm_x_mm": 0.2,
         "slip3d_max_mm": 1.2, "yz_residual_mm": 0.1,

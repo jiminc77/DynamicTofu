@@ -22,10 +22,13 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from src.frozen_config import assert_frozen, frozen_provenance
-from src.judgment_vbd import (PHASE_NAMES, label_v22, latched_dvf,
+from src.judgment_vbd import (PHASE_NAMES, grasp_frame_y_res_mm, hold_slip_z_mm,
+                              label_v23, latched_dvf,
                               per_phase_strain_maxima, phase_for_time,
                               slip3d_max_mm, slip_perm_tangential_mm,
-                              slip_perm_x_mm, x_res_mm, y_res_mm,
+                              slip_perm_x_mm, transport_slip_xz_mm,
+                              transport_x_res_mm, transport_y_res_mm,
+                              transport_z_res_mm, x_res_mm, y_res_mm,
                               yz_residual_mm, z_res_mm)
 from src.transport import g_trk, realized_accel, trapezoid_reversal
 
@@ -84,6 +87,14 @@ def screen_cell_receipt(cell, axis_map):
         "realized_accel_m_s2": realized,
         "realized_source": "cell" if measured is not None else "axis_map",
         "axis_map_realized_accel_m_s2": float(axis_map[commanded]),
+        "hold_slip_z_mm": cell.get("hold_slip_z_mm"),
+        "transport_slip_xz_mm": cell.get("transport_slip_xz_mm"),
+        "transport_x_res_mm": cell.get("transport_x_res_mm"),
+        "transport_z_res_mm": cell.get("transport_z_res_mm"),
+        "transport_y_res_mm": cell.get("transport_y_res_mm"),
+        "grasp_frame_y_res_mm": cell.get("grasp_frame_y_res_mm"),
+        "assembly_drift_mm": cell.get("assembly_drift_mm"),
+        "escape_mode": cell.get("escape_mode"),
         "slip_perm_tangential_mm": cell.get("slip_perm_tangential_mm"),
         "x_res_mm": cell.get("x_res_mm"), "z_res_mm": cell.get("z_res_mm"),
         "y_res_mm": cell.get("y_res_mm"), "slip_perm_x_mm": cell.get("slip_perm_x_mm"),
@@ -94,9 +105,13 @@ def screen_cell_receipt(cell, axis_map):
         "settle_end_palm_x": cell.get("settle_end_palm_x"),
         "ref_block_x": cell.get("ref_block_x"), "ref_palm_x": cell.get("ref_palm_x"),
         "grip_ref_com": cell.get("grip_ref_com"), "grip_ref_palm": cell.get("grip_ref_palm"),
+        "transport_ref_com": cell.get("transport_ref_com"),
+        "transport_ref_palm": cell.get("transport_ref_palm"),
         "settle_end_com": cell.get("settle_end_com"),
         "settle_end_palm": cell.get("settle_end_palm"),
         "label": cell.get("label", "error"), "dvf": cell.get("dvf"),
+        "damage_latch_t": cell.get("damage_latch_t"), "drop_t": cell.get("drop_t"),
+        "damage_after_drop": cell.get("damage_after_drop", False),
         "p99_strain": cell.get("p99_strain"), "peak_strain": cell.get("peak_strain"),
         "validity_gate": cell.get("validity_gate"), "ejected": cell.get("ejected", False),
         "per_phase_strain_maxima": cell.get("per_phase_strain_maxima"),
@@ -123,12 +138,22 @@ def update_band(band, receipt):
     band["cells"][key] = {
         "label": receipt["label"], "realized_accel_m_s2": receipt["realized_accel_m_s2"],
         "realized_source": receipt["realized_source"],
+        "hold_slip_z_mm": receipt["hold_slip_z_mm"],
+        "transport_slip_xz_mm": receipt["transport_slip_xz_mm"],
+        "transport_x_res_mm": receipt["transport_x_res_mm"],
+        "transport_z_res_mm": receipt["transport_z_res_mm"],
+        "transport_y_res_mm": receipt["transport_y_res_mm"],
+        "grasp_frame_y_res_mm": receipt["grasp_frame_y_res_mm"],
+        "assembly_drift_mm": receipt["assembly_drift_mm"],
+        "escape_mode": receipt["escape_mode"],
         "slip_perm_tangential_mm": receipt["slip_perm_tangential_mm"],
         "x_res_mm": receipt["x_res_mm"], "z_res_mm": receipt["z_res_mm"],
         "y_res_mm": receipt["y_res_mm"], "slip_perm_x_mm": receipt["slip_perm_x_mm"],
         "slip3d_max_mm": receipt["slip3d_max_mm"],
         "yz_residual_mm": receipt["yz_residual_mm"],
-        "dvf": receipt["dvf"], "ejected": receipt["ejected"],
+        "dvf": receipt["dvf"], "damage_latch_t": receipt["damage_latch_t"],
+        "drop_t": receipt["drop_t"], "damage_after_drop": receipt["damage_after_drop"],
+        "ejected": receipt["ejected"],
         "finite": receipt["health"].get("finite"), "certified": (
             receipt.get("validity_gate") or {}).get("certified"),
     }
@@ -302,6 +327,10 @@ def run_transport_cell(E, F, a_peak, seed, substeps=80, cell_m=0.005,
     transport_reference = None
     ejected = False
     finite = True
+    grip_relative_z = None
+    grip_relative_finger_y = None
+    damage_latch_t = None
+    drop_t = None
     t_pre = cfg.ramp_s + cfg.preload_s
     for frame_index in range(round(T_END * FPS)):
         t = rig.sim_time
@@ -319,6 +348,19 @@ def run_transport_cell(E, F, a_peak, seed, substeps=80, cell_m=0.005,
             finite = False
             series.append(m)
             break
+        finger_mid_y = 0.5 * (m["left_y"] + m["right_y"])
+        m["finger_mid_y"] = finger_mid_y
+        if grip_relative_z is None and abs(m["t"] - 1.80) <= 0.5 / FPS:
+            grip_relative_z = m["com"][2] - m["palm_pos"][2]
+            grip_relative_finger_y = m["com"][1] - finger_mid_y
+        if grip_relative_z is not None and drop_t is None:
+            hold_drop = (4.30 <= m["t"] <= 9.30
+                         and abs((m["com"][2] - m["palm_pos"][2])
+                                 - grip_relative_z) * 1000.0 > 2.0)
+            lateral_drop = (abs((m["com"][1] - finger_mid_y)
+                                - grip_relative_finger_y) * 1000.0 > 10.0)
+            if hold_drop or lateral_drop:
+                drop_t = float(m["t"])
         if m["t"] >= TRANSPORT_START:
             relative = np.asarray(m["com"]) - np.asarray(m["palm_pos"])
             if transport_reference is None:
@@ -326,9 +368,15 @@ def run_transport_cell(E, F, a_peak, seed, substeps=80, cell_m=0.005,
             if gross_slip_mm(m, transport_reference) > GROSS_SLIP_MM:
                 series.append(m)
                 ejected = True
+                if drop_t is None:
+                    drop_t = float(m["t"])
                 break
         field, rest_vol = rig.strain_field()
         temporal_max = field.copy() if temporal_max is None else np.maximum(temporal_max, field)
+        if damage_latch_t is None:
+            current_dvf, current_latched = latched_dvf(temporal_max, rest_vol)
+            if current_latched:
+                damage_latch_t = float(m["t"])
         if m["phase"] is not None:
             previous = phase_fields.get(m["phase"])
             phase_fields[m["phase"]] = field.copy() if previous is None else np.maximum(previous, field)
@@ -363,12 +411,6 @@ def run_transport_cell(E, F, a_peak, seed, substeps=80, cell_m=0.005,
         zero_fits = realized_accel(times, velocities, zero_windows)
         zero_command_accel = max(abs(fit["a_fit"]) for fit in zero_fits.values())
     hold = [m for m in series if m["phase"] == "hold"]
-    hold_ref = None
-    legacy_slip = 0.0
-    for m in hold:
-        rel = m["com_z"] - m["palm_z"]
-        hold_ref = rel if hold_ref is None else hold_ref
-        legacy_slip = max(legacy_slip, abs(rel - hold_ref) * 1000)
     dvf, damaged = latched_dvf(temporal_max, rest_vol)
     finite_series = [m for m in series if m["finite"]
                      and np.all(np.isfinite(m["com"])) and np.all(np.isfinite(m["palm_pos"]))]
@@ -379,14 +421,27 @@ def run_transport_cell(E, F, a_peak, seed, substeps=80, cell_m=0.005,
         raise ValueError("series contains no frame near t_grip=1.80")
     grip_ref_com = [float(value) for value in grip_frame["com"]]
     grip_ref_palm = [float(value) for value in grip_frame["palm_pos"]]
+    hold_slip = hold_slip_z_mm(finite_series)
+    legacy_slip = hold_slip
+    if transport_reference is not None:
+        ref_frame = min(finite_series, key=lambda m: abs(m["t"] - TRANSPORT_START))
+        transport_ref_com = [float(value) for value in ref_frame["com"]]
+        transport_ref_palm = [float(value) for value in ref_frame["palm_pos"]]
+    else:
+        ref_frame = None
+        transport_ref_com = transport_ref_palm = None
     if not ejected and finite and settled:
+        transport_slip = transport_slip_xz_mm(finite_series)
+        transport_x_res = transport_x_res_mm(finite_series)
+        transport_y_res = transport_y_res_mm(finite_series)
+        transport_z_res = transport_z_res_mm(finite_series)
         slip_tangential = slip_perm_tangential_mm(finite_series)
         x_res = x_res_mm(finite_series)
         y_res = y_res_mm(finite_series)
         z_res = z_res_mm(finite_series)
+        grasp_y_res = grasp_frame_y_res_mm(finite_series)
         slip_perm = slip_perm_x_mm(finite_series)
         yz_residual = yz_residual_mm(finite_series)
-        ref_frame = min(finite_series, key=lambda m: abs(m["t"] - TRANSPORT_START))
         settle_end_com = np.mean([m["com"] for m in settled], axis=0).astype(float).tolist()
         settle_end_palm = np.mean([m["palm_pos"] for m in settled], axis=0).astype(float).tolist()
         settle_end_block_x = float(np.mean([m["com"][0] for m in settled]))
@@ -394,12 +449,13 @@ def run_transport_cell(E, F, a_peak, seed, substeps=80, cell_m=0.005,
         ref_block_x = float(ref_frame["com"][0])
         ref_palm_x = float(ref_frame["palm_pos"][0])
     else:
+        grasp_y_res = None
+        transport_slip = transport_x_res = transport_y_res = transport_z_res = None
         slip_tangential = x_res = y_res = z_res = None
         slip_perm = yz_residual = None
         settle_end_com = settle_end_palm = None
         settle_end_block_x = settle_end_palm_x = None
-        if transport_reference is not None:
-            ref_frame = min(finite_series, key=lambda m: abs(m["t"] - TRANSPORT_START))
+        if ref_frame is not None:
             ref_block_x, ref_palm_x = float(ref_frame["com"][0]), float(ref_frame["palm_pos"][0])
         else:
             ref_block_x = ref_palm_x = None
@@ -412,25 +468,46 @@ def run_transport_cell(E, F, a_peak, seed, substeps=80, cell_m=0.005,
     stats = rig.strain_stats(0.15) if finite else {"p99_vol_weighted_strain": None}
     finite = finite and all(m["finite"] for m in series)
     fn_hold = [0.5 * (m["fn_left_n"] + m["fn_right_n"]) for m in hold]
+    escape_mode = "lateral" if grasp_y_res is not None and grasp_y_res > 10.0 else None
+    if escape_mode is not None and drop_t is None:
+        # Normally captured incrementally; retain fail-closed timing evidence if
+        # only the settle-window mean crosses the criterion.
+        drop_t = 11.30
+    damage_after_drop = bool(
+        damage_latch_t is not None and drop_t is not None
+        and damage_latch_t >= drop_t
+    )
+    classification = {
+        "damage_latch_t": damage_latch_t, "drop_t": drop_t,
+        "dropped": drop_t is not None, "ejected": ejected,
+        "hold_slip_z_mm": hold_slip,
+        "transport_slip_xz_mm": transport_slip,
+        "grasp_frame_y_res_mm": grasp_y_res,
+    }
     receipt = {
         "status": "ok", "E_pa": float(E), "grip_force_n": float(F), "seed": int(seed),
         "ejected": ejected, "finite": finite,
         "commanded_a_peak_m_s2": float(a_peak), "tracking": tracking,
         "realized_F_g_n": float(np.mean(fn_hold)) if fn_hold else float("nan"),
+        "hold_slip_z_mm": hold_slip, "transport_slip_xz_mm": transport_slip,
+        "transport_x_res_mm": transport_x_res, "transport_z_res_mm": transport_z_res,
+        "transport_y_res_mm": transport_y_res,
+        "grasp_frame_y_res_mm": grasp_y_res,
+        "assembly_drift_mm": y_res,
+        "escape_mode": escape_mode,
         "slip_perm_tangential_mm": slip_tangential,
         "x_res_mm": x_res, "z_res_mm": z_res, "y_res_mm": y_res,
         "slip_perm_x_mm": slip_perm, "slip3d_max_mm": slip_max,
         "yz_residual_mm": yz_residual, "legacy_hold_slip_mm": legacy_slip,
         "grip_ref_com": grip_ref_com, "grip_ref_palm": grip_ref_palm,
+        "transport_ref_com": transport_ref_com, "transport_ref_palm": transport_ref_palm,
         "settle_end_com": settle_end_com, "settle_end_palm": settle_end_palm,
         "settle_end_block_x": settle_end_block_x, "settle_end_palm_x": settle_end_palm_x,
         "ref_block_x": ref_block_x, "ref_palm_x": ref_palm_x,
         "dvf": dvf, "damage_latched": damaged,
-        "label": ("nonfinite" if not finite else label_v22({
-            "dvf": dvf, "damage_latched": damaged,
-            "slip_perm_tangential_mm": slip_tangential,
-            "ejected": ejected,
-        })),
+        "damage_latch_t": damage_latch_t, "drop_t": drop_t,
+        "damage_after_drop": damage_after_drop,
+        "label": ("nonfinite" if not finite else label_v23(classification)),
         "p99_strain": stats["p99_vol_weighted_strain"], "peak_strain": float(np.max(temporal_max)),
         "per_phase_strain_maxima": strain_maxima,
         "validity_gate": {"summary": vg, "certified": certified},
@@ -481,7 +558,7 @@ def run_screen(material=None, resume=False):
         cert = (receipt.get("validity_gate") or {}).get("certified")
         realized = receipt["realized_accel_m_s2"]
         print(f"E{E_kpa} a{acceleration:g} F{force:g} -> {receipt['label']} "
-              f"realized={realized:.4g} slip={receipt['slip_perm_tangential_mm']} dvf={receipt['dvf']} "
+              f"realized={realized:.4g} slip={max(receipt['hold_slip_z_mm'] or 0, receipt['transport_slip_xz_mm'] or 0)} dvf={receipt['dvf']} "
               f"ejected={receipt['ejected']} cert={cert} ({done}cells done, {elapsed:.1f}s)")
     return 0
 

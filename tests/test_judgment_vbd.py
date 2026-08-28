@@ -2,15 +2,19 @@ import numpy as np
 
 from src.judgment_vbd import (
     PHASE_NAMES,
+    grasp_frame_y_res_mm,
     label,
     label_v21,
     label_v22,
+    label_v23,
+    hold_slip_z_mm,
     latched_dvf,
     per_phase_strain_maxima,
     phase_for_time,
     slip3d,
     slip_perm_tangential_mm,
     slip_perm_x_mm,
+    transport_slip_xz_mm,
     x_res_mm,
     y_res_mm,
     yz_residual_mm,
@@ -87,6 +91,62 @@ def test_v22_permanent_tangential_slip_and_normal_reseating():
     assert slip_perm_tangential_mm(y_only) == 0.0
     assert label_v22({"slip_perm_tangential_mm": 0.0}) == "intact"
     assert label_v22({"slip_perm_tangential_mm": None, "ejected": True}) == "slip"
+
+
+def test_v23_separate_hold_and_transport_windows():
+    def series(hold_z=0.0, settle_x=0.0, settle_z=None, settle_y=0.0):
+        settle_z = hold_z if settle_z is None else settle_z
+        return [
+            _frame(1.8, [0, 0, 0], [0, 0, 0]),
+            _frame(4.3, [0, 0, hold_z], [0, 0, 0]),
+            _frame(9.3, [0, 0, hold_z], [0, 0, 0]),
+            _frame(11.3, [settle_x, settle_y, settle_z], [0, 0, 0]),
+            _frame(11.6, [settle_x, settle_y, settle_z], [0, 0, 0]),
+        ]
+
+    hold_creep = series(hold_z=-0.006)
+    assert np.isclose(hold_slip_z_mm(hold_creep), 6.0)
+    assert transport_slip_xz_mm(hold_creep) == 0.0
+    assert label_v23({"hold_slip_z_mm": 6.0, "transport_slip_xz_mm": 0.0}) == "slip"
+
+    transport = series(settle_x=0.003)
+    assert hold_slip_z_mm(transport) == 0.0
+    assert np.isclose(transport_slip_xz_mm(transport), 3.0)
+    assert label_v23({"hold_slip_z_mm": 0.0, "transport_slip_xz_mm": 3.0}) == "slip"
+
+    assert label_v23({"hold_slip_z_mm": 1.0, "transport_slip_xz_mm": 1.0}) == "intact"
+    y_only = series(settle_y=0.010)
+    assert transport_slip_xz_mm(y_only) == 0.0
+    assert label_v23({"hold_slip_z_mm": 0.0, "transport_slip_xz_mm": 0.0}) == "intact"
+    assert label_v23({"ejected": True, "damage_latched": True}) == "slip"
+    assert label_v23({"hold_slip_z_mm": 0.0, "transport_slip_xz_mm": 0.0,
+                      "damage_latch_t": 8.0}) == "damage"
+
+
+def test_v23_lateral_escape_and_timestamped_damage_precedence():
+    common_mode = [
+        {**_frame(1.8, [0, 0.020, 0], [0, 0, 0]),
+         "left_y": 0.03, "right_y": 0.01},
+        {**_frame(11.3, [0, 0.030, 0], [0, 0, 0]),
+         "left_y": 0.04, "right_y": 0.02},
+        {**_frame(11.6, [0, 0.030, 0], [0, 0, 0]),
+         "left_y": 0.04, "right_y": 0.02},
+    ]
+    assert np.isclose(grasp_frame_y_res_mm(common_mode), 0.0)
+    base = {"hold_slip_z_mm": 0.0, "transport_slip_xz_mm": 0.0}
+    assert label_v23({**base, "grasp_frame_y_res_mm": 0.0}) == "intact"
+
+    escaped = [dict(frame) for frame in common_mode]
+    for frame in escaped[1:]:
+        frame["com"] = np.array([0, 0.042, 0])
+    assert np.isclose(grasp_frame_y_res_mm(escaped), 12.0)
+    assert label_v23({**base, "grasp_frame_y_res_mm": 12.0,
+                      "drop_t": 11.3}) == "slip"
+
+    assert label_v23({**base, "drop_t": 9.0, "damage_latch_t": 8.0,
+                      "ejected": True}) == "damage"
+    assert label_v23({**base, "drop_t": 9.0, "damage_latch_t": 9.0,
+                      "ejected": True}) == "slip"
 
 
 def test_dvf_latches_transient_accel_back_damage():
