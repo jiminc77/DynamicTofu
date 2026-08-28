@@ -42,7 +42,7 @@ The committed p1_oracle.json holds summary metrics + hold-slip; the reproducible
 
 The pure-VBD architecture removes the ejection and the friction_epsilon=2e-4 fix is confirmed optimal, but the oracle does not meet the <2 mm acceptance at E=100-200 kPa, and P0 isolation + several acceptance measurements are UNRESOLVED. **STOPPING for external review before the Day-2 tofu sweep**, per the hard-gate directive.
 
-## P1 final (margin=1e-3, substeps=40, full acceptance set) — reports/logs/vbd/p1_final.json
+## P1 final (margin=1e-3, substeps=40, PARTIAL acceptance set) — reports/logs/vbd/p1_final.json
 
 First TRUE HOLD in the project: **E=100 kPa / 2 N holds the block lifted 48.7 mm with slip 1.00 mm over 5 s** (clip reports/media/p1_pass_E100_2N.mp4), equilibrium OK (finger speed 1e-4 m/s), pre-lift XY excursion 1.24 mm (<5). But the FULL acceptance set is NOT cleanly met at 100-200 kPa:
 
@@ -58,3 +58,6 @@ First TRUE HOLD in the project: **E=100 kPa / 2 N holds the block lifted 48.7 mm
 - **Substep-invariance 40->80 FAILS**: at E=100/2 N, slip 1.01 -> 0.56 mm (45% change > the 20% criterion). Converging (more substeps -> less slip) but substeps=40 is NOT converged.
 
 **Verdict: the pure-VBD oracle achieves a real hold (E=100/2N) but does NOT cleanly pass the full acceptance set at 100-200 kPa** (sub-Newton creep; E=200/2N > 2 mm; substep-invariance fails). Per the hard gate: STOP for external review; do not touch tofu. The trend is monotone: slip decreases with grip force AND with substeps, so a converged pass likely needs grip force >= 2 N (above the sub-Newton / 2x-safety target) and substeps >= 80. The gating physics is the eps-friction creep at marginal load.
+
+### Unresolved acceptance items (per review)
+Direct per-pad contact Fn is NOT measured — the runner records the target force + an equilibrium inference (finger speed ~1e-4 in the held case), not a measured contact normal force; the rig's penalty-proxy fn_left/right go spurious once the block drops. Mean-Fn substep-invariance and tet positive-volume health (only particle finiteness is checked) are also NOT measured. These are stiff-oracle-only measurements deferred to the external review; none touches tofu. 'Full acceptance' should read 'partial acceptance' accordingly.

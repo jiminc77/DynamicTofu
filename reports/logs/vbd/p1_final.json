@@ -132,5 +132,6 @@
   },
   "hard_gate_subNewton_pass": false,
   "any_pass_100_200": true,
-  "min_holding_force_E100_n": 2.0
+  "min_holding_force_E100_n": 2.0,
+  "acceptance_scope": "PARTIAL, not full. Measured: hold slip, pre-lift COM excursion, finger speed (equilibrium), surface-penetration proxy, substep 40->80 SLIP invariance. NOT measured (UNRESOLVED): direct per-pad contact Fn (only target F + equilibrium inference from low finger speed; the rig's fn_left/right are a penalty-proxy that is spurious once the block drops); mean-Fn substep-invariance; tet positive-volume health (only particle finiteness checked)."
 }
