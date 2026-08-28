@@ -1,0 +1,163 @@
+{
+  "gate": "V_day2_boundary_3seed",
+  "substeps": 80,
+  "git_sha": "84676610af6cedbb8dc66e02d98ebd8641ed65a8",
+  "cells": {
+    "E15_F0.6": {
+      "seeds": [
+        {
+          "seed": 0,
+          "label": "slip",
+          "slip_mm": 2.21
+        },
+        {
+          "seed": 1,
+          "label": "slip",
+          "slip_mm": 2.22
+        },
+        {
+          "seed": 2,
+          "label": "slip",
+          "slip_mm": 2.21
+        }
+      ],
+      "labels": [
+        "slip",
+        "slip",
+        "slip"
+      ],
+      "consensus_label": "slip",
+      "unanimous": true
+    },
+    "E15_F0.8": {
+      "seeds": [
+        {
+          "seed": 0,
+          "label": "intact",
+          "slip_mm": 1.24
+        },
+        {
+          "seed": 1,
+          "label": "intact",
+          "slip_mm": 1.24
+        },
+        {
+          "seed": 2,
+          "label": "intact",
+          "slip_mm": 1.23
+        }
+      ],
+      "labels": [
+        "intact",
+        "intact",
+        "intact"
+      ],
+      "consensus_label": "intact",
+      "unanimous": true
+    },
+    "E25_F0.6": {
+      "seeds": [
+        {
+          "seed": 0,
+          "label": "slip",
+          "slip_mm": 2.23
+        },
+        {
+          "seed": 1,
+          "label": "slip",
+          "slip_mm": 2.24
+        },
+        {
+          "seed": 2,
+          "label": "slip",
+          "slip_mm": 2.23
+        }
+      ],
+      "labels": [
+        "slip",
+        "slip",
+        "slip"
+      ],
+      "consensus_label": "slip",
+      "unanimous": true
+    },
+    "E25_F0.8": {
+      "seeds": [
+        {
+          "seed": 0,
+          "label": "intact",
+          "slip_mm": 1.26
+        },
+        {
+          "seed": 1,
+          "label": "intact",
+          "slip_mm": 1.27
+        },
+        {
+          "seed": 2,
+          "label": "intact",
+          "slip_mm": 1.26
+        }
+      ],
+      "labels": [
+        "intact",
+        "intact",
+        "intact"
+      ],
+      "consensus_label": "intact",
+      "unanimous": true
+    },
+    "E7_F0.6": {
+      "seeds": [
+        {
+          "seed": 0,
+          "label": "slip",
+          "slip_mm": 2.35
+        },
+        {
+          "seed": 1,
+          "label": "slip",
+          "slip_mm": 2.38
+        },
+        {
+          "seed": 2,
+          "label": "slip",
+          "slip_mm": 2.38
+        }
+      ],
+      "labels": [
+        "slip",
+        "slip",
+        "slip"
+      ],
+      "consensus_label": "slip",
+      "unanimous": true
+    },
+    "E7_F0.8": {
+      "seeds": [
+        {
+          "seed": 0,
+          "label": "intact",
+          "slip_mm": 1.33
+        },
+        {
+          "seed": 1,
+          "label": "intact",
+          "slip_mm": 1.32
+        },
+        {
+          "seed": 2,
+          "label": "intact",
+          "slip_mm": 1.36
+        }
+      ],
+      "labels": [
+        "intact",
+        "intact",
+        "intact"
+      ],
+      "consensus_label": "intact",
+      "unanimous": true
+    }
+  }
+}
