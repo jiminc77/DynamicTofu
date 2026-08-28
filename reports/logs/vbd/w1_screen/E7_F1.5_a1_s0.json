@@ -1,0 +1,82 @@
+{
+  "schema": "w1_screen_cell.v1",
+  "status": "ok",
+  "E_pa": 7000.0,
+  "grip_force_n": 1.5,
+  "seed": 0,
+  "commanded_a_peak_m_s2": 1.0,
+  "realized_accel_m_s2": 0.7250240870884126,
+  "realized_source": "cell",
+  "axis_map_realized_accel_m_s2": 0.681,
+  "slip3d_mm": 2.326864956595412,
+  "legacy_hold_slip_mm": 0.27430057525634766,
+  "label": "slip",
+  "dvf": 0.0019531250442354517,
+  "p99_strain": 0.09891018568106574,
+  "peak_strain": 0.15735001862049103,
+  "validity_gate": {
+    "summary": {
+      "per_pad": {
+        "left": {
+          "vg1_max_rel_disp_mm": 0.09079017490148544,
+          "vg2_zero_record_substeps": 670,
+          "vg3_overflow_substeps": 0,
+          "certified": false
+        },
+        "right": {
+          "vg1_max_rel_disp_mm": 0.12931571900844574,
+          "vg2_zero_record_substeps": 669,
+          "vg3_overflow_substeps": 0,
+          "certified": false
+        }
+      },
+      "cfl_max_substep_mm": 0.0
+    },
+    "certified": false
+  },
+  "ejected": false,
+  "per_phase_strain_maxima": {
+    "ramp": 0.15735001862049103,
+    "preload": 0.15333986282348633,
+    "lift": 0.1481110006570816,
+    "hold": 0.11602935194969177,
+    "accel_out": 0.11939898878335953,
+    "cruise_out": 0.12090331315994263,
+    "decel_out": 0.12130650132894516,
+    "dwell": 0.11937723308801651,
+    "accel_back": 0.12088415771722794,
+    "cruise_back": 0.12359576672315598,
+    "decel_back": 0.12424321472644806,
+    "settle": 0.12265109270811081
+  },
+  "health": {
+    "finite": true,
+    "finger_vy_hold_mean": 0.0015918468567845897,
+    "contact_count_min": 0,
+    "cfl_max_substep_mm": 0.0,
+    "zero_command_realized_accel_magnitude": null
+  },
+  "git_sha": "34090572fba82fb85a3f1c0c06900dd53694f4f4",
+  "prereg_sha256": "47541607bf1487e01266efef5580dcbd8d163356a3c18ba9c4079c0708707446",
+  "frozen_config": {
+    "substeps": 80,
+    "friction_epsilon": 0.0002,
+    "mu_pair": 1.0,
+    "contact_ke": 1000.0,
+    "contact_kd": 1.0,
+    "soft_contact_margin": 0.001,
+    "cell_m": 0.005,
+    "particle_radius": 0.0025,
+    "correct_mass": true,
+    "nu": 0.45,
+    "E_pa": [
+      7000.0,
+      15000.0,
+      25000.0
+    ]
+  },
+  "frozen_check": true,
+  "rig_pre_edit_sha256": "11011fb9e53544d4da75f1ad1e17932ccfc9d867e81eb8c146eb994209156475",
+  "newton_commit": "b74df534",
+  "msg": null
+}

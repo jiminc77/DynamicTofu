@@ -23,7 +23,12 @@
   },
   "label_matrix": {
     "1": {
-      "0.4": "slip"
+      "0.4": "slip",
+      "0.6": "intact",
+      "0.8": "slip",
+      "1": "slip",
+      "1.2": "intact",
+      "1.5": "slip"
     }
   },
   "cells": {
@@ -36,6 +41,56 @@
       "ejected": false,
       "finite": true,
       "certified": false
+    },
+    "a1_F0.6": {
+      "label": "intact",
+      "realized_accel_m_s2": 0.644724496773279,
+      "realized_source": "cell",
+      "slip3d_mm": 1.863511233099087,
+      "dvf": 0.0006510416814118173,
+      "ejected": false,
+      "finite": true,
+      "certified": false
+    },
+    "a1_F0.8": {
+      "label": "slip",
+      "realized_accel_m_s2": 0.6749244939003336,
+      "realized_source": "cell",
+      "slip3d_mm": 7.597717042316789,
+      "dvf": 0.0006510416814118173,
+      "ejected": false,
+      "finite": true,
+      "certified": false
+    },
+    "a1_F1": {
+      "label": "slip",
+      "realized_accel_m_s2": 0.6508418491908158,
+      "realized_source": "cell",
+      "slip3d_mm": 4.233575215515329,
+      "dvf": 0.0006510416814118173,
+      "ejected": false,
+      "finite": true,
+      "certified": false
+    },
+    "a1_F1.2": {
+      "label": "intact",
+      "realized_accel_m_s2": 0.6765450750078137,
+      "realized_source": "cell",
+      "slip3d_mm": 0.20624220154266537,
+      "dvf": 0.0006510416814118173,
+      "ejected": false,
+      "finite": true,
+      "certified": false
+    },
+    "a1_F1.5": {
+      "label": "slip",
+      "realized_accel_m_s2": 0.7250240870884126,
+      "realized_source": "cell",
+      "slip3d_mm": 2.326864956595412,
+      "dvf": 0.0019531250442354517,
+      "ejected": false,
+      "finite": true,
+      "certified": false
     }
   },
   "coverage": {
@@ -43,6 +98,26 @@
       [
         1.0,
         0.4
+      ],
+      [
+        1.0,
+        0.6
+      ],
+      [
+        1.0,
+        0.8
+      ],
+      [
+        1.0,
+        1.0
+      ],
+      [
+        1.0,
+        1.2
+      ],
+      [
+        1.0,
+        1.5
       ]
     ],
     "failed": []
