@@ -11,6 +11,7 @@ from src.judgment_vbd import (
     latched_dvf,
     per_phase_strain_maxima,
     phase_for_time,
+    post_lift_latched_dvf,
     slip3d,
     slip_perm_tangential_mm,
     slip_perm_x_mm,
@@ -160,6 +161,25 @@ def test_dvf_latches_transient_accel_back_damage():
     assert maxima["settle"] == 0.03
     assert dvf == 0.005
     assert latched
+
+
+def test_post_lift_damage_window_excludes_preload_indentation():
+    volumes = np.array([1.0, 199.0])
+    times = [0.5, 4.3, 9.3]
+    preload_only = [
+        np.array([0.20, 0.01]),
+        np.array([0.02, 0.01]),
+        np.array([0.03, 0.01]),
+    ]
+    dvf, damaged = post_lift_latched_dvf(times, preload_only, volumes)
+    assert dvf == 0.0
+    assert damaged is False
+
+    post_lift = list(preload_only)
+    post_lift[-1] = np.array([0.20, 0.01])
+    dvf, damaged = post_lift_latched_dvf(times, post_lift, volumes)
+    assert dvf == 0.005
+    assert damaged is True
 
 
 def test_damage_drop_precedence_both_orders():

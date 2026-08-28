@@ -12,6 +12,7 @@ SLIP_START_K = 44640
 SLIP_END_K = 55680
 SLIP_THRESHOLD_MM = 2.0
 DAMAGE_DVF_THRESHOLD = 0.005
+LIFT_END = 4.30
 
 PHASE_WINDOWS = (
     ("ramp", 0, 3840, False),
@@ -239,6 +240,21 @@ def latched_dvf(temporal_max_field, rest_vol, eps: float = 0.15) -> tuple[float,
         raise ValueError("rest_vol must be non-negative with positive total volume")
     dvf = float(volume[strain > eps].sum() / volume.sum())
     return dvf, dvf >= DAMAGE_DVF_THRESHOLD
+
+
+def post_lift_latched_dvf(times, fields, rest_vol, lift_end: float = LIFT_END,
+                          eps: float = 0.15) -> tuple[float, bool]:
+    """Reduce per-frame fields to the post-lift damage window."""
+    selected = [
+        np.asarray(field, dtype=float)
+        for time, field in zip(times, fields) if float(time) >= lift_end
+    ]
+    if not selected:
+        raise ValueError("post-lift damage window contains no fields")
+    shape = selected[0].shape
+    if any(field.shape != shape for field in selected):
+        raise ValueError("strain fields must have matching shapes")
+    return latched_dvf(np.maximum.reduce(selected), rest_vol, eps=eps)
 
 
 def per_phase_strain_maxima(field_by_phase: Mapping[str, object]) -> dict[str, float]:

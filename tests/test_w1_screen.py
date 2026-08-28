@@ -24,6 +24,8 @@ def _receipt(realized=None):
         "grasp_frame_y_res_mm": 0.0, "assembly_drift_mm": 0.1,
         "escape_mode": None, "damage_latch_t": None, "drop_t": None,
         "damage_after_drop": False,
+        "dvf_wholetrial": 0.0, "damage_window": "post_lift_hold_onset",
+        "lift_end_s": 4.3,
         "slip_perm_tangential_mm": 0.2, "x_res_mm": 0.1, "z_res_mm": 0.1,
         "y_res_mm": 0.1, "slip_perm_x_mm": 0.2,
         "slip3d_max_mm": 1.2, "yz_residual_mm": 0.1,

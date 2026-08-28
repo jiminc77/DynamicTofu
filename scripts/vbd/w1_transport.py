@@ -22,8 +22,8 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from src.frozen_config import assert_frozen, frozen_provenance
-from src.judgment_vbd import (PHASE_NAMES, grasp_frame_y_res_mm, hold_slip_z_mm,
-                              label_v23, latched_dvf,
+from src.judgment_vbd import (LIFT_END, PHASE_NAMES, grasp_frame_y_res_mm,
+                              hold_slip_z_mm, label_v23, latched_dvf,
                               per_phase_strain_maxima, phase_for_time,
                               slip3d_max_mm, slip_perm_tangential_mm,
                               slip_perm_x_mm, transport_slip_xz_mm,
@@ -110,6 +110,8 @@ def screen_cell_receipt(cell, axis_map):
         "settle_end_com": cell.get("settle_end_com"),
         "settle_end_palm": cell.get("settle_end_palm"),
         "label": cell.get("label", "error"), "dvf": cell.get("dvf"),
+        "dvf_wholetrial": cell.get("dvf_wholetrial"),
+        "damage_window": cell.get("damage_window"), "lift_end_s": cell.get("lift_end_s"),
         "damage_latch_t": cell.get("damage_latch_t"), "drop_t": cell.get("drop_t"),
         "damage_after_drop": cell.get("damage_after_drop", False),
         "p99_strain": cell.get("p99_strain"), "peak_strain": cell.get("peak_strain"),
@@ -151,7 +153,9 @@ def update_band(band, receipt):
         "y_res_mm": receipt["y_res_mm"], "slip_perm_x_mm": receipt["slip_perm_x_mm"],
         "slip3d_max_mm": receipt["slip3d_max_mm"],
         "yz_residual_mm": receipt["yz_residual_mm"],
-        "dvf": receipt["dvf"], "damage_latch_t": receipt["damage_latch_t"],
+        "dvf": receipt["dvf"], "dvf_wholetrial": receipt["dvf_wholetrial"],
+        "damage_window": receipt["damage_window"], "lift_end_s": receipt["lift_end_s"],
+        "damage_latch_t": receipt["damage_latch_t"],
         "drop_t": receipt["drop_t"], "damage_after_drop": receipt["damage_after_drop"],
         "ejected": receipt["ejected"],
         "finite": receipt["health"].get("finite"), "certified": (
@@ -322,6 +326,7 @@ def run_transport_cell(E, F, a_peak, seed, substeps=80, cell_m=0.005,
     series = []
     phase_fields = {}
     temporal_max = None
+    post_lift_temporal_max = None
     rest_vol = None
     snap_index = 0
     transport_reference = None
@@ -373,8 +378,13 @@ def run_transport_cell(E, F, a_peak, seed, substeps=80, cell_m=0.005,
                 break
         field, rest_vol = rig.strain_field()
         temporal_max = field.copy() if temporal_max is None else np.maximum(temporal_max, field)
-        if damage_latch_t is None:
-            current_dvf, current_latched = latched_dvf(temporal_max, rest_vol)
+        if m["t"] >= LIFT_END:
+            post_lift_temporal_max = (
+                field.copy() if post_lift_temporal_max is None
+                else np.maximum(post_lift_temporal_max, field)
+            )
+        if damage_latch_t is None and post_lift_temporal_max is not None:
+            current_dvf, current_latched = latched_dvf(post_lift_temporal_max, rest_vol)
             if current_latched:
                 damage_latch_t = float(m["t"])
         if m["phase"] is not None:
@@ -393,6 +403,7 @@ def run_transport_cell(E, F, a_peak, seed, substeps=80, cell_m=0.005,
         Path(save_field).parent.mkdir(parents=True, exist_ok=True)
         final_field, _ = rig.strain_field()
         np.savez_compressed(save_field, temporal_max_principal_strain=temporal_max,
+                            post_lift_temporal_max_principal_strain=post_lift_temporal_max,
                             final_principal_strain=final_field, tet_rest_vol=rest_vol)
     transport = [m for m in series if m["t"] >= TRANSPORT_START]
     times = [m["t"] for m in transport]
@@ -411,7 +422,10 @@ def run_transport_cell(E, F, a_peak, seed, substeps=80, cell_m=0.005,
         zero_fits = realized_accel(times, velocities, zero_windows)
         zero_command_accel = max(abs(fit["a_fit"]) for fit in zero_fits.values())
     hold = [m for m in series if m["phase"] == "hold"]
-    dvf, damaged = latched_dvf(temporal_max, rest_vol)
+    if post_lift_temporal_max is None:
+        raise RuntimeError("post-lift damage window contains no strain field")
+    dvf, damaged = latched_dvf(post_lift_temporal_max, rest_vol)
+    dvf_wholetrial, _ = latched_dvf(temporal_max, rest_vol)
     finite_series = [m for m in series if m["finite"]
                      and np.all(np.isfinite(m["com"])) and np.all(np.isfinite(m["palm_pos"]))]
     slip_max = slip3d_max_mm(finite_series, TRANSPORT_START) if transport_reference is not None else 0.0
@@ -504,7 +518,9 @@ def run_transport_cell(E, F, a_peak, seed, substeps=80, cell_m=0.005,
         "settle_end_com": settle_end_com, "settle_end_palm": settle_end_palm,
         "settle_end_block_x": settle_end_block_x, "settle_end_palm_x": settle_end_palm_x,
         "ref_block_x": ref_block_x, "ref_palm_x": ref_palm_x,
-        "dvf": dvf, "damage_latched": damaged,
+        "dvf": dvf, "dvf_wholetrial": dvf_wholetrial,
+        "damage_window": "post_lift_hold_onset", "lift_end_s": LIFT_END,
+        "damage_latched": damaged,
         "damage_latch_t": damage_latch_t, "drop_t": drop_t,
         "damage_after_drop": damage_after_drop,
         "label": ("nonfinite" if not finite else label_v23(classification)),
