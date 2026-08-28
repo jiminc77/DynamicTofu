@@ -1,0 +1,154 @@
+{
+  "gate": "P3c_ATTR",
+  "inputs": {
+    "E_pa": 15000.0,
+    "grip_force_n": 1.2,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "substeps": 80
+  },
+  "provenance": {
+    "git_sha": "dcd92272f0371457832057ccbc4c1f0c3b9eebe3",
+    "prereg_sha256": "47541607bf1487e01266efef5580dcbd8d163356a3c18ba9c4079c0708707446",
+    "solver_attribute": "SolverVBD.body_forces",
+    "solver_layout_units": "wp.array[wp.vec3], shape (model.body_count,), world-frame newtons"
+  },
+  "seed_runs": [
+    {
+      "left": {
+        "normal_n": 1.1891061067581177,
+        "tangential_n": 0.5353002895271888,
+        "penalty_n": 0.0
+      },
+      "right": {
+        "normal_n": 1.1933721899986267,
+        "tangential_n": 0.5311276667754976,
+        "penalty_n": 0.0
+      },
+      "finger_vy": 0.0006970465183258057,
+      "sample_count": 300
+    },
+    {
+      "left": {
+        "normal_n": 1.1927990913391113,
+        "tangential_n": 0.5388500670891077,
+        "penalty_n": 0.0
+      },
+      "right": {
+        "normal_n": 1.1912662982940674,
+        "tangential_n": 0.5434450219076639,
+        "penalty_n": 0.0
+      },
+      "finger_vy": 0.0005382299423217773,
+      "sample_count": 300
+    },
+    {
+      "left": {
+        "normal_n": 1.1879510283470154,
+        "tangential_n": 0.5240329056526458,
+        "penalty_n": 0.0
+      },
+      "right": {
+        "normal_n": 1.1898233890533447,
+        "tangential_n": 0.5510953015307164,
+        "penalty_n": 0.0
+      },
+      "finger_vy": 0.001188814640045166,
+      "sample_count": 300
+    }
+  ],
+  "block_absent_control": {
+    "left": {
+      "normal_n": 1.200024127960205,
+      "tangential_n": 3.3799179817786684e-12,
+      "penalty_n": 20.321747235953808
+    },
+    "right": {
+      "normal_n": 1.200024127960205,
+      "tangential_n": 3.3799179817786684e-12,
+      "penalty_n": 20.373847283422947
+    },
+    "finger_vy": 0.0,
+    "sample_count": 300
+  },
+  "checks": {
+    "A_sign_units": {
+      "pass": true,
+      "per_seed": [
+        {
+          "A_sign_units": true,
+          "D_equilibrium": false,
+          "normals_n": [
+            1.1891061067581177,
+            1.1933721899986267
+          ],
+          "penalty_n": [
+            0.0,
+            0.0
+          ],
+          "finger_vy_m_s": 0.0006970465183258057
+        },
+        {
+          "A_sign_units": true,
+          "D_equilibrium": false,
+          "normals_n": [
+            1.1927990913391113,
+            1.1912662982940674
+          ],
+          "penalty_n": [
+            0.0,
+            0.0
+          ],
+          "finger_vy_m_s": 0.0005382299423217773
+        },
+        {
+          "A_sign_units": true,
+          "D_equilibrium": false,
+          "normals_n": [
+            1.1879510283470154,
+            1.1898233890533447
+          ],
+          "penalty_n": [
+            0.0,
+            0.0
+          ],
+          "finger_vy_m_s": 0.001188814640045166
+        }
+      ]
+    },
+    "B_block_absent": {
+      "pass": false,
+      "normal_abs_n": [
+        1.200024127960205,
+        1.200024127960205
+      ],
+      "limit_n": 0.02
+    },
+    "C_contact_not_joint_effort": {
+      "pass": false,
+      "control_joint_effort_n": 1.2,
+      "control_normal_abs_n": [
+        1.200024127960205,
+        1.200024127960205
+      ]
+    },
+    "D_equilibrium": {
+      "pass": false,
+      "relative_tolerance": 0.15
+    },
+    "E_three_seed_reproducibility": {
+      "pass": false,
+      "seed_count": 3
+    }
+  },
+  "verdict": "GEOMETRY_ONLY",
+  "failed_checks": [
+    "B_block_absent",
+    "C_contact_not_joint_effort",
+    "D_equilibrium",
+    "E_three_seed_reproducibility"
+  ]
+}
