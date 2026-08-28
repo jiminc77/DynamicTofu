@@ -1,0 +1,36 @@
+{
+  "gate": "V_day2_finalize",
+  "git_sha": "f935cad1aeccba52e6a59d13f4b5cb516aa96d04",
+  "mesh_convergence": {
+    "E15_F1.0": {
+      "h5mm": {
+        "slip_mm": 0.86,
+        "label": "intact",
+        "peak_strain": 0.0811,
+        "p99": 0.0314
+      },
+      "h4mm": {
+        "slip_mm": 0.77,
+        "held": true,
+        "peak_strain": 0.0865,
+        "p99": 0.0333
+      },
+      "label_invariant": true
+    },
+    "E7_F1.5": {
+      "h5mm": {
+        "slip_mm": 0.97,
+        "label": "intact",
+        "peak_strain": 0.1454,
+        "p99": 0.099
+      },
+      "h4mm": {
+        "slip_mm": 0.81,
+        "held": true,
+        "peak_strain": 0.1744,
+        "p99": 0.1015
+      },
+      "label_invariant": true
+    }
+  }
+}
