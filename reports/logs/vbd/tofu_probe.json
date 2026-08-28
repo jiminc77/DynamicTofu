@@ -1,0 +1,30 @@
+{
+  "gate": "V_day2_preprobe",
+  "git_sha": "729d069f50f3902b2a31a0aba6bdf6a04236819e",
+  "cell": "E15kPa_nu0.45_F0.6N_h5mm_r2.5mm_ke1e3_mu1_eps2e-04_sub40_margin1e-3_lift50mm2.5s_hold5s",
+  "placeholder_damage_threshold": 0.15,
+  "result": {
+    "E_pa": 15000.0,
+    "grip_force_n": 0.6,
+    "friction_epsilon": 0.0002,
+    "hold_slip_mm": 16.28,
+    "held_lt2mm": false,
+    "finite": true,
+    "mean_finger_speed_hold": 1e-05,
+    "Fn_applied_equilibrium_n": 0.6,
+    "coulomb_load_fraction": 0.745,
+    "weight_n": 0.8939,
+    "contacts_hold_mean": 12,
+    "bbox_final": [
+      0.0413,
+      0.0405,
+      0.0415
+    ],
+    "peak_principal_strain": 0.0724,
+    "hold_mean_principal_strain": 0.0537,
+    "hold_mean_p99_strain": 0.0461,
+    "hold_mean_damaged_vol_frac_placeholder": 0.0,
+    "final_com_rise_mm": 33.3
+  },
+  "decision": "run_eps_ladder"
+}

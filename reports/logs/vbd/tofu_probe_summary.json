@@ -1,0 +1,25 @@
+{
+  "gate": "V_day2_preprobe_summary",
+  "recipe_cell_E15_F0.6_sub40": {
+    "eps2e-4": 16.28,
+    "eps1e-4": 19.65,
+    "eps5e-5": 19.81,
+    "held": false,
+    "note": "pre-probe recipe + sanctioned eps ladder ALL fail <2mm; 0.6N load fraction 0.745 (marginal); eps<2e-4 is worse (noise)"
+  },
+  "force_sweep_E15_sub40_eps2e-4": {
+    "1.0N": 17.57,
+    "1.2N": 2.95,
+    "1.5N": 17.26,
+    "note": "non-monotonic/noisy at substeps40 (under-resolved); 1.2N nearly holds (near-full lift 46.6mm, low strain 0.081)"
+  },
+  "substep80_E15_F1.2_eps2e-4": {
+    "slip_mm": 1.13,
+    "final_rise_mm": 48.2,
+    "held": true,
+    "note": "HOLDS <2mm at substeps=80 (the oracle's convergence resolution) -> the tofu grip works; substeps=40 was under-resolved"
+  },
+  "weight_measured_n": 0.894,
+  "weight_note": "measured tofu weight 0.894N (mass ~91g) vs 0.628N nominal for 64g -> add_soft_grid mass lumping; affects load-fraction; flag for review",
+  "verdict": "Architecture TRANSFERS to soft tofu: E=15kPa holds at F=1.2N + substeps=80 (1.13mm, near-full lift). But NOT at the pre-probe recipe (0.6N/sub40) or any eps in {2e-4,1e-4,5e-5}. Fixes needed vs the ruling recipe: substeps=80 (=the accepted oracle convergence resolution) + adequate force (~1.2N; sub-Newton is marginal). The sanctioned probe-failure path (eps ladder) is exhausted -> escalate for sign-off on substeps=80 + grid force range before committing the full grid."
+}

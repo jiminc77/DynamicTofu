@@ -1,0 +1,51 @@
+{
+  "ladder": {
+    "eps0.0001": {
+      "E_pa": 15000.0,
+      "grip_force_n": 0.6,
+      "friction_epsilon": 0.0001,
+      "hold_slip_mm": 19.65,
+      "held_lt2mm": false,
+      "finite": true,
+      "mean_finger_speed_hold": 1e-05,
+      "Fn_applied_equilibrium_n": 0.6,
+      "coulomb_load_fraction": 0.745,
+      "weight_n": 0.8939,
+      "contacts_hold_mean": 12,
+      "bbox_final": [
+        0.0407,
+        0.0405,
+        0.0417
+      ],
+      "peak_principal_strain": 0.0822,
+      "hold_mean_principal_strain": 0.0583,
+      "hold_mean_p99_strain": 0.0503,
+      "hold_mean_damaged_vol_frac_placeholder": 0.0,
+      "final_com_rise_mm": 30.0
+    },
+    "eps5e-05": {
+      "E_pa": 15000.0,
+      "grip_force_n": 0.6,
+      "friction_epsilon": 5e-05,
+      "hold_slip_mm": 19.81,
+      "held_lt2mm": false,
+      "finite": true,
+      "mean_finger_speed_hold": 1e-05,
+      "Fn_applied_equilibrium_n": 0.6,
+      "coulomb_load_fraction": 0.745,
+      "weight_n": 0.8939,
+      "contacts_hold_mean": 12,
+      "bbox_final": [
+        0.0416,
+        0.0404,
+        0.042
+      ],
+      "peak_principal_strain": 0.091,
+      "hold_mean_principal_strain": 0.0587,
+      "hold_mean_p99_strain": 0.05,
+      "hold_mean_damaged_vol_frac_placeholder": 0.0,
+      "final_com_rise_mm": 29.9
+    }
+  },
+  "highest_eps_that_passes": null
+}

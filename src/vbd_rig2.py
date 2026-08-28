@@ -127,6 +127,36 @@ class Vbd2Rig:
         self.l_qi = int(qs[self.j_left]); self.r_qi = int(qs[self.j_right])
         self.initial_com = self._com()
         self.grab_z = GRAB_Z
+        # per-tet rest data for Green-strain instrumentation
+        self.tet_idx = self.model.tet_indices.numpy()
+        self.tet_poses = self.model.tet_poses.numpy()   # Dm^-1 per tet
+        self.tet_rest_vol = 1.0 / (6.0 * np.abs(np.linalg.det(self.tet_poses)) + 1e-30)
+        self._weight_n = 9.81 * float(self.model.particle_mass.numpy()[self.soft_start:self.soft_end].sum())
+
+    def strain_stats(self, threshold):
+        """Per-tet max principal Green-Lagrange strain, volume-weighted P99, and
+        damaged-volume fraction above `threshold`."""
+        pq = self.state_0.particle_q.numpy()
+        ti = self.tet_idx
+        x0 = pq[ti[:, 0]]
+        Ds = np.stack([pq[ti[:, 1]] - x0, pq[ti[:, 2]] - x0, pq[ti[:, 3]] - x0], axis=-1)
+        F = Ds @ self.tet_poses
+        E = 0.5 * (np.transpose(F, (0, 2, 1)) @ F - np.eye(3))
+        maxp = np.linalg.eigvalsh(E)[:, -1]   # largest principal strain per tet
+        v = self.tet_rest_vol
+        order = np.argsort(maxp)
+        cw = np.cumsum(v[order]) / v.sum()
+        p99 = float(maxp[order][min(len(maxp) - 1, int(np.searchsorted(cw, 0.99)))])
+        dmg = float(v[maxp > threshold].sum() / v.sum())
+        return {"max_principal_strain": float(maxp.max()), "p99_vol_weighted_strain": p99,
+                "damaged_vol_frac": dmg, "threshold": threshold}
+
+    def contact_count(self):
+        try:
+            rc = self.contacts.rigid_contact_count.numpy()
+            return int(rc.reshape(-1)[0])
+        except Exception:
+            return -1
 
     def _build_gripper(self, builder):
         cfg = self.cfg
