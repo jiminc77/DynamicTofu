@@ -41,3 +41,44 @@ At this placeholder, the intact band (F 0.8-1.2 N) stays well below threshold (P
 ## Deliverables + STOP
 
 Probe JSON (tofu_probe*.json), grid JSON (tofu_grid.json + tofu_grid_confirm.json), mesh-conv JSON, strain fields, and 3 clips (holding tofu_hold.mp4, slipping tofu_slip.mp4, high-strain tofu_highstrain.mp4). STOP for external review of: (1) the damage threshold eps_damage before labeling; (2) the band as-measured. MPM E1 data frozen.
+
+
+## FINAL judgment-v2 phase diagram (labels applied post-hoc; eps_damage=0.15, DVF>=0.5%)
+
+s=slip (>2mm rel), I=intact, D=damage (DVF>=0.5% at eps1>0.15 latched)
+
+| E\\F (N/finger) | 0.4 | 0.6 | 0.8 | 1.0 | 1.2 | 1.5 | 2.0 |
+|---|---|---|---|---|---|---|---|
+| **7 kPa** | s | s | I | I | I | I | **D** |
+| **15 kPa** | s | s | I | I | I | I | I |
+| **25 kPa** | s | s | I | I | I | I | I |
+
+**Three regions cleanly resolved:** SLIP (F<=0.6 N, all E) -> INTACT (F 0.8-1.5 N all E; +2.0 N for E>=15 kPa) -> DAMAGE (E=7 kPa / F=2.0 N only: DVF 4.36%). The softest tofu at the strongest grip is the sole damage cell -> physically sensible. Damage label CONFIRMED mesh-invariant: E7/F2.0 DVF 4.36% (h=5mm) and 2.85% (h=4mm), both >> 0.5%; peak principal strain 0.253/0.306.
+
+### Per-cell peak / P99 / DVF (temporal-max Green principal strain)
+
+| cell | label | slip mm | peak | P99 | DVF |
+|---|---|---|---|---|---|
+| E7/F0.4 | slip | 11.38 | 0.116 | 0.082 | 0.000% |
+| E7/F0.6 | slip | 2.36 | 0.116 | 0.082 | 0.000% |
+| E7/F0.8 | intact | 1.32 | 0.116 | 0.095 | 0.000% |
+| E7/F1.0 | intact | 1.05 | 0.116 | 0.097 | 0.000% |
+| E7/F1.2 | intact | 0.90 | 0.134 | 0.105 | 0.000% |
+| E7/F1.5 | intact | 0.90 | 0.158 | 0.123 | 0.260% |
+| E7/F2.0 | damage | 1.11 | 0.253 | 0.193 | 4.362% |
+| E15/F0.4 | slip | 10.85 | 0.081 | 0.069 | 0.000% |
+| E15/F0.6 | slip | 2.21 | 0.081 | 0.069 | 0.000% |
+| E15/F0.8 | intact | 1.24 | 0.081 | 0.069 | 0.000% |
+| E15/F1.0 | intact | 0.86 | 0.081 | 0.069 | 0.000% |
+| E15/F1.2 | intact | 0.63 | 0.081 | 0.069 | 0.000% |
+| E15/F1.5 | intact | 0.49 | 0.082 | 0.070 | 0.000% |
+| E15/F2.0 | intact | 0.41 | 0.110 | 0.081 | 0.000% |
+| E25/F0.4 | slip | 10.72 | 0.135 | 0.089 | 0.000% |
+| E25/F0.6 | slip | 2.23 | 0.135 | 0.088 | 0.000% |
+| E25/F0.8 | intact | 1.26 | 0.135 | 0.088 | 0.000% |
+| E25/F1.0 | intact | 0.87 | 0.135 | 0.088 | 0.000% |
+| E25/F1.2 | intact | 0.68 | 0.135 | 0.088 | 0.000% |
+| E25/F1.5 | intact | 0.51 | 0.135 | 0.089 | 0.000% |
+| E25/F2.0 | intact | 0.36 | 0.135 | 0.088 | 0.000% |
+
+DVF is 0% across the intact band and the slip region (strains below 0.15); only E7/F2.0 crosses the 0.5% volume-robust bar. Labels are threshold-independent from the stored per-tet temporal-max fields (reports/logs/vbd/strain_fields/*.npz) -> any future eps_damage can be re-applied without reruns.

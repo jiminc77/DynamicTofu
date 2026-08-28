@@ -1,0 +1,185 @@
+{
+  "gate": "V_day2_judgment_v2_labels",
+  "eps_damage": 0.15,
+  "dvf_min_frac": 0.005,
+  "cells": {
+    "E7_F0.4": {
+      "label": "slip",
+      "slip_mm": 11.38,
+      "peak_strain": 0.1163,
+      "p99_strain": 0.0823,
+      "dvf": 0.0,
+      "damage_if_dvf_ge_0.5pct": false
+    },
+    "E7_F0.6": {
+      "label": "slip",
+      "slip_mm": 2.36,
+      "peak_strain": 0.1163,
+      "p99_strain": 0.0823,
+      "dvf": 0.0,
+      "damage_if_dvf_ge_0.5pct": false
+    },
+    "E7_F0.8": {
+      "label": "intact",
+      "slip_mm": 1.32,
+      "peak_strain": 0.1163,
+      "p99_strain": 0.0954,
+      "dvf": 0.0,
+      "damage_if_dvf_ge_0.5pct": false
+    },
+    "E7_F1.0": {
+      "label": "intact",
+      "slip_mm": 1.05,
+      "peak_strain": 0.1163,
+      "p99_strain": 0.0969,
+      "dvf": 0.0,
+      "damage_if_dvf_ge_0.5pct": false
+    },
+    "E7_F1.2": {
+      "label": "intact",
+      "slip_mm": 0.9,
+      "peak_strain": 0.134,
+      "p99_strain": 0.1051,
+      "dvf": 0.0,
+      "damage_if_dvf_ge_0.5pct": false
+    },
+    "E7_F1.5": {
+      "label": "intact",
+      "slip_mm": 0.9,
+      "peak_strain": 0.1583,
+      "p99_strain": 0.123,
+      "dvf": 0.0026,
+      "damage_if_dvf_ge_0.5pct": false
+    },
+    "E7_F2.0": {
+      "label": "damage",
+      "slip_mm": 1.11,
+      "peak_strain": 0.2528,
+      "p99_strain": 0.1926,
+      "dvf": 0.04362,
+      "damage_if_dvf_ge_0.5pct": true
+    },
+    "E15_F0.4": {
+      "label": "slip",
+      "slip_mm": 10.85,
+      "peak_strain": 0.0811,
+      "p99_strain": 0.0693,
+      "dvf": 0.0,
+      "damage_if_dvf_ge_0.5pct": false
+    },
+    "E15_F0.6": {
+      "label": "slip",
+      "slip_mm": 2.21,
+      "peak_strain": 0.0811,
+      "p99_strain": 0.0693,
+      "dvf": 0.0,
+      "damage_if_dvf_ge_0.5pct": false
+    },
+    "E15_F0.8": {
+      "label": "intact",
+      "slip_mm": 1.24,
+      "peak_strain": 0.0811,
+      "p99_strain": 0.0693,
+      "dvf": 0.0,
+      "damage_if_dvf_ge_0.5pct": false
+    },
+    "E15_F1.0": {
+      "label": "intact",
+      "slip_mm": 0.86,
+      "peak_strain": 0.0811,
+      "p99_strain": 0.0693,
+      "dvf": 0.0,
+      "damage_if_dvf_ge_0.5pct": false
+    },
+    "E15_F1.2": {
+      "label": "intact",
+      "slip_mm": 0.63,
+      "peak_strain": 0.0811,
+      "p99_strain": 0.0693,
+      "dvf": 0.0,
+      "damage_if_dvf_ge_0.5pct": false
+    },
+    "E15_F1.5": {
+      "label": "intact",
+      "slip_mm": 0.49,
+      "peak_strain": 0.0815,
+      "p99_strain": 0.0698,
+      "dvf": 0.0,
+      "damage_if_dvf_ge_0.5pct": false
+    },
+    "E15_F2.0": {
+      "label": "intact",
+      "slip_mm": 0.41,
+      "peak_strain": 0.1095,
+      "p99_strain": 0.0813,
+      "dvf": 0.0,
+      "damage_if_dvf_ge_0.5pct": false
+    },
+    "E25_F0.4": {
+      "label": "slip",
+      "slip_mm": 10.72,
+      "peak_strain": 0.1347,
+      "p99_strain": 0.0886,
+      "dvf": 0.0,
+      "damage_if_dvf_ge_0.5pct": false
+    },
+    "E25_F0.6": {
+      "label": "slip",
+      "slip_mm": 2.23,
+      "peak_strain": 0.1349,
+      "p99_strain": 0.0884,
+      "dvf": 0.0,
+      "damage_if_dvf_ge_0.5pct": false
+    },
+    "E25_F0.8": {
+      "label": "intact",
+      "slip_mm": 1.26,
+      "peak_strain": 0.1349,
+      "p99_strain": 0.0884,
+      "dvf": 0.0,
+      "damage_if_dvf_ge_0.5pct": false
+    },
+    "E25_F1.0": {
+      "label": "intact",
+      "slip_mm": 0.87,
+      "peak_strain": 0.1349,
+      "p99_strain": 0.0884,
+      "dvf": 0.0,
+      "damage_if_dvf_ge_0.5pct": false
+    },
+    "E25_F1.2": {
+      "label": "intact",
+      "slip_mm": 0.68,
+      "peak_strain": 0.1349,
+      "p99_strain": 0.0884,
+      "dvf": 0.0,
+      "damage_if_dvf_ge_0.5pct": false
+    },
+    "E25_F1.5": {
+      "label": "intact",
+      "slip_mm": 0.51,
+      "peak_strain": 0.1347,
+      "p99_strain": 0.0886,
+      "dvf": 0.0,
+      "damage_if_dvf_ge_0.5pct": false
+    },
+    "E25_F2.0": {
+      "label": "intact",
+      "slip_mm": 0.36,
+      "peak_strain": 0.1349,
+      "p99_strain": 0.0884,
+      "dvf": 0.0,
+      "damage_if_dvf_ge_0.5pct": false
+    }
+  },
+  "phase_diagram": [
+    "| E\\\\F | 0.4 | 0.6 | 0.8 | 1.0 | 1.2 | 1.5 | 2.0 |",
+    "|---|---|---|---|---|---|---|---|",
+    "| **7kPa** | s | s | I | I | I | I | D |",
+    "| **15kPa** | s | s | I | I | I | I | I |",
+    "| **25kPa** | s | s | I | I | I | I | I |"
+  ],
+  "damage_cells": [
+    "E7_F2.0"
+  ]
+}
