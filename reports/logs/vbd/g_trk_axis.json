@@ -1,0 +1,72 @@
+{
+  "gate": "G-TRK realized-axis repeatability (completed)",
+  "result": "PASS",
+  "axis_map_commanded_to_realized": [
+    {
+      "commanded_a_peak": 1.0,
+      "realized_median_m_s2": 0.681,
+      "realized_cv": 0.00102,
+      "r2_min": 0.9986,
+      "method": "grasped_3seed"
+    },
+    {
+      "commanded_a_peak": 2.5,
+      "realized_median_m_s2": 1.647,
+      "realized_cv": 0.0029,
+      "r2_min": 0.9981,
+      "method": "grasped_3seed"
+    },
+    {
+      "commanded_a_peak": 5.0,
+      "realized_median_m_s2": 3.1825,
+      "realized_cv": 0.0007,
+      "r2_min": 0.9985,
+      "method": "grasped_3seed"
+    },
+    {
+      "commanded_a_peak": 10.0,
+      "realized_median_m_s2": 6.4019,
+      "realized_cv": 0.00164,
+      "r2_min": 0.9996,
+      "method": "grasped_3seed"
+    },
+    {
+      "commanded_a_peak": 20.0,
+      "realized_median_m_s2": 12.8892,
+      "realized_cv": 0.00125,
+      "r2_min": 0.9992,
+      "method": "grasped_3seed"
+    },
+    {
+      "commanded_a_peak": 30.0,
+      "realized_median_m_s2": 19.846,
+      "realized_cv": 0.0,
+      "r2_min": 1.0,
+      "method": "free_carriage (grasped ejects instantly; grasp-independent, deterministic)"
+    }
+  ],
+  "cross_check_free_vs_grasped": {
+    "a10": {
+      "free": 6.615,
+      "grasped": 6.402,
+      "rel": "+3.3%"
+    },
+    "a20": {
+      "free": 13.229,
+      "grasped": 12.889,
+      "rel": "+2.6%"
+    },
+    "within_5pct": true
+  },
+  "checks": {
+    "monotone": true,
+    "separated": true,
+    "cv_le_5pct": true,
+    "r2_ge_0p99": true,
+    "noise_floor_m_s2": 2.2352102340455716e-05,
+    "noise_floor_pass": true
+  },
+  "note": "a=1..20 realized medians are grasped 3-seed (CV<0.3%). a=30 grasped cells eject before the accel plateau accumulates >=5 samples (instant grip failure at extreme accel), so its realized palm accel is characterized on the grasp-independent free carriage (validated: free vs grasped agree within 3.3% at a=10/a=20). Expected ladder {0.6,1.6,3.2,6.4,12.8,19} reproduced.",
+  "source_ladder": "reports/logs/vbd/g_trk_ladder.json",
+  "git_sha": "5e9c68d54ff47b03c33776b4161194bfc29b8883"
+}

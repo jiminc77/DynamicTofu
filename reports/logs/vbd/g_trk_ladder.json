@@ -1,0 +1,261 @@
+{
+  "levels": [
+    {
+      "commanded_a_peak": 1.0,
+      "realized_per_cell": [
+        0.6809592247008939,
+        0.682323319571325,
+        0.680759974888359
+      ],
+      "realized_median": 0.6809592247008939,
+      "realized_cv": 0.001019717964203319,
+      "r2_min": 0.9986243841555417,
+      "status": "ok",
+      "cells": [
+        {
+          "seed": 0,
+          "status": "ok",
+          "ejected": false,
+          "finite": true,
+          "realized_accel": 0.6809592247008939
+        },
+        {
+          "seed": 1,
+          "status": "ok",
+          "ejected": false,
+          "finite": true,
+          "realized_accel": 0.682323319571325
+        },
+        {
+          "seed": 2,
+          "status": "ok",
+          "ejected": false,
+          "finite": true,
+          "realized_accel": 0.680759974888359
+        }
+      ],
+      "level_pass": true
+    },
+    {
+      "commanded_a_peak": 2.5,
+      "realized_per_cell": [
+        1.6506774084907798,
+        1.6392435346330099,
+        1.6469989504132132
+      ],
+      "realized_median": 1.6469989504132132,
+      "realized_cv": 0.002895983279840647,
+      "r2_min": 0.998101916321931,
+      "status": "ok",
+      "cells": [
+        {
+          "seed": 0,
+          "status": "ok",
+          "ejected": false,
+          "finite": true,
+          "realized_accel": 1.6506774084907798
+        },
+        {
+          "seed": 1,
+          "status": "ok",
+          "ejected": false,
+          "finite": true,
+          "realized_accel": 1.6392435346330099
+        },
+        {
+          "seed": 2,
+          "status": "ok",
+          "ejected": false,
+          "finite": true,
+          "realized_accel": 1.6469989504132132
+        }
+      ],
+      "level_pass": true
+    },
+    {
+      "commanded_a_peak": 5.0,
+      "realized_per_cell": [
+        3.1825094882929443,
+        3.186899689691249,
+        3.181859052606833
+      ],
+      "realized_median": 3.1825094882929443,
+      "realized_cv": 0.0007031550424139413,
+      "r2_min": 0.9985025879284773,
+      "status": "ok",
+      "cells": [
+        {
+          "seed": 0,
+          "status": "ok",
+          "ejected": true,
+          "finite": true,
+          "realized_accel": 3.1825094882929443
+        },
+        {
+          "seed": 1,
+          "status": "ok",
+          "ejected": false,
+          "finite": true,
+          "realized_accel": 3.186899689691249
+        },
+        {
+          "seed": 2,
+          "status": "ok",
+          "ejected": false,
+          "finite": true,
+          "realized_accel": 3.181859052606833
+        }
+      ],
+      "level_pass": true
+    },
+    {
+      "commanded_a_peak": 10.0,
+      "realized_per_cell": [
+        6.401852411882898,
+        6.392165805611973,
+        6.417614221572556
+      ],
+      "realized_median": 6.401852411882898,
+      "realized_cv": 0.001637677984477922,
+      "r2_min": 0.999574796507587,
+      "status": "ok",
+      "cells": [
+        {
+          "seed": 0,
+          "status": "ok",
+          "ejected": true,
+          "finite": true,
+          "realized_accel": 6.401852411882898
+        },
+        {
+          "seed": 1,
+          "status": "ok",
+          "ejected": true,
+          "finite": true,
+          "realized_accel": 6.392165805611973
+        },
+        {
+          "seed": 2,
+          "status": "ok",
+          "ejected": true,
+          "finite": true,
+          "realized_accel": 6.417614221572556
+        }
+      ],
+      "level_pass": true
+    },
+    {
+      "commanded_a_peak": 20.0,
+      "realized_per_cell": [
+        12.859513929911381,
+        12.896731495856598,
+        12.88922514234206
+      ],
+      "realized_median": 12.88922514234206,
+      "realized_cv": 0.0012475061597178286,
+      "r2_min": 0.9992281454655907,
+      "status": "ok",
+      "cells": [
+        {
+          "seed": 0,
+          "status": "ok",
+          "ejected": true,
+          "finite": true,
+          "realized_accel": 12.859513929911381
+        },
+        {
+          "seed": 1,
+          "status": "ok",
+          "ejected": true,
+          "finite": true,
+          "realized_accel": 12.896731495856598
+        },
+        {
+          "seed": 2,
+          "status": "ok",
+          "ejected": true,
+          "finite": true,
+          "realized_accel": 12.88922514234206
+        }
+      ],
+      "level_pass": true
+    },
+    {
+      "commanded_a_peak": 30.0,
+      "realized_per_cell": [],
+      "realized_median": null,
+      "realized_cv": null,
+      "r2_min": null,
+      "status": "insufficient",
+      "cells": [
+        {
+          "seed": 0,
+          "status": "ok",
+          "ejected": true,
+          "finite": true,
+          "realized_accel": null
+        },
+        {
+          "seed": 1,
+          "status": "ok",
+          "ejected": true,
+          "finite": true,
+          "realized_accel": null
+        },
+        {
+          "seed": 2,
+          "status": "ok",
+          "ejected": true,
+          "finite": true,
+          "realized_accel": null
+        }
+      ],
+      "level_pass": false
+    }
+  ],
+  "spot_check": {
+    "reference_realized_median": 6.401852411882898,
+    "cells": [
+      {
+        "E_pa": 7000.0,
+        "grip_force_n": 0.6,
+        "seed": 0,
+        "status": "ok",
+        "ejected": true,
+        "finite": true,
+        "realized_accel": 6.5044526542932815,
+        "within_5pct": true
+      },
+      {
+        "E_pa": 7000.0,
+        "grip_force_n": 1.2,
+        "seed": 0,
+        "status": "ok",
+        "ejected": true,
+        "finite": true,
+        "realized_accel": 6.3649643744738,
+        "within_5pct": true
+      },
+      {
+        "E_pa": 25000.0,
+        "grip_force_n": 1.2,
+        "seed": 0,
+        "status": "ok",
+        "ejected": true,
+        "finite": true,
+        "realized_accel": 6.40855793442013,
+        "within_5pct": true
+      }
+    ],
+    "independence_pass": true
+  },
+  "monotone_pass": false,
+  "separated_pass": false,
+  "noise_floor_m_s2": 2.2352102340455716e-05,
+  "noise_floor_pass": true,
+  "overall_pass": false,
+  "provenance": {
+    "git_sha": "5e9c68d54ff47b03c33776b4161194bfc29b8883",
+    "prereg_sha256": "47541607bf1487e01266efef5580dcbd8d163356a3c18ba9c4079c0708707446"
+  }
+}

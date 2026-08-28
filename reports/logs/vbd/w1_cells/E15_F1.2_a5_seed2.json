@@ -1,0 +1,154 @@
+{
+  "status": "ok",
+  "E_pa": 15000.0,
+  "grip_force_n": 1.2,
+  "seed": 2,
+  "ejected": false,
+  "finite": true,
+  "commanded_a_peak_m_s2": 5.0,
+  "tracking": {
+    "plateaus": {
+      "accel_out": {
+        "a_fit": 3.278104854481398,
+        "abs_err": 0.3443790291037204,
+        "n_samples": 6,
+        "r2": 0.9985025879284773
+      },
+      "decel_out": {
+        "a_fit": -3.085613250732268,
+        "abs_err": 0.3828773498535464,
+        "n_samples": 6,
+        "r2": 0.999251420738602
+      },
+      "accel_back": {
+        "a_fit": -3.3101218087330944,
+        "abs_err": 0.3379756382533811,
+        "n_samples": 6,
+        "r2": 0.9988811992802196
+      },
+      "decel_back": {
+        "a_fit": 3.0485068048748136,
+        "abs_err": 0.39029863902503725,
+        "n_samples": 6,
+        "r2": 0.998546106399993
+      }
+    },
+    "max_abs_relative_error": 0.39029863902503725,
+    "samples_valid": true,
+    "pass": false,
+    "realized_accel_m_s2": 3.181859052606833
+  },
+  "realized_F_g_n": 0.0,
+  "slip3d_mm": 6.179549484840219,
+  "legacy_hold_slip_mm": 0.38961321115493774,
+  "dvf": 0.005208332674138368,
+  "damage_latched": true,
+  "label": "damage",
+  "p99_strain": 0.044478077932065284,
+  "peak_strain": 0.22276361286640167,
+  "per_phase_strain_maxima": {
+    "ramp": 0.13208362460136414,
+    "preload": 0.06344833225011826,
+    "lift": 0.061779458075761795,
+    "hold": 0.04552365094423294,
+    "accel_out": 0.1999838501214981,
+    "cruise_out": 0.22276361286640167,
+    "decel_out": 0.22063632309436798,
+    "dwell": 0.06569010019302368,
+    "accel_back": 0.1973136067390442,
+    "cruise_back": 0.20523174107074738,
+    "decel_back": 0.17076295614242554,
+    "settle": 0.06064346060156822
+  },
+  "validity_gate": {
+    "summary": {
+      "per_pad": {
+        "left": {
+          "vg1_max_rel_disp_mm": 0.26087555289268494,
+          "vg2_zero_record_substeps": 714,
+          "vg3_overflow_substeps": 0,
+          "certified": false
+        },
+        "right": {
+          "vg1_max_rel_disp_mm": 0.2611464262008667,
+          "vg2_zero_record_substeps": 714,
+          "vg3_overflow_substeps": 0,
+          "certified": false
+        }
+      },
+      "cfl_max_substep_mm": 0.0
+    },
+    "certified": false
+  },
+  "health": {
+    "finite": true,
+    "finger_vy_hold_mean": 0.0005436539649963379,
+    "contact_count_min": 0,
+    "cfl_max_substep_mm": 0.0,
+    "zero_command_realized_accel_magnitude": null
+  },
+  "phase_timestamps": {
+    "accel_out": {
+      "expected_s": 9.3,
+      "hit_s": 9.300000000000042,
+      "error_s": 4.085620730620576e-14
+    },
+    "cruise_out": {
+      "expected_s": 9.5,
+      "hit_s": 9.500000000000052,
+      "error_s": 5.1514348342607263e-14
+    },
+    "decel_out": {
+      "expected_s": 9.6,
+      "hit_s": 9.600000000000056,
+      "error_s": 5.684341886080802e-14
+    },
+    "dwell": {
+      "expected_s": 9.799999999999999,
+      "hit_s": 9.800000000000066,
+      "error_s": 6.750155989720952e-14
+    },
+    "accel_back": {
+      "expected_s": 10.1,
+      "hit_s": 10.100000000000081,
+      "error_s": 8.171241461241152e-14
+    },
+    "cruise_back": {
+      "expected_s": 10.299999999999999,
+      "hit_s": 10.300000000000091,
+      "error_s": 9.237055564881302e-14
+    },
+    "decel_back": {
+      "expected_s": 10.399999999999999,
+      "hit_s": 10.400000000000096,
+      "error_s": 9.769962616701378e-14
+    },
+    "settle": {
+      "expected_s": 10.599999999999998,
+      "hit_s": 10.600000000000106,
+      "error_s": 1.0835776720341528e-13
+    }
+  },
+  "git_sha": "5e9c68d54ff47b03c33776b4161194bfc29b8883",
+  "prereg_sha256": "47541607bf1487e01266efef5580dcbd8d163356a3c18ba9c4079c0708707446",
+  "frozen_config": {
+    "substeps": 80,
+    "friction_epsilon": 0.0002,
+    "mu_pair": 1.0,
+    "contact_ke": 1000.0,
+    "contact_kd": 1.0,
+    "soft_contact_margin": 0.001,
+    "cell_m": 0.005,
+    "particle_radius": 0.0025,
+    "correct_mass": true,
+    "nu": 0.45,
+    "E_pa": [
+      7000.0,
+      15000.0,
+      25000.0
+    ]
+  },
+  "frozen_check": true,
+  "rig_pre_edit_sha256": "11011fb9e53544d4da75f1ad1e17932ccfc9d867e81eb8c146eb994209156475",
+  "newton_commit": "b74df534"
+}

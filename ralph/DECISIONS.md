@@ -301,3 +301,12 @@ EXTERNAL RULING (this date): ADOPT OPTION A -- realized-acceleration axis, O-2 p
 5. Frozen gains untouched (option B rejected); profile pre-scaling rejected (would confound exposure).
 
 Proceed: tracking-characterization ladder receipt -> P3c ATTR -> W1 screen, no further pause on this issue.
+
+## 2026-08-28 -- G-TRK repeatability gate PASS (realized-acceleration axis characterized)
+
+Realized-axis characterization ladder (robust runner, early-slip termination) complete. Commanded->realized map:
+| commanded a (m/s^2) | 1 | 2.5 | 5 | 10 | 20 | 30 |
+| realized median (m/s^2) | 0.681 | 1.647 | 3.183 | 6.402 | 12.889 | 19.846 |
+Per-level CV < 0.3% (grasped 3-seed, a=1..20), r^2 > 0.998, monotone + well-separated, zero-command noise floor 2.2e-5 m/s^2. Matches the ruling's expected ladder {0.6,1.6,3.2,6.4,12.8,19}.
+
+a=30 note: grasped cells eject before the accel plateau accumulates >=5 samples (instant grip failure at extreme accel), so a=30 realized palm accel is characterized on the grasp-independent FREE CARRIAGE (19.846 m/s^2). Free-vs-grasped cross-check validates the method: a=10 free 6.615 vs grasped 6.402 (+3.3%), a=20 free 13.229 vs grasped 12.889 (+2.6%), both within 5%. Receipts: reports/logs/vbd/g_trk_ladder.json (a=1..20 grasped) + reports/logs/vbd/g_trk_axis.json (completed axis, gate PASS). Robustness (GROSS_SLIP_MM=15 early termination + per-cell isolation) is REQUIRED for the W1 screen too (high-a low-F cells eject).
