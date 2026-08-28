@@ -70,3 +70,9 @@ W3 uses actual W1 trials only. Scene A searches E15, E25, E7 at `F*`, a=1, intac
 Order is E7→E25→E15 and, within material, a `[1,5,10,20,30,2.5]`; drop order is a=2.5 then remaining E15. PF includes median runtime × remaining approved target, confirms, worst-case capped T-EXT, and 6 h W2–W4 reserve. LT-1 (2026-08-29 09:00 KST) proposes dropping a=2.5 if PF exceeds freeze−2 h; LT-2 (21:00) proposes remaining E15; LT-3 (2026-08-30 12:00) is a hard acquisition cutoff after the in-flight row.
 
 Acceptance requires: pre-registration provenance on every receipt; three-anchor/three-seed G0′ equivalence; complete G-TRK and structural evidence; complete judgment/VG/health receipts; unanimous three-seed boundary manifests; valid reproducible band schemas; phase diagram/classifier/prediction report; confirmed or explicitly unresolved T-EXT; ATTR-gated, bitwise-recomputable W2 plus overlays/equilibrium/falsifier; source-traceable same-grip W3 with unavailable scenes documented; hashed G0′/G-TRK/ATTR media; complete W4 results/handoff/decisions/manifest/unresolved list; frozen allowlist proof with no MPM run; and structural body/joint/DOF/pad/snapshot-render tests.
+
+
+## Post-registration spec fixes
+
+### 2026-08-28 — G0'-prime damage-branch DVF criterion (external ruling)
+The ±20% per-seed DVF equivalence tolerance is incoherent with the damage branch's intrinsic ~60% relative seed spread. Amended (external sign-off): a damage-branch cell's DVF PASSES iff label-equivalence across the 0.5% threshold AND the extended per-seed DVF is within the baseline seed range widened by 20% of that range, OR |delta| <= 0.01 absolute, whichever is looser. All other G0'-prime criteria (label, hold-slip ±0.15 mm, COM-z RMS ≤0.5 mm, P99 ±0.02) unchanged. See ralph/DECISIONS.md 2026-08-28.

@@ -57,7 +57,10 @@ def test_assert_frozen_rejects_mutated_substeps_and_lists_key():
         assert_frozen(config)
 
 
-def test_baseline_check_passes_without_importing_gpu_stack():
+def test_baseline_check_is_cpu_only_and_flags_post_edit_rig():
+    # --check is the PRE-EDIT-phase guard pinned to the frozen rig sha256. After the
+    # G2/P1 rig extension the rig is intentionally modified, so the guard MUST return
+    # non-zero and report the sha mismatch -- while staying CPU-only (no warp import).
     result = subprocess.run(
         [sys.executable, "scripts/vbd/w1_baseline.py", "--check"],
         cwd=ROOT,
@@ -65,5 +68,7 @@ def test_baseline_check_passes_without_importing_gpu_stack():
         capture_output=True,
         check=False,
     )
-    assert result.returncode == 0, result.stdout + result.stderr
-    assert "PASS" in result.stdout
+    combined = result.stdout + result.stderr
+    assert "No module named 'warp'" not in combined  # CPU-only: never imports the GPU stack
+    assert result.returncode == 1, combined
+    assert "mismatch" in result.stdout.lower()

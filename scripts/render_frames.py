@@ -32,36 +32,52 @@ def render_frame(npz_path: str, out_path: str) -> None:
     pq = data["particle_q"]
     jp = data.get("jp")
     bq = data["body_q"]
+    labels = [str(x.decode() if isinstance(x, bytes) else x) for x in data["body_labels"]] if "body_labels" in data else []
+    finger_indices = {i for i, label in enumerate(labels) if label in {"left", "right"}}
+    if not finger_indices:
+        finger_indices = {i for i in (7, 8) if i < len(bq)}
     t = float(data["t"])
 
     img = Image.new("RGB", (2 * W, H), (16, 16, 20))
     draw = ImageDraw.Draw(img)
+    all_pos = np.concatenate((pq[:, :3], bq[:, :3]), axis=0)
+
+    def view_range(axis, minimum_span):
+        lo, hi = float(all_pos[:, axis].min()), float(all_pos[:, axis].max())
+        pad = max(0.02, 0.08 * (hi - lo))
+        mid = 0.5 * (lo + hi)
+        half = max(0.5 * minimum_span, 0.5 * (hi - lo) + pad)
+        return mid - half, mid + half
+
+    world_y = view_range(1, 0.10)
+    world_x = view_range(0, 0.10)
+    world_z = view_range(2, 0.12)
 
     # table line
-    for panel, urange, ucol in ((0, WORLD_Y, 1), (1, WORLD_X, 0)):
-        x0, y0 = _to_px(urange[0], 0.20, urange, WORLD_Z)
-        x1, y1 = _to_px(urange[1], 0.20, urange, WORLD_Z)
+    for panel, urange in ((0, world_y), (1, world_x)):
+        x0, y0 = _to_px(urange[0], 0.0, urange, world_z)
+        x1, y1 = _to_px(urange[1], 0.0, urange, world_z)
         draw.line([(panel * W + x0, y0), (panel * W + x1, y1)], fill=(80, 80, 90), width=2)
 
     dmg = np.abs(jp - 1.0) > 0.05 if jp is not None else np.zeros(len(pq), bool)
-    for panel, ucol, urange in ((0, 1, WORLD_Y), (1, 0, WORLD_X)):
+    for panel, ucol, urange in ((0, 1, world_y), (1, 0, world_x)):
         us, vs = pq[:, ucol], pq[:, 2]
-        inside = (us > urange[0]) & (us < urange[1]) & (vs > WORLD_Z[0]) & (vs < WORLD_Z[1])
+        inside = (us > urange[0]) & (us < urange[1]) & (vs > world_z[0]) & (vs < world_z[1])
         for i in np.nonzero(inside)[0]:
-            x, y = _to_px(us[i], vs[i], urange, WORLD_Z)
+            x, y = _to_px(us[i], vs[i], urange, world_z)
             c = (240, 80, 80) if dmg[i] else (235, 235, 210)
             draw.point((panel * W + x, y), fill=c)
         n_out = int((~inside).sum())
         draw.text((panel * W + 8, 24), f"outside view: {n_out}", fill=(255, 160, 60))
 
-    # bodies: fingers (cyan), link7 (green)
-    for panel, ucol, urange in ((0, 1, WORLD_Y), (1, 0, WORLD_X)):
+    # Bodies: label-resolved fingers (cyan), other links (green).
+    for panel, ucol, urange in ((0, 1, world_y), (1, 0, world_x)):
         for bi in range(len(bq)):
             u, v = bq[bi][ucol], bq[bi][2]
-            if urange[0] < u < urange[1] and WORLD_Z[0] < v < WORLD_Z[1]:
-                x, y = _to_px(u, v, urange, WORLD_Z)
-                col = (80, 220, 255) if bi in (7, 8) else (90, 200, 90)
-                r = 5 if bi in (7, 8) else 3
+            if urange[0] < u < urange[1] and world_z[0] < v < world_z[1]:
+                x, y = _to_px(u, v, urange, world_z)
+                col = (80, 220, 255) if bi in finger_indices else (90, 200, 90)
+                r = 5 if bi in finger_indices else 3
                 draw.ellipse([panel * W + x - r, y - r, panel * W + x + r, y + r], outline=col, width=2)
 
     draw.text((8, 6), f"t={t:.2f}s  side(y,z) | front(x,z)", fill=(200, 200, 255))

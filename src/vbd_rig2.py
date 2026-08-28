@@ -6,9 +6,9 @@ Architecture precedent: examples/vbd/example_vbd_gripper_soft_grid.py.
   per-particle contact alone slips).
 - friction_epsilon exposed (velocity-regularized Coulomb; default 1e-2 is too
   large -> creep; use 2e-4).
-- gantry gripper: world -> Z-prismatic (position PD, lift) -> palm -> 2 finger
-  prismatics with FORCE control via Control.joint_f (target_ke=0), grip force =
-  effort directly (no deep position target).
+- gantry gripper: world -> X-prismatic carriage -> Z-prismatic lift -> palm ->
+  2 finger prismatics with FORCE control via Control.joint_f (target_ke=0),
+  grip force = effort directly (no deep position target).
 - mu/ke MIX with pad shape (avg_mu geometric, ke arithmetic) -> set BOTH soft
   and pad-shape values.
 
@@ -133,6 +133,7 @@ class Vbd2Rig:
         self.state_1 = self.model.state()
         self.control = self.model.control()
         self.contacts = self.collision_pipeline.contacts()
+        self._substep_hooks = []
         newton.eval_fk(self.model, self.model.joint_q, self.model.joint_qd, self.state_0)
         wp.copy(self.state_1.body_q, self.state_0.body_q)
 
@@ -145,10 +146,27 @@ class Vbd2Rig:
 
         qs = self.model.joint_q_start.numpy()
         tqs = self.model.joint_target_q_start.numpy()
+        qds = self.model.joint_qd_start.numpy()
+        self.x_qi = int(qs[self.j_x]); self.x_ti = int(tqs[self.j_x])
+        self.x_dof = int(qds[self.j_x])
         self.z_qi = int(qs[self.j_z]); self.z_ti = int(tqs[self.j_z])
-        self.l_dof = int(self.model.joint_qd_start.numpy()[self.j_left])
-        self.r_dof = int(self.model.joint_qd_start.numpy()[self.j_right])
+        self.l_dof = int(qds[self.j_left])
+        self.r_dof = int(qds[self.j_right])
         self.l_qi = int(qs[self.j_left]); self.r_qi = int(qs[self.j_right])
+        labels = list(self.model.body_label)
+        body_by_label = {label: i for i, label in enumerate(labels)}
+        self.b_carriage = body_by_label["carriage"]
+        self.b_palm = body_by_label["palm"]
+        self.b_left = body_by_label["left"]
+        self.b_right = body_by_label["right"]
+        mass = self.model.body_mass.numpy()
+        inv_mass = self.model.body_inv_mass.numpy()
+        inertia = self.model.body_inertia.numpy()[self.b_carriage]
+        inv_inertia = self.model.body_inv_inertia.numpy()[self.b_carriage]
+        assert np.isclose(mass[self.b_carriage], 0.050)
+        assert inv_mass[self.b_carriage] > 0.0
+        assert np.all(np.linalg.eigvalsh(inertia) > 0.0)
+        assert np.all(np.isfinite(inv_inertia))
         self.initial_com = self._com()
         self.grab_z = GRAB_Z
         # per-tet rest data for Green-strain instrumentation
@@ -188,6 +206,13 @@ class Vbd2Rig:
 
     def contact_count(self):
         try:
+            rc = self.contacts.soft_contact_count.numpy()
+            return int(rc.reshape(-1)[0])
+        except Exception:
+            return -1
+
+    def rigid_contact_count_legacy(self):
+        try:
             rc = self.contacts.rigid_contact_count.numpy()
             return int(rc.reshape(-1)[0])
         except Exception:
@@ -202,14 +227,24 @@ class Vbd2Rig:
         open_gap = 0.06
         gz = GRAB_Z
         self.open_gap = open_gap
+        carriage = builder.add_link(
+            mass=0.050,
+            inertia=wp.mat33(1.0e-4, 0.0, 0.0, 0.0, 1.0e-4, 0.0, 0.0, 0.0, 1.0e-4),
+            label="carriage",
+        )
         palm = builder.add_link(xform=wp.transform(wp.vec3(0.0, 0.0, gz), wp.quat_identity()), mass=0.05, label="palm")
         left = builder.add_link(xform=wp.transform(wp.vec3(0.0, open_gap, gz), wp.quat_identity()), label="left")
         right = builder.add_link(xform=wp.transform(wp.vec3(0.0, -open_gap, gz), wp.quat_identity()), label="right")
         builder.add_shape_box(left, hx=FINGER_HALF, hy=0.006, hz=FINGER_HALF, cfg=pad, color=wp.vec3(0.85, 0.4, 0.3))
         builder.add_shape_box(right, hx=FINGER_HALF, hy=0.006, hz=FINGER_HALF, cfg=pad, color=wp.vec3(0.3, 0.4, 0.85))
-        # world -> Z prismatic (position PD, lift)
+        # world -> X carriage -> Z prismatic (position PD, lift)
+        self.j_x = builder.add_joint_prismatic(
+            parent=-1, child=carriage, axis=wp.vec3(1.0, 0.0, 0.0),
+            target_ke=1.0e4, target_kd=2.0e2, target_pos=0.0,
+            limit_lower=-2.0, limit_upper=2.0, label="gantry_x",
+        )
         self.j_z = builder.add_joint_prismatic(
-            parent=-1, child=palm, axis=wp.vec3(0.0, 0.0, 1.0),
+            parent=carriage, child=palm, axis=wp.vec3(0.0, 0.0, 1.0),
             target_ke=1.0e4, target_kd=2.0e2, target_pos=gz, limit_lower=-0.05, limit_upper=0.30,
             label="gantry_z")
         # palm -> fingers, FORCE control (target_ke=0). parent_xform places each finger
@@ -226,8 +261,8 @@ class Vbd2Rig:
             child_xform=wp.transform(wp.vec3(0.0, 0.0, 0.0), wp.quat_identity()),
             target_ke=0.0, target_kd=0.0, limit_lower=0.0, limit_upper=open_gap,
             limit_ke=2.0e3, limit_kd=10.0, label="right_slide")
-        builder.add_articulation([self.j_z, self.j_left, self.j_right], label="gantry_gripper")
-        builder.joint_q[0] = gz  # gantry_z is the first joint dof
+        builder.add_articulation([self.j_x, self.j_z, self.j_left, self.j_right], label="gantry_gripper")
+        builder.joint_q[builder.joint_q_start[self.j_z]] = gz
 
     def _com(self):
         return self.state_0.particle_q.numpy()[self.soft_start:self.soft_end].mean(axis=0)
@@ -237,9 +272,9 @@ class Vbd2Rig:
         return pq.min(axis=0), pq.max(axis=0)
 
     def _palm_z(self):
-        return float(self.state_0.body_q.numpy()[0][2])
+        return float(self.state_0.body_q.numpy()[self.b_palm][2])
 
-    def set_control(self, close_force, lift_target):
+    def set_control(self, close_force, lift_target, x_target=None, x_vel=0.0):
         jf = self.control.joint_f.numpy(); jf[:] = 0.0
         # closing: left axis (0,-1,0) closes toward -y -> +force along axis; right (0,+1,0) toward +y.
         # both fingers move inward with POSITIVE joint_f along their inward axes.
@@ -248,16 +283,26 @@ class Vbd2Rig:
         jf[self.l_dof] = close_force
         jf[self.r_dof] = close_force
         self.control.joint_f.assign(jf)
-        tq = self.control.joint_target_q.numpy(); tq[self.z_ti] = lift_target
+        tq = self.control.joint_target_q.numpy()
+        tq[self.x_ti] = 0.0 if x_target is None else x_target
+        tq[self.z_ti] = lift_target
         self.control.joint_target_q.assign(tq)
+        tqd = self.control.joint_target_qd.numpy()
+        tqd[self.x_dof] = x_vel
+        self.control.joint_target_qd.assign(tqd)
 
-    def step(self, close_force, lift_target):
-        self.set_control(close_force, lift_target)
-        for _ in range(self.sim_substeps):
+    def add_substep_hook(self, fn):
+        self._substep_hooks.append(fn)
+
+    def step(self, close_force, lift_target, x_target=None, x_vel=0.0):
+        self.set_control(close_force, lift_target, x_target=x_target, x_vel=x_vel)
+        for k in range(self.sim_substeps):
             self.state_0.clear_forces()
             self.collision_pipeline.collide(self.state_0, self.contacts)
             self.solver.step(self.state_0, self.state_1, self.control, self.contacts, self.sim_dt)
             self.state_0, self.state_1 = self.state_1, self.state_0
+            for fn in self._substep_hooks:
+                fn(self, k)
         self.sim_time += self.frame_dt
 
     def metrics(self):
@@ -266,7 +311,7 @@ class Vbd2Rig:
         bq = self.state_0.body_q.numpy()
         bqd = self.state_0.body_qd.numpy()
         FH = 0.006  # pad half-thickness (hy)
-        left_y = float(bq[1][1]); right_y = float(bq[2][1])
+        left_y = float(bq[self.b_left][1]); right_y = float(bq[self.b_right][1])
         # pad-block penetration: block +y/-y faces vs each pad inner face. >0 = real contact.
         block_ymax = float(pq[:, 1].max()); block_ymin = float(pq[:, 1].min())
         pen_left = block_ymax - (left_y - FH)     # left pad at +y; inner face = left_y - FH
@@ -275,15 +320,22 @@ class Vbd2Rig:
         fn_left = self.cfg.contact_ke * max(0.0, pen_left)
         fn_right = self.cfg.contact_ke * max(0.0, pen_right)
         # finger linear-y speed (equilibrium check: ~0 in hold => Fn ~ applied joint_f)
-        fvy = float(max(abs(bqd[1][4]) if bqd.shape[1] > 4 else 0.0, abs(bqd[2][4]) if bqd.shape[1] > 4 else 0.0))
+        fvy_linear = float(max(abs(bqd[self.b_left][1]), abs(bqd[self.b_right][1])))
+        # Frozen receipt compatibility only: slot 4 is angular-y, not linear-y.
+        fwy_legacy = float(max(abs(bqd[self.b_left][4]), abs(bqd[self.b_right][4])))
         return {"t": self.sim_time, "com": com.tolist(), "com_z": float(com[2]),
                 "com_rise": float(com[2] - self.initial_com[2]),
                 "bbox": [float(hi[i] - lo[i]) for i in range(3)],
                 "finite": bool(np.all(np.isfinite(pq))),
                 "palm_z": self._palm_z(),
+                "palm_x": float(bq[self.b_palm][0]),
+                "palm_vx": float(bqd[self.b_palm][0]),
+                "palm_pos": bq[self.b_palm][:3].tolist(),
                 "left_y": left_y, "right_y": right_y, "gap_m": float(abs(left_y - right_y)),
                 "pen_left_mm": pen_left * 1000.0, "pen_right_mm": pen_right * 1000.0,
-                "fn_left_n": fn_left, "fn_right_n": fn_right, "finger_vy": fvy}
+                "fn_left_n": fn_left, "fn_right_n": fn_right,
+                "finger_vy": fvy_linear,
+                "finger_vy_linear": fvy_linear, "finger_wy_legacy": fwy_legacy}
 
 
 def run_vbd2(cfg: Vbd2Config, snap_dir: str | None = None):
@@ -320,5 +372,7 @@ def run_vbd2(cfg: Vbd2Config, snap_dir: str | None = None):
             s0 = rig.state_0
             np.savez_compressed(os.path.join(snap_dir, f"f_{si:04d}.npz"),
                                 particle_q=s0.particle_q.numpy()[rig.soft_start:rig.soft_end].astype(np.float32),
-                                body_q=s0.body_q.numpy().astype(np.float32), t=np.float64(rig.sim_time)); si += 1
+                                body_q=s0.body_q.numpy().astype(np.float32),
+                                body_labels=np.asarray(rig.model.body_label),
+                                t=np.float64(rig.sim_time)); si += 1
     return rig, series, dict(t_preload_end=t_preload_end, t_lift_end=t_lift_end, t_end=t_end)

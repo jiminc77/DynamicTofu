@@ -11,120 +11,395 @@
     "kind": "jerk-limited trapezoid",
     "reversals": 1,
     "T_j_s": 0.05,
-    "T_a_s": 0.10,
-    "T_c_s": 0.10,
-    "dwell_s": 0.30,
-    "settle_s": 1.00,
-    "transport_duration_s": 1.30,
+    "T_a_s": 0.1,
+    "T_c_s": 0.1,
+    "dwell_s": 0.3,
+    "settle_s": 1.0,
+    "transport_duration_s": 1.3,
     "delta_v_formula": "a_peak*(T_a_s+T_j_s) = 0.15*a_peak",
     "leg_displacement_formula": "0.045*a_peak",
     "jerk_formula": "a_peak/T_j_s",
     "direction": "out(+x), full stop, return(-x), settle"
   },
   "phase_machine": [
-    {"name":"ramp","start_s":0.0,"end_s":0.8},
-    {"name":"preload","start_s":0.8,"end_s":1.8},
-    {"name":"lift","start_s":1.8,"end_s":4.3,"height_m":0.05},
-    {"name":"hold","start_s":4.3,"end_s":9.3},
-    {"name":"transport","start_s":9.3,"end_s":10.6},
-    {"name":"settle","start_s":10.6,"end_s":11.6,"end_closed":true}
+    {
+      "name": "ramp",
+      "start_s": 0.0,
+      "end_s": 0.8
+    },
+    {
+      "name": "preload",
+      "start_s": 0.8,
+      "end_s": 1.8
+    },
+    {
+      "name": "lift",
+      "start_s": 1.8,
+      "end_s": 4.3,
+      "height_m": 0.05
+    },
+    {
+      "name": "hold",
+      "start_s": 4.3,
+      "end_s": 9.3
+    },
+    {
+      "name": "transport",
+      "start_s": 9.3,
+      "end_s": 10.6
+    },
+    {
+      "name": "settle",
+      "start_s": 10.6,
+      "end_s": 11.6,
+      "end_closed": true
+    }
   ],
   "trial_length_s": 11.6,
-  "timebase": {"fps":60,"substeps_per_frame":80,"hz":4800,"index_rule":"k = round(t*4800)","membership":"integer comparison only; no float epsilon"},
+  "timebase": {
+    "fps": 60,
+    "substeps_per_frame": 80,
+    "hz": 4800,
+    "index_rule": "k = round(t*4800)",
+    "membership": "integer comparison only; no float epsilon"
+  },
   "transport_windows": [
-    {"name":"accel_out","start_s":9.30,"end_s":9.50,"start_k":44640,"end_k":45600,"end_closed":false},
-    {"name":"cruise_out","start_s":9.50,"end_s":9.60,"start_k":45600,"end_k":46080,"end_closed":false},
-    {"name":"decel_out","start_s":9.60,"end_s":9.80,"start_k":46080,"end_k":47040,"end_closed":false},
-    {"name":"dwell","start_s":9.80,"end_s":10.10,"start_k":47040,"end_k":48480,"end_closed":false},
-    {"name":"accel_back","start_s":10.10,"end_s":10.30,"start_k":48480,"end_k":49440,"end_closed":false},
-    {"name":"cruise_back","start_s":10.30,"end_s":10.40,"start_k":49440,"end_k":49920,"end_closed":false},
-    {"name":"decel_back","start_s":10.40,"end_s":10.60,"start_k":49920,"end_k":50880,"end_closed":false},
-    {"name":"settle","start_s":10.60,"end_s":11.60,"start_k":50880,"end_k":55680,"end_closed":true}
+    {
+      "name": "accel_out",
+      "start_s": 9.3,
+      "end_s": 9.5,
+      "start_k": 44640,
+      "end_k": 45600,
+      "end_closed": false
+    },
+    {
+      "name": "cruise_out",
+      "start_s": 9.5,
+      "end_s": 9.6,
+      "start_k": 45600,
+      "end_k": 46080,
+      "end_closed": false
+    },
+    {
+      "name": "decel_out",
+      "start_s": 9.6,
+      "end_s": 9.8,
+      "start_k": 46080,
+      "end_k": 47040,
+      "end_closed": false
+    },
+    {
+      "name": "dwell",
+      "start_s": 9.8,
+      "end_s": 10.1,
+      "start_k": 47040,
+      "end_k": 48480,
+      "end_closed": false
+    },
+    {
+      "name": "accel_back",
+      "start_s": 10.1,
+      "end_s": 10.3,
+      "start_k": 48480,
+      "end_k": 49440,
+      "end_closed": false
+    },
+    {
+      "name": "cruise_back",
+      "start_s": 10.3,
+      "end_s": 10.4,
+      "start_k": 49440,
+      "end_k": 49920,
+      "end_closed": false
+    },
+    {
+      "name": "decel_back",
+      "start_s": 10.4,
+      "end_s": 10.6,
+      "start_k": 49920,
+      "end_k": 50880,
+      "end_closed": false
+    },
+    {
+      "name": "settle",
+      "start_s": 10.6,
+      "end_s": 11.6,
+      "start_k": 50880,
+      "end_k": 55680,
+      "end_closed": true
+    }
   ],
   "plateau_windows": [
-    {"phase":"accel_out","start_s":9.35,"end_s":9.45,"start_k":44880,"end_k":45360,"membership":"strictly interior"},
-    {"phase":"decel_out","start_s":9.65,"end_s":9.75,"start_k":46320,"end_k":46800,"membership":"strictly interior"},
-    {"phase":"accel_back","start_s":10.15,"end_s":10.25,"start_k":48720,"end_k":49200,"membership":"strictly interior"},
-    {"phase":"decel_back","start_s":10.45,"end_s":10.55,"start_k":50160,"end_k":50640,"membership":"strictly interior"}
+    {
+      "phase": "accel_out",
+      "start_s": 9.35,
+      "end_s": 9.45,
+      "start_k": 44880,
+      "end_k": 45360,
+      "membership": "strictly interior"
+    },
+    {
+      "phase": "decel_out",
+      "start_s": 9.65,
+      "end_s": 9.75,
+      "start_k": 46320,
+      "end_k": 46800,
+      "membership": "strictly interior"
+    },
+    {
+      "phase": "accel_back",
+      "start_s": 10.15,
+      "end_s": 10.25,
+      "start_k": 48720,
+      "end_k": 49200,
+      "membership": "strictly interior"
+    },
+    {
+      "phase": "decel_back",
+      "start_s": 10.45,
+      "end_s": 10.55,
+      "start_k": 50160,
+      "end_k": 50640,
+      "membership": "strictly interior"
+    }
   ],
-  "grid": {"a_peak_m_s2":[1,2.5,5,10,20,30],"F_N":[0.4,0.6,0.8,1.0,1.2,1.5,2.0],"E_kPa":[7,15,25],"primary_cells":126},
-  "t_ext": {
-    "forces_N":[2.5,3.0],"cap_rows":8,"priority":"descending a, then ascending E",
-    "topology_table":[
-      {"topology":"all-slip","action":"extend F in {2.5,3.0}"},
-      {"topology":"slip-to-intact with intact at ceiling","action":"extend upper edge only"},
-      {"topology":"intact then slip re-entry at ceiling","action":"no extension"},
-      {"topology":"damage at ceiling","action":"no extension"},
-      {"topology":"multiple flips","action":"STOP and escalate"},
-      {"topology":"uncertified at deciding coordinate","action":"no extension; unresolved fail-closed"}
+  "grid": {
+    "a_peak_m_s2": [
+      1,
+      2.5,
+      5,
+      10,
+      20,
+      30
     ],
-    "confirmation":"3 seeds at newly located flips and F=3.0 censoring endpoint when it supports closure"
+    "F_N": [
+      0.4,
+      0.6,
+      0.8,
+      1.0,
+      1.2,
+      1.5,
+      2.0
+    ],
+    "E_kPa": [
+      7,
+      15,
+      25
+    ],
+    "primary_cells": 126
+  },
+  "t_ext": {
+    "forces_N": [
+      2.5,
+      3.0
+    ],
+    "cap_rows": 8,
+    "priority": "descending a, then ascending E",
+    "topology_table": [
+      {
+        "topology": "all-slip",
+        "action": "extend F in {2.5,3.0}"
+      },
+      {
+        "topology": "slip-to-intact with intact at ceiling",
+        "action": "extend upper edge only"
+      },
+      {
+        "topology": "intact then slip re-entry at ceiling",
+        "action": "no extension"
+      },
+      {
+        "topology": "damage at ceiling",
+        "action": "no extension"
+      },
+      {
+        "topology": "multiple flips",
+        "action": "STOP and escalate"
+      },
+      {
+        "topology": "uncertified at deciding coordinate",
+        "action": "no extension; unresolved fail-closed"
+      }
+    ],
+    "confirmation": "3 seeds at newly located flips and F=3.0 censoring endpoint when it supports closure"
   },
   "judgment": {
-    "transport_window_s":[9.30,11.60],"t_ref_s":9.30,"t_ref_k":44640,"gripper_frame":"translation_only",
-    "slip_formula":"max ||(COM_block(t)-p_palm(t))-(COM_block(t_ref)-p_palm(t_ref))||",
-    "slip_threshold_m":0.002,"p_palm":"body_q[b_palm][:3]",
-    "eps_damage":0.15,"DVF_MIN":0.005,"damage_rule":"latched fraction of tets whose temporal-max principal Green strain exceeds eps_damage",
-    "precedence":"damage > slip only when damage_latch_t < drop_t",
-    "legacy_hold_window_s":[4.30,9.30],"per_phase_strain_phase_count":12
+    "transport_window_s": [
+      9.3,
+      11.6
+    ],
+    "t_ref_s": 9.3,
+    "t_ref_k": 44640,
+    "gripper_frame": "translation_only",
+    "slip_formula": "max ||(COM_block(t)-p_palm(t))-(COM_block(t_ref)-p_palm(t_ref))||",
+    "slip_threshold_m": 0.002,
+    "p_palm": "body_q[b_palm][:3]",
+    "eps_damage": 0.15,
+    "DVF_MIN": 0.005,
+    "damage_rule": "latched fraction of tets whose temporal-max principal Green strain exceeds eps_damage",
+    "precedence": "damage > slip only when damage_latch_t < drop_t",
+    "legacy_hold_window_s": [
+      4.3,
+      9.3
+    ],
+    "per_phase_strain_phase_count": 12
   },
   "g_trk": {
-    "velocity_source":"body_qd[b_palm][0] (linear-first)","fit":"least-squares velocity slope", "max_relative_error":0.05,
-    "required_at_every_a":true,"min_samples_per_window":5,"fail_closed":true,
-    "zero_command_noise_floor_m_s2":0.01,"a1_has_no_absolute_tolerance_floor":true
+    "velocity_source": "body_qd[b_palm][0] (linear-first)",
+    "fit": "least-squares velocity slope",
+    "max_relative_error": 0.05,
+    "required_at_every_a": true,
+    "min_samples_per_window": 5,
+    "fail_closed": true,
+    "zero_command_noise_floor_m_s2": 0.01,
+    "a1_has_no_absolute_tolerance_floor": true
   },
   "validity_gate": {
-    "evidence":"device-side per-solver-substep accumulation against actual contacted soft feature",
-    "max_rel_disp_substep_mm":0.5,"zero_record_substeps_required":0,"overflow_substeps_required":0,"finite_required":true,"all_plateau_fits_required":true,
-    "reset":"start of every frame","host_download":"end of frame and every 20 substeps during transport","substep_coverage":"all",
+    "evidence": "device-side per-solver-substep accumulation against actual contacted soft feature",
+    "max_rel_disp_substep_mm": 0.5,
+    "zero_record_substeps_required": 0,
+    "overflow_substeps_required": 0,
+    "finite_required": true,
+    "all_plateau_fits_required": true,
+    "reset": "start of every frame",
+    "host_download": "end of frame and every 20 substeps during transport",
+    "substep_coverage": "all",
     "graded_fail_closed_policy": {
-      "isolated_interior_first_failure":"invalidate and censor cell; certified=false; exclude from boundary, T-EXT, closure, classifier; continue row",
-      "deciding_coordinate_or_second_failure":"STOP row and escalate",
-      "uncertified_evidence":"never supports boundary, T-EXT trigger, or closure",
-      "substeps":"remain frozen"
+      "isolated_interior_first_failure": "invalidate and censor cell; certified=false; exclude from boundary, T-EXT, closure, classifier; continue row",
+      "deciding_coordinate_or_second_failure": "STOP row and escalate",
+      "uncertified_evidence": "never supports boundary, T-EXT trigger, or closure",
+      "substeps": "remain frozen"
     }
   },
   "classifier": {
-    "first_match_order":["INCONCLUSIVE","P-B CLOSURE","P-A CONTRACTION","P-C NO EFFECT","MIXED / NON-MONOTONE"],
+    "first_match_order": [
+      "INCONCLUSIVE",
+      "P-B CLOSURE",
+      "P-A CONTRACTION",
+      "P-C NO EFFECT",
+      "MIXED / NON-MONOTONE"
+    ],
     "rules": {
-      "INCONCLUSIVE":"any deciding row contains uncertified or unconfirmed cells",
-      "P-B CLOSURE":"empty band at a confirmed closure coordinate; a* only when empty for all tested a at and above a_c",
-      "P-A CONTRACTION":"no closure; F_lo non-decreasing; endpoint increase >=0.2 N; endpoints confirmed",
-      "P-C NO EFFECT":"no closure and identical label vector across all tested a",
-      "MIXED / NON-MONOTONE":"everything else"
+      "INCONCLUSIVE": "any deciding row contains uncertified or unconfirmed cells",
+      "P-B CLOSURE": "empty band at a confirmed closure coordinate; a* only when empty for all tested a at and above a_c",
+      "P-A CONTRACTION": "no closure; F_lo non-decreasing; endpoint increase >=0.2 N; endpoints confirmed",
+      "P-C NO EFFECT": "no closure and identical label vector across all tested a",
+      "MIXED / NON-MONOTONE": "everything else"
     }
   },
   "prediction": {
-    "formula":"F_slip(a)=m*sqrt(g^2+a^2)/(2*mu_eff)","mass_kg":0.0640,"weight_N":0.628,"g_m_s2":9.81,"mu_eff":0.449,
-    "calibration_note":"Intercept fitted to frozen slip 0.6 / intact 0.8 bracket: F(0)=0.70 N and mu_eff=0.628/1.40=0.449; acceleration dependence is out of sample; no post-hoc refit.",
-    "rows":[
-      {"a":1,"predicted_N":0.70,"bracket_N":[0.60,0.80]},
-      {"a":2.5,"predicted_N":0.72,"bracket_N":[0.62,0.83]},
-      {"a":5,"predicted_N":0.79,"bracket_N":[0.67,0.90]},
-      {"a":10,"predicted_N":1.00,"bracket_N":[0.86,1.14]},
-      {"a":20,"predicted_N":1.59,"bracket_N":[1.36,1.82]},
-      {"a":30,"predicted_N":2.25,"bracket_N":[1.93,2.57]}
+    "formula": "F_slip(a)=m*sqrt(g^2+a^2)/(2*mu_eff)",
+    "mass_kg": 0.064,
+    "weight_N": 0.628,
+    "g_m_s2": 9.81,
+    "mu_eff": 0.449,
+    "calibration_note": "Intercept fitted to frozen slip 0.6 / intact 0.8 bracket: F(0)=0.70 N and mu_eff=0.628/1.40=0.449; acceleration dependence is out of sample; no post-hoc refit.",
+    "rows": [
+      {
+        "a": 1,
+        "predicted_N": 0.7,
+        "bracket_N": [
+          0.6,
+          0.8
+        ]
+      },
+      {
+        "a": 2.5,
+        "predicted_N": 0.72,
+        "bracket_N": [
+          0.62,
+          0.83
+        ]
+      },
+      {
+        "a": 5,
+        "predicted_N": 0.79,
+        "bracket_N": [
+          0.67,
+          0.9
+        ]
+      },
+      {
+        "a": 10,
+        "predicted_N": 1.0,
+        "bracket_N": [
+          0.86,
+          1.14
+        ]
+      },
+      {
+        "a": 20,
+        "predicted_N": 1.59,
+        "bracket_N": [
+          1.36,
+          1.82
+        ]
+      },
+      {
+        "a": 30,
+        "predicted_N": 2.25,
+        "bracket_N": [
+          1.93,
+          2.57
+        ]
+      }
     ],
-    "scoring":"observed edge=(F_last_slip,F_first_intact]; hit iff prediction bracket intersects; censored unscored"
+    "scoring": "observed edge=(F_last_slip,F_first_intact]; hit iff prediction bracket intersects; censored unscored"
   },
   "w2": {
-    "F_star_intersection_rule":["INT(E)=intersection across compared a of confirmed certified intact F values","if nonempty choose median, ties lower","require margin F* >= F_lo(E,a_max)+0.2; otherwise smallest satisfying, else max with margin_met=false","if empty use maximal contiguous a-subset starting at a=1 with nonempty intersection","fewer than two surviving a levels skips material fail-closed"],
-    "falsifier":{"statistic":"R=peak(tangential/normal resultant) over transport, one value per seed","supported":"three-seed [min,max] at a_max strictly disjoint from and greater than a_min range","otherwise":"NOT SUPPORTED","always_report":"signed median difference","unavailable":">20% excluded samples, or endpoint slip/uncertified","sample_exclusion":"per-pad normal <0.05 N or pad out of contact"}
+    "F_star_intersection_rule": [
+      "INT(E)=intersection across compared a of confirmed certified intact F values",
+      "if nonempty choose median, ties lower",
+      "require margin F* >= F_lo(E,a_max)+0.2; otherwise smallest satisfying, else max with margin_met=false",
+      "if empty use maximal contiguous a-subset starting at a=1 with nonempty intersection",
+      "fewer than two surviving a levels skips material fail-closed"
+    ],
+    "falsifier": {
+      "statistic": "R=peak(tangential/normal resultant) over transport, one value per seed",
+      "supported": "three-seed [min,max] at a_max strictly disjoint from and greater than a_min range",
+      "otherwise": "NOT SUPPORTED",
+      "always_report": "signed median difference",
+      "unavailable": ">20% excluded samples, or endpoint slip/uncertified",
+      "sample_exclusion": "per-pad normal <0.05 N or pad out of contact"
+    }
   },
   "w3_scene_rules": {
-    "actual_w1_trials_only":true,
-    "scene_A":"E15 then E25 then E7 at F*, a=1, intact certified; fallback any confirmed certified intact, lowest a then F closest to F*; otherwise unavailable",
-    "scene_B":"same E and F as Scene A (hard same-grip), highest certified slip a",
-    "scene_C":"lowest-a certified damage cell at highest F primary or extension; otherwise unavailable",
-    "rerun":"identical seed/config; label must reproduce",
-    "key_frames":["grasp","lift-complete","transport-start","plateau-peak","reversal","settle-end"]
+    "actual_w1_trials_only": true,
+    "scene_A": "E15 then E25 then E7 at F*, a=1, intact certified; fallback any confirmed certified intact, lowest a then F closest to F*; otherwise unavailable",
+    "scene_B": "same E and F as Scene A (hard same-grip), highest certified slip a",
+    "scene_C": "lowest-a certified damage cell at highest F primary or extension; otherwise unavailable",
+    "rerun": "identical seed/config; label must reproduce",
+    "key_frames": [
+      "grasp",
+      "lift-complete",
+      "transport-start",
+      "plateau-peak",
+      "reversal",
+      "settle-end"
+    ]
   },
   "reduction_ladder": {
-    "projected_finish_formula":"now + median cell runtime*remaining approved N_target + mandatory confirms + T-EXT worst case + 6.0 h W2/W3/W4 reserve",
-    "a_order":[1,5,10,20,30,2.5],"material_order_kPa":[7,25,15],"drop_order":["a=2.5","remaining E=15 kPa"],
-    "LT-1":"2026-08-29 09:00 KST: if PF > freeze-2h, propose dropping a=2.5 (N_target 126->105)",
-    "LT-2":"2026-08-29 21:00 KST: if PF > freeze-2h, propose dropping remaining E=15 kPa",
-    "LT-3":"2026-08-30 12:00 KST hard W1 acquisition cutoff; finish in-flight row; report all missing work fail-closed; defer T-EXT if not started"
+    "projected_finish_formula": "now + median cell runtime*remaining approved N_target + mandatory confirms + T-EXT worst case + 6.0 h W2/W3/W4 reserve",
+    "a_order": [
+      1,
+      5,
+      10,
+      20,
+      30,
+      2.5
+    ],
+    "material_order_kPa": [
+      7,
+      25,
+      15
+    ],
+    "drop_order": [
+      "a=2.5",
+      "remaining E=15 kPa"
+    ],
+    "LT-1": "2026-08-29 09:00 KST: if PF > freeze-2h, propose dropping a=2.5 (N_target 126->105)",
+    "LT-2": "2026-08-29 21:00 KST: if PF > freeze-2h, propose dropping remaining E=15 kPa",
+    "LT-3": "2026-08-30 12:00 KST hard W1 acquisition cutoff; finish in-flight row; report all missing work fail-closed; defer T-EXT if not started"
   },
   "acceptance_criteria": [
     "Pre-registration committed before production; every receipt has prereg_sha256, git_sha, newton_commit, passing frozen_check",
@@ -141,5 +416,20 @@
     "W4 results, handoff, decisions and complete hashed manifest include unresolved work",
     "Frozen allowlist passes against model state and every receipt; rig diff limited to authorized changes; no MPM run",
     "Structural body/joint/DOF/pad/snapshot-render tests pass"
+  ],
+  "spec_amendments": [
+    {
+      "date": "2026-08-28",
+      "id": "G0prime-dvf-tolerance",
+      "authority": "external ruling",
+      "kind": "post-registration spec fix (quantity-noise coherence)",
+      "change": "G0'-prime damage-branch DVF criterion: PASS iff label-equivalence across 0.5% threshold AND (extended per-seed DVF within baseline seed range widened by 20% of range OR |delta|<=0.01 absolute), whichever looser.",
+      "rationale": "The +-20% per-seed DVF tolerance is tighter than the damage branch's intrinsic ~60% relative seed spread; the failing seed's value lies inside the baseline seed range and every robust metric (label/slip/P99/COM-z RMS) passes.",
+      "params": {
+        "DVF_RANGE_WIDEN": 0.2,
+        "DVF_ABS_TOL": 0.01
+      },
+      "no_other_criterion_loosened": true
+    }
   ]
 }
