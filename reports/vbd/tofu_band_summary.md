@@ -81,4 +81,4 @@ s=slip (>2mm rel), I=intact, D=damage (DVF>=0.5% at eps1>0.15 latched)
 | E25/F1.5 | intact | 0.51 | 0.135 | 0.089 | 0.000% |
 | E25/F2.0 | intact | 0.36 | 0.135 | 0.088 | 0.000% |
 
-DVF is 0% across the intact band and the slip region (strains below 0.15); only E7/F2.0 crosses the 0.5% volume-robust bar. Labels are threshold-independent from the stored per-tet temporal-max fields (reports/logs/vbd/strain_fields/*.npz) -> any future eps_damage can be re-applied without reruns.
+DVF is 0% across the intact band and the slip region (strains below 0.15); only E7/F2.0 crosses the 0.5% volume-robust bar. The stored per-tet temporal-max fields are threshold-independent (reports/logs/vbd/strain_fields/*.npz) -> any future eps_damage can be re-applied without reruns.
