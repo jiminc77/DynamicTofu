@@ -74,6 +74,20 @@ def reduce_labels(labels: Iterable[str]) -> tuple[str, int, str]:
     return (label, n, "two_thirds_majority") if count * 3 >= 2 * n else ("UNRESOLVED", n, "no_two_thirds_majority")
 
 
+def reduced_cells(receipts: Iterable[dict[str, Any]]) -> dict[tuple[int, float, float], tuple[str, list[dict[str, Any]], str]]:
+    """Reduce every present screen cell; validity certification is not a label input."""
+    grouped: dict[tuple[int, float, float], list[dict[str, Any]]] = {}
+    for receipt in receipts:
+        e, a, f, _ = receipt_coords(receipt)
+        grouped.setdefault((e, a, f), []).append(receipt)
+    reduced = {}
+    for coords, cell_receipts in grouped.items():
+        cell_receipts.sort(key=lambda receipt: int(receipt.get("seed", 0)))
+        label, _, status = reduce_labels(receipt["label"] for receipt in cell_receipts)
+        reduced[coords] = (label, cell_receipts, status)
+    return reduced
+
+
 def t_ext_rows(rows: Iterable[dict[str, Any]], cap: int = 8) -> list[dict[str, Any]]:
     candidates = []
     for row in rows:
@@ -113,13 +127,20 @@ def provenance() -> dict[str, str]:
 
 def do_boundaries(receipts: list[dict[str, Any]]) -> None:
     output = []
+    reduced = reduced_cells(receipts)
     for e in E_ORDER:
-        matrix = {(a, f): str(r["label"]).lower() for r in receipts for ee, a, f, s in [receipt_coords(r)]
-                  if ee == e and s == 0 and certified(r)}
+        matrix = {(a, f): label for (ee, a, f), (label, _, _) in reduced.items()
+                  if ee == e and label != "UNRESOLVED"}
         output.extend({"E_kPa": e, "commanded_a_peak_m_s2": a, "grip_force_n": f, "seeds_to_run": [1, 2]}
                       for a, f in find_boundaries(matrix))
     output.sort(key=lambda x: (E_ORDER.index(x["E_kPa"]), A_ORDER.index(x["commanded_a_peak_m_s2"]), F_ORDER.index(x["grip_force_n"])))
-    payload = {"schema": "w1_confirm_list.v1", "coverage": {"present_receipts": len(receipts), "planned_primary_cells": 126}, "cells": output}
+    payload = {"schema": "w1_confirm_list.v1",
+               "coverage": {"completed": sorted(f"E{e}_a{_num_key(a)}_F{_num_key(f)}" for e, a, f in reduced),
+                            "failed": [], "present_receipts": len(receipts),
+                            "present_certified_cells": sum(all(certified(r) for r in rs)
+                                                           for _, rs, _ in reduced.values()),
+                            "planned_primary_cells": 126},
+               "cells": output}
     (LOG / "w1_confirm_list.json").write_text(json.dumps(payload, indent=2) + "\n")
 
 
@@ -140,20 +161,16 @@ def do_t_ext(receipts: list[dict[str, Any]]) -> None:
 
 def build_bands(receipts: list[dict[str, Any]]) -> list[dict[str, Any]]:
     axis, prov = axis_map(), provenance()
-    grouped: dict[tuple[int, float, float], list[dict[str, Any]]] = {}
-    for r in receipts:
-        e, a, f, _ = receipt_coords(r)
-        if certified(r): grouped.setdefault((e, a, f), []).append(r)
+    reduced = reduced_cells(receipts)
     bands = []
     for e in E_ORDER:
         matrix, cells = {}, {}
-        for (ee, a, f), rs in sorted(grouped.items()):
+        for (ee, a, f), (label, rs, status) in sorted(reduced.items()):
             if ee != e: continue
-            rs.sort(key=lambda r: int(r.get("seed", 0)))
-            label, n, status = reduce_labels(r["label"] for r in rs)
             matrix.setdefault(_num_key(a), {})[_num_key(f)] = label
-            cells[f"a{_num_key(a)}_F{_num_key(f)}"] = {"label": label, "n_seeds": n, "confirmation": status, "realized_accel_m_s2": axis.get(a), "source_receipts": [r["_path"] for r in rs]}
-        band = {"schema": "e1v2_band.v1", "E_kPa": e, "a_order": A_ORDER, "F_order_N": F_ORDER, "realized_accel_by_commanded": {_num_key(a): axis[a] for a in A_ORDER}, "label_matrix": matrix, "cells": cells, "coverage": {"present_certified_cells": len(cells), "planned_primary_cells": 42}, "provenance": prov}
+            cells[f"a{_num_key(a)}_F{_num_key(f)}"] = {"label": label, "n_seeds": len(rs), "confirmation": status, "realized_accel_m_s2": axis.get(a), "source_receipts": [r["_path"] for r in rs]}
+        completed = sorted(cells)
+        band = {"schema": "e1v2_band.v1", "E_kPa": e, "a_order": A_ORDER, "F_order_N": F_ORDER, "realized_accel_by_commanded": {_num_key(a): axis[a] for a in A_ORDER}, "label_matrix": matrix, "cells": cells, "coverage": {"completed": completed, "failed": [], "present_certified_cells": sum(all(certified(r) for r in rs) for (ee, _, _), (_, rs, _) in reduced.items() if ee == e), "planned_primary_cells": 42}, "provenance": prov}
         # Write the CONFIRMED final band to a separate dir so it never collides with the
         # live screen's incremental reports/logs/vbd/e1v2_band_{e}.json.
         (LOG / "final").mkdir(parents=True, exist_ok=True)
@@ -175,13 +192,15 @@ def do_phase(bands: list[dict[str, Any]]) -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(); group = parser.add_mutually_exclusive_group(required=True)
-    for flag in ("boundaries", "t-ext", "label", "phase-diagram"): group.add_argument(f"--{flag}", action="store_true")
+    parser = argparse.ArgumentParser()
+    for flag in ("boundaries", "t-ext", "label", "phase-diagram"): parser.add_argument(f"--{flag}", action="store_true")
     args = parser.parse_args(); receipts = load_receipts()
+    if not any((args.boundaries, args.t_ext, args.label, args.phase_diagram)):
+        parser.error("at least one action is required")
     if args.boundaries: do_boundaries(receipts)
-    elif getattr(args, "t_ext"): do_t_ext(receipts)
-    elif args.label: build_bands(receipts)
-    else: do_phase(build_bands(receipts))
+    if args.t_ext: do_t_ext(receipts)
+    bands = build_bands(receipts) if args.label or args.phase_diagram else []
+    if args.phase_diagram: do_phase(bands)
 
 
 if __name__ == "__main__": main()
