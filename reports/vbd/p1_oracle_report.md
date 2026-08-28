@@ -41,3 +41,20 @@ The committed p1_oracle.json holds summary metrics + hold-slip; the reproducible
 ## Status
 
 The pure-VBD architecture removes the ejection and the friction_epsilon=2e-4 fix is confirmed optimal, but the oracle does not meet the <2 mm acceptance at E=100-200 kPa, and P0 isolation + several acceptance measurements are UNRESOLVED. **STOPPING for external review before the Day-2 tofu sweep**, per the hard-gate directive.
+
+## P1 final (margin=1e-3, substeps=40, full acceptance set) — reports/logs/vbd/p1_final.json
+
+First TRUE HOLD in the project: **E=100 kPa / 2 N holds the block lifted 48.7 mm with slip 1.00 mm over 5 s** (clip reports/media/p1_pass_E100_2N.mp4), equilibrium OK (finger speed 1e-4 m/s), pre-lift XY excursion 1.24 mm (<5). But the FULL acceptance set is NOT cleanly met at 100-200 kPa:
+
+| E | 0.45 N | 0.6 N | 0.8 N | 2.0 N |
+|---|---|---|---|---|
+| 100 kPa | 50.1 (drop) | 24.4 | 16.1 | **1.01 (HOLD)** |
+| 200 kPa | 50.1 (drop) | 29.1 | 19.5 | 7.97 |
+
+(hold slip mm over 5 s; margin fix + substeps=40)
+
+- **Sub-Newton FAILS**: 0.45 N (authorized recipe) fully drops; 0.6 N (authorized fallback) slips 24-29 mm; 0.8 N slips 16-20 mm. Rigid Coulomb says 0.6 N should hold (capacity 1.2 N > 0.63 N weight) -> the residual is **velocity-regularized-friction CREEP at marginal load** (eps 2e-4 optimal but creep grows near the Coulomb limit).
+- **2 N**: E=100 passes (1.01 mm); **E=200 fails (7.97 mm)** -> not robust across the required 100-200 kPa band.
+- **Substep-invariance 40->80 FAILS**: at E=100/2 N, slip 1.01 -> 0.56 mm (45% change > the 20% criterion). Converging (more substeps -> less slip) but substeps=40 is NOT converged.
+
+**Verdict: the pure-VBD oracle achieves a real hold (E=100/2N) but does NOT cleanly pass the full acceptance set at 100-200 kPa** (sub-Newton creep; E=200/2N > 2 mm; substep-invariance fails). Per the hard gate: STOP for external review; do not touch tofu. The trend is monotone: slip decreases with grip force AND with substeps, so a converged pass likely needs grip force >= 2 N (above the sub-Newton / 2x-safety target) and substeps >= 80. The gating physics is the eps-friction creep at marginal load.
