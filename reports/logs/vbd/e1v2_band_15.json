@@ -1,6 +1,6 @@
 {
   "schema": "e1v2_band.v1",
-  "E_kPa": 7,
+  "E_kPa": 15,
   "a_order": [
     1,
     5,
