@@ -47,7 +47,7 @@ def phase_for_time(t: float) -> str | None:
     return None
 
 
-def slip3d(series: Sequence[Mapping], t_ref: float = 9.30) -> float:
+def slip3d_max_mm(series: Sequence[Mapping], t_ref: float = 9.30) -> float:
     """Maximum block-to-palm relative displacement in the transport window, mm."""
     ref_k = substep_index(t_ref)
     reference = None
@@ -70,6 +70,42 @@ def slip3d(series: Sequence[Mapping], t_ref: float = 9.30) -> float:
     if not displacements:
         raise ValueError("series contains no frames in the judgment window")
     return float(max(np.linalg.norm(relative - reference) for _, relative in displacements) * 1000.0)
+
+
+def _permanent_residual(series, t_ref, settle_lo, settle_hi):
+    frames = list(series)
+    if not frames:
+        raise ValueError("series must not be empty")
+    reference_frame = min(frames, key=lambda frame: abs(float(frame["t"]) - t_ref))
+    reference = np.asarray(reference_frame["com"], dtype=float) - np.asarray(
+        reference_frame["palm_pos"], dtype=float
+    )
+    settled = [
+        np.asarray(frame["com"], dtype=float) - np.asarray(frame["palm_pos"], dtype=float)
+        for frame in frames if settle_lo <= float(frame["t"]) <= settle_hi
+    ]
+    if reference.shape != (3,) or not np.all(np.isfinite(reference)):
+        raise ValueError("reference com and palm_pos must be finite 3-vectors")
+    if not settled or any(value.shape != (3,) or not np.all(np.isfinite(value))
+                          for value in settled):
+        raise ValueError("settle window must contain finite 3-vector frames")
+    return np.mean(settled, axis=0) - reference
+
+
+def slip_perm_x_mm(series: Sequence[Mapping], t_ref: float = 9.30,
+                   settle_lo: float = 11.30, settle_hi: float = 11.60) -> float:
+    """Permanent transport-axis residual after settling, in millimetres."""
+    return float(abs(_permanent_residual(series, t_ref, settle_lo, settle_hi)[0]) * 1000.0)
+
+
+def yz_residual_mm(series: Sequence[Mapping], t_ref: float = 9.30,
+                   settle_lo: float = 11.30, settle_hi: float = 11.60) -> float:
+    """Permanent non-transport-axis residual norm after settling, in millimetres."""
+    return float(np.linalg.norm(_permanent_residual(series, t_ref, settle_lo, settle_hi)[1:]) * 1000.0)
+
+
+# Compatibility name for the recorded maximum-3D observable.
+slip3d = slip3d_max_mm
 
 
 def is_slip(series: Sequence[Mapping], t_ref: float = 9.30) -> bool:
@@ -127,3 +163,18 @@ def label(cell: Mapping[str, object]) -> str:
     if slip_mm > SLIP_THRESHOLD_MM:
         return "slip"
     return "intact"
+
+
+def label_v21(cell: Mapping[str, object]) -> str:
+    """Classify by permanent x slip, with drop/ejection taking precedence."""
+    if (bool(cell.get("dropped", cell.get("ejected", False)))
+            or cell.get("drop_t") is not None):
+        return "slip"
+    permanent = cell.get("slip_perm_x_mm")
+    if permanent is not None and float(permanent) > SLIP_THRESHOLD_MM:
+        return "slip"
+    damage = bool(cell.get(
+        "damage_latched",
+        cell.get("latched", float(cell.get("dvf", 0.0)) >= DAMAGE_DVF_THRESHOLD),
+    ))
+    return "damage" if damage else "intact"

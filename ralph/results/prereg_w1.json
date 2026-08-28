@@ -448,6 +448,18 @@
       },
       "t_ext_unchanged": "top realized level keeps predicted slip boundary (~1.5 N) inside the frozen force grid",
       "free_carriage_receipt": "reports/vbd/g_trk_gate.md"
+    },
+    {
+      "date": "2026-08-28",
+      "id": "slip-label-v2.1",
+      "authority": "external ruling (amendment 2)",
+      "kind": "post-registration amendment (metric-reliability correction)",
+      "change": "Transport slip label = |residual world-x block-COM-vs-gripper displacement at settle-end| > 2mm OR drop/eject. max-3D peak + Y/Z residual demoted to recorded non-labeling observables.",
+      "rationale": "max-3D metric is non-reproducible (7.60/5.30/1.81mm same cell) and captures transient wobble + Y/Z re-seating, not grip failure (x_settle~0). See reports/vbd/slip_metric_issue.md.",
+      "gpu_nondeterminism": "transport trials are NOT deterministic; 3-seed + two-thirds band rules mandatory; T-EXT on confirmed labels only",
+      "acceptance_test": "a=1 row monotone in F + intact at 0.8-1.5N (realized ~0.65) before screen resumes",
+      "receipt": "reports/vbd/slip_metric_issue.md",
+      "scope": "slip label only; damage/drop unchanged"
     }
   ]
 }

@@ -3,10 +3,13 @@ import numpy as np
 from src.judgment_vbd import (
     PHASE_NAMES,
     label,
+    label_v21,
     latched_dvf,
     per_phase_strain_maxima,
     phase_for_time,
     slip3d,
+    slip_perm_x_mm,
+    yz_residual_mm,
 )
 
 
@@ -27,6 +30,27 @@ def test_slip3d_translation_invariance_and_relative_shift():
         _frame(t, [t, 0.0, 10.0 * t + 0.25], [t, 0.0, 10.0 * t]) for t in times
     ]
     assert slip3d(palm_z_motion) == 0.0
+
+
+def test_v21_permanent_x_ignores_transient_max_and_labels_residual_or_ejection():
+    returned = [
+        _frame(9.3, [0, 0, 0], [0, 0, 0]),
+        _frame(10.0, [0.010, 0, 0], [0, 0, 0]),
+        _frame(11.3, [0, 0, 0], [0, 0, 0]),
+        _frame(11.6, [0, 0, 0], [0, 0, 0]),
+    ]
+    assert slip3d(returned) == 10.0
+    assert slip_perm_x_mm(returned) == 0.0
+    assert yz_residual_mm(returned) == 0.0
+    assert label_v21({"slip_perm_x_mm": slip_perm_x_mm(returned)}) == "intact"
+
+    displaced = returned[:2] + [
+        _frame(11.3, [0.003, 0, 0], [0, 0, 0]),
+        _frame(11.6, [0.003, 0, 0], [0, 0, 0]),
+    ]
+    assert np.isclose(slip_perm_x_mm(displaced), 3.0)
+    assert label_v21({"slip_perm_x_mm": slip_perm_x_mm(displaced)}) == "slip"
+    assert label_v21({"slip_perm_x_mm": None, "ejected": True}) == "slip"
 
 
 def test_dvf_latches_transient_accel_back_damage():

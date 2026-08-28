@@ -22,8 +22,9 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from src.frozen_config import assert_frozen, frozen_provenance
-from src.judgment_vbd import (PHASE_NAMES, label, latched_dvf,
-                              per_phase_strain_maxima, phase_for_time, slip3d)
+from src.judgment_vbd import (PHASE_NAMES, label_v21, latched_dvf,
+                              per_phase_strain_maxima, phase_for_time,
+                              slip3d_max_mm, slip_perm_x_mm, yz_residual_mm)
 from src.transport import g_trk, realized_accel, trapezoid_reversal
 
 FPS = 60
@@ -81,7 +82,13 @@ def screen_cell_receipt(cell, axis_map):
         "realized_accel_m_s2": realized,
         "realized_source": "cell" if measured is not None else "axis_map",
         "axis_map_realized_accel_m_s2": float(axis_map[commanded]),
-        "slip3d_mm": cell.get("slip3d_mm"), "legacy_hold_slip_mm": cell.get("legacy_hold_slip_mm"),
+        "slip_perm_x_mm": cell.get("slip_perm_x_mm"),
+        "slip3d_max_mm": cell.get("slip3d_max_mm"),
+        "yz_residual_mm": cell.get("yz_residual_mm"),
+        "legacy_hold_slip_mm": cell.get("legacy_hold_slip_mm"),
+        "settle_end_block_x": cell.get("settle_end_block_x"),
+        "settle_end_palm_x": cell.get("settle_end_palm_x"),
+        "ref_block_x": cell.get("ref_block_x"), "ref_palm_x": cell.get("ref_palm_x"),
         "label": cell.get("label", "error"), "dvf": cell.get("dvf"),
         "p99_strain": cell.get("p99_strain"), "peak_strain": cell.get("peak_strain"),
         "validity_gate": cell.get("validity_gate"), "ejected": cell.get("ejected", False),
@@ -108,7 +115,10 @@ def update_band(band, receipt):
     band["label_matrix"].setdefault(a, {})[F] = receipt["label"]
     band["cells"][key] = {
         "label": receipt["label"], "realized_accel_m_s2": receipt["realized_accel_m_s2"],
-        "realized_source": receipt["realized_source"], "slip3d_mm": receipt["slip3d_mm"],
+        "realized_source": receipt["realized_source"],
+        "slip_perm_x_mm": receipt["slip_perm_x_mm"],
+        "slip3d_max_mm": receipt["slip3d_max_mm"],
+        "yz_residual_mm": receipt["yz_residual_mm"],
         "dvf": receipt["dvf"], "ejected": receipt["ejected"],
         "finite": receipt["health"].get("finite"), "certified": (
             receipt.get("validity_gate") or {}).get("certified"),
@@ -353,7 +363,24 @@ def run_transport_cell(E, F, a_peak, seed, substeps=80, cell_m=0.005,
     dvf, damaged = latched_dvf(temporal_max, rest_vol)
     finite_series = [m for m in series if m["finite"]
                      and np.all(np.isfinite(m["com"])) and np.all(np.isfinite(m["palm_pos"]))]
-    slip = slip3d(finite_series, TRANSPORT_START) if transport_reference is not None else 0.0
+    slip_max = slip3d_max_mm(finite_series, TRANSPORT_START) if transport_reference is not None else 0.0
+    settled = [m for m in finite_series if 11.30 <= m["t"] <= 11.60]
+    if not ejected and finite and settled:
+        slip_perm = slip_perm_x_mm(finite_series)
+        yz_residual = yz_residual_mm(finite_series)
+        ref_frame = min(finite_series, key=lambda m: abs(m["t"] - TRANSPORT_START))
+        settle_end_block_x = float(np.mean([m["com"][0] for m in settled]))
+        settle_end_palm_x = float(np.mean([m["palm_pos"][0] for m in settled]))
+        ref_block_x = float(ref_frame["com"][0])
+        ref_palm_x = float(ref_frame["palm_pos"][0])
+    else:
+        slip_perm = yz_residual = None
+        settle_end_block_x = settle_end_palm_x = None
+        if transport_reference is not None:
+            ref_frame = min(finite_series, key=lambda m: abs(m["t"] - TRANSPORT_START))
+            ref_block_x, ref_palm_x = float(ref_frame["com"][0]), float(ref_frame["palm_pos"][0])
+        else:
+            ref_block_x = ref_palm_x = None
     strain_maxima = (per_phase_strain_maxima(phase_fields)
                       if set(phase_fields) == set(PHASE_NAMES)
                       else {name: (float(np.max(phase_fields[name])) if name in phase_fields else None)
@@ -368,10 +395,15 @@ def run_transport_cell(E, F, a_peak, seed, substeps=80, cell_m=0.005,
         "ejected": ejected, "finite": finite,
         "commanded_a_peak_m_s2": float(a_peak), "tracking": tracking,
         "realized_F_g_n": float(np.mean(fn_hold)) if fn_hold else float("nan"),
-        "slip3d_mm": slip, "legacy_hold_slip_mm": legacy_slip,
+        "slip_perm_x_mm": slip_perm, "slip3d_max_mm": slip_max,
+        "yz_residual_mm": yz_residual, "legacy_hold_slip_mm": legacy_slip,
+        "settle_end_block_x": settle_end_block_x, "settle_end_palm_x": settle_end_palm_x,
+        "ref_block_x": ref_block_x, "ref_palm_x": ref_palm_x,
         "dvf": dvf, "damage_latched": damaged,
-        "label": ("nonfinite" if not finite else "slip" if ejected else
-                  label({"dvf": dvf, "damage_latched": damaged, "slip3d_mm": slip})),
+        "label": ("nonfinite" if not finite else label_v21({
+            "dvf": dvf, "damage_latched": damaged, "slip_perm_x_mm": slip_perm,
+            "ejected": ejected,
+        })),
         "p99_strain": stats["p99_vol_weighted_strain"], "peak_strain": float(np.max(temporal_max)),
         "per_phase_strain_maxima": strain_maxima,
         "validity_gate": {"summary": vg, "certified": certified},
@@ -422,7 +454,7 @@ def run_screen(material=None, resume=False):
         cert = (receipt.get("validity_gate") or {}).get("certified")
         realized = receipt["realized_accel_m_s2"]
         print(f"E{E_kpa} a{acceleration:g} F{force:g} -> {receipt['label']} "
-              f"realized={realized:.4g} slip={receipt['slip3d_mm']} dvf={receipt['dvf']} "
+              f"realized={realized:.4g} slip={receipt['slip_perm_x_mm']} dvf={receipt['dvf']} "
               f"ejected={receipt['ejected']} cert={cert} ({done}cells done, {elapsed:.1f}s)")
     return 0
 
