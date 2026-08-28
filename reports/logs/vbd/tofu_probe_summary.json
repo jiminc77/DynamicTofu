@@ -21,5 +21,7 @@
   },
   "weight_measured_n": 0.894,
   "weight_note": "measured tofu weight 0.894N (mass ~91g) vs 0.628N nominal for 64g -> add_soft_grid mass lumping; affects load-fraction; flag for review",
-  "verdict": "Architecture TRANSFERS to soft tofu: E=15kPa holds at F=1.2N + substeps=80 (1.13mm, near-full lift). But NOT at the pre-probe recipe (0.6N/sub40) or any eps in {2e-4,1e-4,5e-5}. Fixes needed vs the ruling recipe: substeps=80 (=the accepted oracle convergence resolution) + adequate force (~1.2N; sub-Newton is marginal). The sanctioned probe-failure path (eps ladder) is exhausted -> escalate for sign-off on substeps=80 + grid force range before committing the full grid."
+  "verdict": "Architecture TRANSFERS to soft tofu: E=15kPa holds at F=1.2N + substeps=80 (1.13mm, near-full lift). But NOT at the pre-probe recipe (0.6N/sub40) or any eps in {2e-4,1e-4,5e-5}. Fixes needed vs the ruling recipe: substeps=80 (=the accepted oracle convergence resolution) + adequate force (~1.2N; sub-Newton is marginal). The sanctioned probe-failure path (eps ladder) is exhausted -> escalate for sign-off on substeps=80 + grid force range before committing the full grid.",
+  "reproducible_artifacts": "scripts/vbd/tofu_variants.py -> reports/logs/vbd/tofu_probe_variants.json (force sweep + decisive 1.2N/sub80 hold, full series + provenance); clip reports/media/tofu_hold_E15_F12_sub80.mp4",
+  "substeps40_nondeterminism": "Re-running the substeps=40 force sweep gave DIFFERENT winners (run1: 1.2N held-ish; run2: 1.5N held-ish, 1.0/1.2N dropped 50mm with strain 0.5-0.7) -> substeps=40 is chaotic/under-resolved and UNRELIABLE; substeps=80 is REQUIRED (1.2N reproducibly holds 1.13mm)."
 }
