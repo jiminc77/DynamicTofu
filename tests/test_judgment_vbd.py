@@ -4,12 +4,17 @@ from src.judgment_vbd import (
     PHASE_NAMES,
     label,
     label_v21,
+    label_v22,
     latched_dvf,
     per_phase_strain_maxima,
     phase_for_time,
     slip3d,
+    slip_perm_tangential_mm,
     slip_perm_x_mm,
+    x_res_mm,
+    y_res_mm,
     yz_residual_mm,
+    z_res_mm,
 )
 
 
@@ -51,6 +56,37 @@ def test_v21_permanent_x_ignores_transient_max_and_labels_residual_or_ejection()
     assert np.isclose(slip_perm_x_mm(displaced), 3.0)
     assert label_v21({"slip_perm_x_mm": slip_perm_x_mm(displaced)}) == "slip"
     assert label_v21({"slip_perm_x_mm": None, "ejected": True}) == "slip"
+
+
+def test_v22_permanent_tangential_slip_and_normal_reseating():
+    def series(settle):
+        return [
+            _frame(1.8, [0, 0, 0], [0, 0, 0]),
+            _frame(9.3, [0, 0, 0], [0, 0, 0]),
+            _frame(10.0, [0.010, 0, -0.006], [0, 0, 0]),
+            _frame(11.3, settle, [0, 0, 0]),
+            _frame(11.6, settle, [0, 0, 0]),
+        ]
+
+    vertical = series([0, 0, -0.006])
+    assert np.isclose(slip_perm_tangential_mm(vertical), 6.0)
+    assert np.isclose(z_res_mm(vertical), -6.0)
+    assert label_v22({"slip_perm_tangential_mm": 6.0}) == "slip"
+
+    held = series([0, 0, 0])
+    assert slip_perm_tangential_mm(held) == 0.0
+    assert label_v22({"slip_perm_tangential_mm": 0.0}) == "intact"
+
+    x_only = series([0.003, 0, 0])
+    assert np.isclose(x_res_mm(x_only), 3.0)
+    assert label_v22({"slip_perm_tangential_mm":
+                      slip_perm_tangential_mm(x_only)}) == "slip"
+
+    y_only = series([0, 0.004, 0])
+    assert np.isclose(y_res_mm(y_only), 4.0)
+    assert slip_perm_tangential_mm(y_only) == 0.0
+    assert label_v22({"slip_perm_tangential_mm": 0.0}) == "intact"
+    assert label_v22({"slip_perm_tangential_mm": None, "ejected": True}) == "slip"
 
 
 def test_dvf_latches_transient_accel_back_damage():

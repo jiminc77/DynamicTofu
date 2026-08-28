@@ -92,6 +92,52 @@ def _permanent_residual(series, t_ref, settle_lo, settle_hi):
     return np.mean(settled, axis=0) - reference
 
 
+def _grip_settle_residual(series, t_grip=1.80, settle_lo=11.30, settle_hi=11.60):
+    frames = list(series)
+    if not frames:
+        raise ValueError("series must not be empty")
+    reference_frame = min(frames, key=lambda frame: abs(float(frame["t"]) - t_grip))
+    # The production series samples pre-transport phases at least at 10 Hz.
+    if abs(float(reference_frame["t"]) - t_grip) > 0.0500001:
+        raise ValueError("series contains no frame near t_grip")
+    reference = np.asarray(reference_frame["com"], dtype=float) - np.asarray(
+        reference_frame["palm_pos"], dtype=float
+    )
+    settled = [
+        np.asarray(frame["com"], dtype=float) - np.asarray(frame["palm_pos"], dtype=float)
+        for frame in frames if settle_lo <= float(frame["t"]) <= settle_hi
+    ]
+    if reference.shape != (3,) or not np.all(np.isfinite(reference)):
+        raise ValueError("grip reference com and palm_pos must be finite 3-vectors")
+    if not settled or any(value.shape != (3,) or not np.all(np.isfinite(value))
+                          for value in settled):
+        raise ValueError("settle window must contain finite 3-vector frames")
+    return np.mean(settled, axis=0) - reference
+
+
+def slip_perm_tangential_mm(series: Sequence[Mapping], t_grip: float = 1.80,
+                            settle_lo: float = 11.30,
+                            settle_hi: float = 11.60) -> float:
+    """Permanent x-z (transport/gravity) residual from the grip reference."""
+    residual = _grip_settle_residual(series, t_grip, settle_lo, settle_hi)
+    return float(np.linalg.norm(residual[[0, 2]]) * 1000.0)
+
+
+def x_res_mm(series: Sequence[Mapping], t_grip: float = 1.80,
+             settle_lo: float = 11.30, settle_hi: float = 11.60) -> float:
+    return float(_grip_settle_residual(series, t_grip, settle_lo, settle_hi)[0] * 1000.0)
+
+
+def y_res_mm(series: Sequence[Mapping], t_grip: float = 1.80,
+             settle_lo: float = 11.30, settle_hi: float = 11.60) -> float:
+    return float(_grip_settle_residual(series, t_grip, settle_lo, settle_hi)[1] * 1000.0)
+
+
+def z_res_mm(series: Sequence[Mapping], t_grip: float = 1.80,
+             settle_lo: float = 11.30, settle_hi: float = 11.60) -> float:
+    return float(_grip_settle_residual(series, t_grip, settle_lo, settle_hi)[2] * 1000.0)
+
+
 def slip_perm_x_mm(series: Sequence[Mapping], t_ref: float = 9.30,
                    settle_lo: float = 11.30, settle_hi: float = 11.60) -> float:
     """Permanent transport-axis residual after settling, in millimetres."""
@@ -171,6 +217,21 @@ def label_v21(cell: Mapping[str, object]) -> str:
             or cell.get("drop_t") is not None):
         return "slip"
     permanent = cell.get("slip_perm_x_mm")
+    if permanent is not None and float(permanent) > SLIP_THRESHOLD_MM:
+        return "slip"
+    damage = bool(cell.get(
+        "damage_latched",
+        cell.get("latched", float(cell.get("dvf", 0.0)) >= DAMAGE_DVF_THRESHOLD),
+    ))
+    return "damage" if damage else "intact"
+
+
+def label_v22(cell: Mapping[str, object]) -> str:
+    """Classify by permanent tangential slip from the preload-end grip state."""
+    if (bool(cell.get("dropped", cell.get("ejected", False)))
+            or cell.get("drop_t") is not None):
+        return "slip"
+    permanent = cell.get("slip_perm_tangential_mm")
     if permanent is not None and float(permanent) > SLIP_THRESHOLD_MM:
         return "slip"
     damage = bool(cell.get(

@@ -18,7 +18,9 @@ def _receipt(realized=None):
     return {
         "status": "ok", "E_pa": 7000.0, "grip_force_n": 0.4, "seed": 0,
         "commanded_a_peak_m_s2": 10.0, "tracking": tracking,
-        "slip_perm_x_mm": 0.2, "slip3d_max_mm": 1.2, "yz_residual_mm": 0.1,
+        "slip_perm_tangential_mm": 0.2, "x_res_mm": 0.1, "z_res_mm": 0.1,
+        "y_res_mm": 0.1, "slip_perm_x_mm": 0.2,
+        "slip3d_max_mm": 1.2, "yz_residual_mm": 0.1,
         "legacy_hold_slip_mm": 0.2, "label": "intact",
         "dvf": 0.0, "p99_strain": 0.1, "peak_strain": 0.2,
         "validity_gate": {"certified": True}, "ejected": False,
