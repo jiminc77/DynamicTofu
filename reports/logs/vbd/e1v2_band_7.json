@@ -1,0 +1,50 @@
+{
+  "schema": "e1v2_band.v1",
+  "E_kPa": 7,
+  "a_order": [
+    1,
+    5,
+    10,
+    20,
+    30,
+    2.5
+  ],
+  "F_order_N": [
+    0.4,
+    0.6,
+    0.8,
+    1.0,
+    1.2,
+    1.5,
+    2.0
+  ],
+  "realized_accel_by_commanded": {
+    "1": 0.681
+  },
+  "label_matrix": {
+    "1": {
+      "0.4": "slip"
+    }
+  },
+  "cells": {
+    "a1_F0.4": {
+      "label": "slip",
+      "realized_accel_m_s2": 0.6522212709699033,
+      "realized_source": "cell",
+      "slip3d_mm": 4.813148296746041,
+      "dvf": 0.001302083335068057,
+      "ejected": false,
+      "finite": true,
+      "certified": false
+    }
+  },
+  "coverage": {
+    "completed": [
+      [
+        1.0,
+        0.4
+      ]
+    ],
+    "failed": []
+  }
+}
