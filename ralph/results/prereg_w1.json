@@ -430,6 +430,24 @@
         "DVF_ABS_TOL": 0.01
       },
       "no_other_criterion_loosened": true
+    },
+    {
+      "date": "2026-08-28",
+      "id": "G-TRK-realized-axis",
+      "authority": "external ruling (option A)",
+      "kind": "post-registration amendment (actuation-limit adaptation, O-2 precedent)",
+      "change": "Realized-acceleration axis: commanded levels are exposure levels; scientific axis uses per-level realized medians. G-TRK redefined as a repeatability gate (per-level realized plateau accel monotone + well-separated + CV<=5% across cells/materials/grasp-states; keep r^2 bound + zero-command noise floor<=0.01; any level failing -> STOP). FF (D3-C) disabled but retained.",
+      "rationale": "D3-C feed-forward is clamped by the j_x position PD -> ineffective at any mass (free-carriage receipt reports/vbd/g_trk_gate.md). Frozen gains untouched; profile pre-scaling rejected.",
+      "expected_realized_ladder_m_s2": {
+        "1": 0.6,
+        "2.5": 1.6,
+        "5": 3.2,
+        "10": 6.4,
+        "20": 12.8,
+        "30": 19
+      },
+      "t_ext_unchanged": "top realized level keeps predicted slip boundary (~1.5 N) inside the frozen force grid",
+      "free_carriage_receipt": "reports/vbd/g_trk_gate.md"
     }
   ]
 }

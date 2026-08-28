@@ -55,6 +55,53 @@ def tracking_receipt(times, velocities, windows):
             "samples_valid": gate["samples_valid"], "pass": gate["pass"]}
 
 
+def realized_from_fits(fits):
+    """Realized-axis coordinate: median magnitude of four plateau slopes."""
+    values = np.asarray([abs(item["a_fit"]) for item in fits.values()], dtype=float)
+    if values.size != 4 or not np.all(np.isfinite(values)):
+        raise ValueError("realized acceleration requires four finite plateau fits")
+    return float(np.median(values))
+
+
+def summarize_level(commanded_a_peak, cells):
+    """Reduce three seed receipts into the repeatability-gate level row."""
+    realized = np.asarray(
+        [realized_from_fits(cell["tracking"]["plateaus"]) for cell in cells], dtype=float
+    )
+    if realized.size != 3:
+        raise ValueError("repeatability levels require exactly three cells")
+    mean = float(np.mean(realized))
+    median = float(np.median(realized))
+    cv = float(np.std(realized) / mean) if mean > 0.0 else float("inf")
+    r2_min = float(min(
+        fit["r2"] for cell in cells
+        for fit in cell["tracking"]["plateaus"].values()
+    ))
+    return {
+        "commanded_a_peak": float(commanded_a_peak),
+        "realized_per_cell": realized.tolist(),
+        "realized_median": median,
+        "realized_cv": cv,
+        "r2_min": r2_min,
+        "level_pass": bool(cv <= 0.05 and np.isfinite(r2_min) and r2_min >= 0.99),
+    }
+
+
+def ladder_shape_gate(levels):
+    """Evaluate strict monotonicity and spread-aware adjacent separation."""
+    medians = [float(level["realized_median"]) for level in levels]
+    monotone = all(right > left for left, right in zip(medians, medians[1:]))
+    separated = True
+    for left, right in zip(levels, levels[1:]):
+        left_values = np.asarray(left["realized_per_cell"], dtype=float)
+        right_values = np.asarray(right["realized_per_cell"], dtype=float)
+        left_spread = float(left_values.max() - left_values.min())
+        right_spread = float(right_values.max() - right_values.min())
+        required = max(0.1, 2.0 * max(left_spread, right_spread))
+        separated &= float(right["realized_median"]) - float(left["realized_median"]) > required
+    return bool(monotone), bool(separated)
+
+
 def _pad_shapes(rig):
     shape_body = rig.model.shape_body.numpy()
     left = np.flatnonzero(shape_body == rig.b_left)
@@ -139,6 +186,7 @@ def run_transport_cell(E, F, a_peak, seed, substeps=80, cell_m=0.005,
     velocities = [m["palm_vx"] for m in transport]
     if profile is not None:
         tracking = tracking_receipt(times, velocities, profile.plateau_windows)
+        tracking["realized_accel_m_s2"] = realized_from_fits(tracking["plateaus"])
         expected_phases = profile.phase_timestamps
         zero_command_accel = None
     else:
@@ -211,28 +259,58 @@ def main(argv=None):
                           "label": receipt["label"], "provenance": receipt["frozen_config"]}, indent=2))
         timestamps_ok = all(row["hit_s"] is not None and abs(row["error_s"]) <= 1 / FPS
                             for row in receipt["phase_timestamps"].values())
-        return 0 if timestamps_ok and receipt["tracking"]["pass"] else 1
+        fits = receipt["tracking"]["plateaus"].values()
+        shape_ok = all(fit["n_samples"] >= 5 and np.isfinite(fit["r2"])
+                       and fit["r2"] >= 0.99 for fit in fits)
+        return 0 if timestamps_ok and shape_ok else 1
     ladder = []
-    passed = True
     for acceleration in (1, 2.5, 5, 10, 20, 30):
-        receipt = run_transport_cell(15e3, 1.2, acceleration, 0)
+        cells = []
+        for seed in (0, 1, 2):
+            receipt = run_transport_cell(15e3, 1.2, acceleration, seed)
+            _write_receipt(receipt)
+            cells.append(receipt)
+        ladder.append(summarize_level(acceleration, cells))
+    monotone, separated = ladder_shape_gate(ladder)
+    level_10 = next(level for level in ladder if level["commanded_a_peak"] == 10.0)
+    reference = level_10["realized_median"]
+    spot_cells = []
+    for E, F in ((7e3, 0.6), (7e3, 1.2), (25e3, 1.2)):
+        receipt = run_transport_cell(E, F, 10.0, 0)
         _write_receipt(receipt)
-        ladder.append({"a_peak_m_s2": acceleration, **receipt["tracking"]})
-        passed &= receipt["tracking"]["pass"]
+        realized = receipt["tracking"]["realized_accel_m_s2"]
+        within = bool(abs(realized - reference) / reference <= 0.05)
+        spot_cells.append({"E_pa": E, "grip_force_n": F, "seed": 0,
+                           "realized_accel": realized, "within_5pct": within})
+    independence = all(cell["within_5pct"] for cell in spot_cells)
     noise_receipt = run_transport_cell(15e3, 1.2, 0.0, 0)
     _write_receipt(noise_receipt)
-    transport_note = noise_receipt["phase_timestamps"]
-    # Fit stationary-command slopes in the same four immutable windows.
-    # The full series is intentionally not persisted in production receipts; run_transport_cell
-    # records the result below when a=0 through the health telemetry.
     noise = float(noise_receipt["health"]["zero_command_realized_accel_magnitude"])
-    output = {"ladder": ladder, "noise_floor_m_s2": noise, "noise_floor_pass": noise <= 0.01,
-              "zero_phase_timestamps": transport_note}
+    noise_pass = noise <= 0.01
+    overall = bool(all(level["level_pass"] for level in ladder)
+                   and monotone and separated and noise_pass and independence)
+    output = {
+        "levels": ladder,
+        "spot_check": {"reference_realized_median": reference, "cells": spot_cells,
+                       "independence_pass": independence},
+        "monotone_pass": monotone,
+        "separated_pass": separated,
+        "noise_floor_m_s2": noise,
+        "noise_floor_pass": noise_pass,
+        "overall_pass": overall,
+        "provenance": {
+            "git_sha": subprocess.check_output(
+                ["git", "-C", str(ROOT), "rev-parse", "HEAD"], text=True
+            ).strip(),
+            "prereg_sha256": _sha256(ROOT / "ralph/results/prereg_w1.json"),
+        },
+    }
     out = ROOT / "reports/logs/vbd/g_trk_ladder.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(output, indent=2, allow_nan=False) + "\n")
     print(json.dumps(output, indent=2))
-    return 0 if passed and noise <= 0.01 else 1
+    print("PASS" if overall else "STOP")
+    return 0 if overall else 1
 
 
 if __name__ == "__main__":

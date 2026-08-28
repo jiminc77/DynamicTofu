@@ -14,6 +14,8 @@ RUNNER = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(RUNNER)
 phase_timestamp_table = RUNNER.phase_timestamp_table
 tracking_receipt = RUNNER.tracking_receipt
+summarize_level = RUNNER.summarize_level
+ladder_shape_gate = RUNNER.ladder_shape_gate
 
 
 def test_phase_timestamp_table_reports_first_hit_and_missing():
@@ -34,3 +36,29 @@ def test_tracking_receipt_from_exact_synthetic_velocity():
     assert receipt["samples_valid"] is True
     assert receipt["max_abs_relative_error"] < 1e-12
     assert all(fit["n_samples"] >= 5 for fit in receipt["plateaus"].values())
+
+
+def _cell(realized, r2=0.995):
+    signs = (1, -1, -1, 1)
+    return {"tracking": {"plateaus": {
+        str(index): {"a_fit": sign * realized, "r2": r2}
+        for index, sign in enumerate(signs)
+    }}}
+
+
+def test_level_median_cv_and_shape_gates():
+    low = summarize_level(1.0, [_cell(1.00), _cell(1.02), _cell(0.98)])
+    high = summarize_level(2.5, [_cell(2.48), _cell(2.50), _cell(2.52)])
+    assert low["realized_median"] == 1.0
+    assert low["realized_cv"] < 0.05
+    assert low["r2_min"] == 0.995
+    assert low["level_pass"] is True
+    assert ladder_shape_gate([low, high]) == (True, True)
+
+
+def test_shape_gate_rejects_nonmonotone_and_insufficient_separation():
+    first = summarize_level(1.0, [_cell(1.0), _cell(1.0), _cell(1.0)])
+    close = summarize_level(2.5, [_cell(1.05), _cell(1.05), _cell(1.05)])
+    lower = summarize_level(5.0, [_cell(0.9), _cell(0.9), _cell(0.9)])
+    assert ladder_shape_gate([first, close]) == (True, False)
+    assert ladder_shape_gate([first, lower]) == (False, False)

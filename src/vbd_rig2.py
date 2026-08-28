@@ -181,7 +181,10 @@ class Vbd2Rig:
         self.m_gripper_rigid = float(mass[self.b_carriage] + mass[self.b_palm]
                                      + mass[self.b_left] + mass[self.b_right])
         self.m_block = float(self.model.particle_mass.numpy()[self.soft_start:self.soft_end].sum())
-        self.transport_ff_mass = self.m_gripper_rigid
+        # D3-C DISABLED (external ruling 2026-08-28): feed-forward effort is clamped by the j_x
+        # position PD and cannot improve accel tracking at any mass -- see reports/vbd/g_trk_gate.md.
+        # Realized-acceleration axis (option A) adopted instead. FF code path retained but inert (0 kg).
+        self.transport_ff_mass = 0.0
 
     def strain_stats(self, threshold):
         """Per-tet max principal Green-Lagrange strain, volume-weighted P99, and

@@ -76,3 +76,7 @@ Acceptance requires: pre-registration provenance on every receipt; three-anchor/
 
 ### 2026-08-28 — G0'-prime damage-branch DVF criterion (external ruling)
 The ±20% per-seed DVF equivalence tolerance is incoherent with the damage branch's intrinsic ~60% relative seed spread. Amended (external sign-off): a damage-branch cell's DVF PASSES iff label-equivalence across the 0.5% threshold AND the extended per-seed DVF is within the baseline seed range widened by 20% of that range, OR |delta| <= 0.01 absolute, whichever is looser. All other G0'-prime criteria (label, hold-slip ±0.15 mm, COM-z RMS ≤0.5 mm, P99 ±0.02) unchanged. See ralph/DECISIONS.md 2026-08-28.
+
+
+### 2026-08-28 — Realized-acceleration axis + G-TRK repeatability gate (external ruling, option A)
+D3-C feed-forward is clamped by the j_x position PD (ineffective at any mass; free-carriage receipt in reports/vbd/g_trk_gate.md: realized 3.311/3.301/2.986 m/s^2 at FF 0/0.73/25 N). Amendment: (1) commanded levels are exposure levels; the scientific axis uses per-level REALIZED MEDIANS. (2) G-TRK redefined as a repeatability gate -- per commanded level, realized plateau accel monotone + well-separated + CV<=5% across cells/materials/grasp-states; r^2 shape bound and zero-command noise floor <=0.01 retained; any level failing -> STOP. (3) FF code path disabled (transport_ff_mass=0.0). (4) Expected realized ladder ~{0.6,1.6,3.2,6.4,12.8,19} m/s^2; top realized level keeps the predicted slip boundary (~1.5 N) inside the frozen grid so T-EXT is unchanged. See ralph/DECISIONS.md 2026-08-28.

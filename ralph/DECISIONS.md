@@ -288,3 +288,16 @@ The G0' equivalence gate (extended world-x transport-off rig vs the committed pr
 **EXTERNAL RULING (this date):** tolerance mis-spec, NOT a perturbation. Amend the G0'-prime DVF criterion for damage-branch cells: **PASS iff (a) label equivalence across the 0.5% threshold AND (b) the extended per-seed DVF lies within the baseline seed range widened by 20% of that range, OR |delta| <= 1 percentage point absolute, whichever is looser.** Under the amended criterion **G0'-prime = 9/9 PASS**. No other criterion is loosened. Post-registration spec fix (quantity-noise coherence), recorded here + in PREREG_W1 before use.
 
 Implemented in `scripts/vbd/w1_baseline.py::equivalence()` (DVF_RANGE_WIDEN=0.20, DVF_ABS_TOL=0.01). Receipt: `reports/logs/vbd/g0_equivalence.json`. Every robust non-perturbation metric (label, slip ±0.15 mm, COM-z RMS ≤0.5 mm, P99 ±0.02) passes unanimously across all 3 anchors × 3 seeds; the default-inert world-x DOF extension is confirmed non-perturbing.
+
+## 2026-08-28 — G-TRK re-operationalized to the REALIZED-acceleration axis (EXTERNAL RULING, option A)
+
+D3-C (feed-forward effort on the position-controlled j_x) is CONFIRMED architecturally ineffective: the j_x position PD (ke=1e4, kd=2e2) clamps any feed-forward to the commanded trajectory. Free-carriage receipt (reports/vbd/g_trk_gate.md): realized plateau accel 3.311 / 3.301 / 2.986 m/s^2 for FF = 0 / 0.73 / 25 N -> a 34x FF increase does nothing. The ~34% realized-vs-commanded shortfall is the overdamped frozen PD + VBD solver (a free carriage under-tracks identically; NOT block coupling).
+
+EXTERNAL RULING (this date): ADOPT OPTION A -- realized-acceleration axis, O-2 precedent. Conditions:
+1. Commanded levels are EXPOSURE levels; the scientific axis and all band/contraction claims use PER-LEVEL REALIZED MEDIANS.
+2. G-TRK REDEFINED as a REPEATABILITY gate (not command-match): per commanded level, realized plateau accel must be monotone across levels, well-separated, and repeatable across cells/materials/grasp-states with coefficient of variation (CV) <= 5% per level (per-level median +- spread table is the gate receipt). Keep the r^2 shape bound and the zero-command noise floor <= 0.01 m/s^2. Any level failing repeatability -> STOP.
+3. FF code path retained in the repo but DISABLED (src/vbd_rig2.py transport_ff_mass=0.0, one-line comment -> receipt).
+4. Expected realized ladder ~{0.6, 1.6, 3.2, 6.4, 12.8, 19} m/s^2 (monotone, wide, beyond the old Franka ceiling). Predicted slip boundary at the top realized level (~1.5 N) falls INSIDE the frozen force grid -> conditional T-EXT trigger unchanged.
+5. Frozen gains untouched (option B rejected); profile pre-scaling rejected (would confound exposure).
+
+Proceed: tracking-characterization ladder receipt -> P3c ATTR -> W1 screen, no further pause on this issue.
