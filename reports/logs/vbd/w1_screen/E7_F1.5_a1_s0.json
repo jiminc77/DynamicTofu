@@ -5,26 +5,80 @@
   "grip_force_n": 1.5,
   "seed": 0,
   "commanded_a_peak_m_s2": 1.0,
-  "realized_accel_m_s2": 0.7250240870884126,
+  "realized_accel_m_s2": 0.725008760179756,
   "realized_source": "cell",
   "axis_map_realized_accel_m_s2": 0.681,
-  "slip3d_mm": 2.326864956595412,
-  "legacy_hold_slip_mm": 0.27430057525634766,
-  "label": "slip",
-  "dvf": 0.0019531250442354517,
-  "p99_strain": 0.09891018568106574,
-  "peak_strain": 0.15735001862049103,
+  "hold_slip_z_mm": 1.5982463955879211,
+  "transport_slip_xz_mm": 0.13626173227912233,
+  "transport_x_res_mm": -0.0015140456090831735,
+  "transport_z_res_mm": -0.13625332050853228,
+  "transport_y_res_mm": -1.0209217678330655,
+  "grasp_frame_y_res_mm": 0.002136913179937336,
+  "assembly_drift_mm": -23.99876636842911,
+  "escape_mode": null,
+  "slip_perm_tangential_mm": 1.7364520293181456,
+  "x_res_mm": -0.0009522570982609482,
+  "z_res_mm": -1.7364517682128475,
+  "y_res_mm": -23.99876636842911,
+  "slip_perm_x_mm": 0.0015140456090831735,
+  "slip3d_max_mm": 2.1990135534978545,
+  "yz_residual_mm": 1.0299738945162604,
+  "legacy_hold_slip_mm": 1.5982463955879211,
+  "settle_end_block_x": 8.787762918574218e-05,
+  "settle_end_palm_x": -9.808884371409476e-08,
+  "ref_block_x": 8.940367843024433e-05,
+  "ref_palm_x": -8.60852082951169e-08,
+  "grip_ref_com": [
+    8.805394463706762e-05,
+    0.00013279487029649317,
+    0.022325502708554268
+  ],
+  "grip_ref_palm": [
+    -8.740304906496021e-07,
+    -7.213852848408919e-10,
+    0.029555292800068855
+  ],
+  "transport_ref_com": [
+    8.940367843024433e-05,
+    -0.02284504659473896,
+    0.07041419297456741
+  ],
+  "transport_ref_palm": [
+    -8.60852082951169e-08,
+    2.4141753041106995e-09,
+    0.07924418151378632
+  ],
+  "settle_end_com": [
+    8.787762918574218e-05,
+    -0.023865970575975046,
+    0.07027559810214573
+  ],
+  "settle_end_palm": [
+    -9.808884371409476e-08,
+    2.00772282287086e-10,
+    0.07924183996187316
+  ],
+  "label": "intact",
+  "dvf": 0.0,
+  "dvf_wholetrial": 0.0006510416814118173,
+  "damage_window": "grip_completion_preload_end",
+  "lift_end_s": 1.8,
+  "damage_latch_t": null,
+  "drop_t": null,
+  "damage_after_drop": false,
+  "p99_strain": 0.09940617880960743,
+  "peak_strain": 0.15713095664978027,
   "validity_gate": {
     "summary": {
       "per_pad": {
         "left": {
-          "vg1_max_rel_disp_mm": 0.09079017490148544,
+          "vg1_max_rel_disp_mm": 0.10693688690662384,
           "vg2_zero_record_substeps": 670,
           "vg3_overflow_substeps": 0,
           "certified": false
         },
         "right": {
-          "vg1_max_rel_disp_mm": 0.12931571900844574,
+          "vg1_max_rel_disp_mm": 0.128058061003685,
           "vg2_zero_record_substeps": 669,
           "vg3_overflow_substeps": 0,
           "certified": false
@@ -36,28 +90,28 @@
   },
   "ejected": false,
   "per_phase_strain_maxima": {
-    "ramp": 0.15735001862049103,
-    "preload": 0.15333986282348633,
-    "lift": 0.1481110006570816,
-    "hold": 0.11602935194969177,
-    "accel_out": 0.11939898878335953,
-    "cruise_out": 0.12090331315994263,
-    "decel_out": 0.12130650132894516,
-    "dwell": 0.11937723308801651,
-    "accel_back": 0.12088415771722794,
-    "cruise_back": 0.12359576672315598,
-    "decel_back": 0.12424321472644806,
-    "settle": 0.12265109270811081
+    "ramp": 0.15713095664978027,
+    "preload": 0.1459534764289856,
+    "lift": 0.14044910669326782,
+    "hold": 0.11600996553897858,
+    "accel_out": 0.119430311024189,
+    "cruise_out": 0.1206008791923523,
+    "decel_out": 0.12091799080371857,
+    "dwell": 0.11907941848039627,
+    "accel_back": 0.12060542404651642,
+    "cruise_back": 0.1233430728316307,
+    "decel_back": 0.12394765019416809,
+    "settle": 0.12250611186027527
   },
   "health": {
     "finite": true,
-    "finger_vy_hold_mean": 0.0015918468567845897,
+    "finger_vy_hold_mean": 0.0015858859232927595,
     "contact_count_min": 0,
     "cfl_max_substep_mm": 0.0,
     "zero_command_realized_accel_magnitude": null
   },
-  "git_sha": "34090572fba82fb85a3f1c0c06900dd53694f4f4",
-  "prereg_sha256": "47541607bf1487e01266efef5580dcbd8d163356a3c18ba9c4079c0708707446",
+  "git_sha": "bf1a70b740f1476552fc7553000a5784d0060b6f",
+  "prereg_sha256": "6ae3ed56859f875fc7862050eac6a10b9ff5287b9e23559d87c8e15a55f95821",
   "frozen_config": {
     "substeps": 80,
     "friction_epsilon": 0.0002,
