@@ -43,6 +43,7 @@ def run_cell(E, F, eps=2e-4, snap_dir=None, thr=PLACEHOLDER_EPS_DAMAGE, substeps
     t_lift = t_pre + cfg.lift_s; t_end = t_lift + cfg.hold_s
     n = int(t_end * FPS)
     ref_rel = None; series = []; si = 0
+    maxfield = None   # per-tet TEMPORAL-MAX principal strain (for latched damage labeling)
     for f in range(n):
         t = rig.sim_time
         cf = F * min(1.0, t / cfg.ramp_s)
@@ -50,6 +51,8 @@ def run_cell(E, F, eps=2e-4, snap_dir=None, thr=PLACEHOLDER_EPS_DAMAGE, substeps
         rig.step(cf, lt)
         if f % 6 == 0:
             m = rig.metrics(); ss = rig.strain_stats(thr)
+            sf, _sv = rig.strain_field()
+            maxfield = sf if maxfield is None else np.maximum(maxfield, sf)
             rel = m["com_z"] - m["palm_z"]
             phase = ("ramp" if t < t_ramp else "preload" if t < t_pre else "lift" if t < t_lift else "hold")
             if ref_rel is None and t >= t_pre:
@@ -67,7 +70,10 @@ def run_cell(E, F, eps=2e-4, snap_dir=None, thr=PLACEHOLDER_EPS_DAMAGE, substeps
     if save_field:
         sf, sv = rig.strain_field()
         os.makedirs(os.path.dirname(save_field), exist_ok=True)
-        np.savez_compressed(save_field, max_principal_strain=sf, tet_rest_vol=sv)
+        # temporal_max = per-tet MAX principal strain over the run (for latched damage
+        # labeling); final = end-of-hold snapshot.
+        np.savez_compressed(save_field, temporal_max_principal_strain=maxfield,
+                            final_principal_strain=sf, tet_rest_vol=sv)
     hold = [s for s in series if s["phase"] == "hold"]
     slip = max((s["rel_slip_mm"] for s in hold), default=999)
     fvy = float(np.mean([s["finger_vy"] for s in hold])) if hold else 999
