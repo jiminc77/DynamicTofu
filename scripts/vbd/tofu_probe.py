@@ -27,15 +27,15 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 PLACEHOLDER_EPS_DAMAGE = 0.15   # placeholder (15% principal strain); real value pending sign-off
 
 
-def tofu_cfg(E, F, eps=2e-4):
-    return Vbd2Config(E_pa=E, nu=0.45, grip_force_n=F, cell_m=0.005, particle_radius=0.0025,
+def tofu_cfg(E, F, eps=2e-4, substeps=40, cell_m=0.005):
+    return Vbd2Config(E_pa=E, nu=0.45, grip_force_n=F, cell_m=cell_m, particle_radius=0.0025,
                       contact_ke=1.0e3, contact_kd=1.0, mu_pair=1.0, friction_epsilon=eps,
-                      soft_contact_margin=1.0e-3, substeps=40, lift_s=2.5, hold_s=5.0, lift_height_m=0.05)
+                      soft_contact_margin=1.0e-3, substeps=substeps, lift_s=2.5, hold_s=5.0, lift_height_m=0.05)
 
 
-def run_cell(E, F, eps=2e-4, snap_dir=None, thr=PLACEHOLDER_EPS_DAMAGE):
+def run_cell(E, F, eps=2e-4, snap_dir=None, thr=PLACEHOLDER_EPS_DAMAGE, substeps=40, cell_m=0.005):
     from src.vbd_rig2 import Vbd2Rig, FPS, GRAB_Z
-    cfg = tofu_cfg(E, F, eps)
+    cfg = tofu_cfg(E, F, eps, substeps=substeps, cell_m=cell_m)
     rig = Vbd2Rig(cfg)
     t_ramp = cfg.ramp_s; t_pre = cfg.ramp_s + cfg.preload_s
     t_lift = t_pre + cfg.lift_s; t_end = t_lift + cfg.hold_s
