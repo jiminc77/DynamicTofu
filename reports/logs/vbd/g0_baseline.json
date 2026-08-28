@@ -1,0 +1,195 @@
+{
+  "gate": "G0_baseline_pre_edit",
+  "provenance": {
+    "git_sha": "4a68e0edc31e557dcb69b9284d8af18ad71e60cd",
+    "newton_commit": "b74df534",
+    "pre_edit_rig_sha256": "11011fb9e53544d4da75f1ad1e17932ccfc9d867e81eb8c146eb994209156475",
+    "rig_sha256_at_capture": "11011fb9e53544d4da75f1ad1e17932ccfc9d867e81eb8c146eb994209156475",
+    "substeps": 80,
+    "cell_m": 0.005,
+    "friction_epsilon": 0.0002,
+    "eps_damage": 0.15,
+    "dvf_min": 0.005,
+    "slip_threshold_mm": 2.0,
+    "production_config": {
+      "frozen_config": {
+        "substeps": 80,
+        "friction_epsilon": 0.0002,
+        "mu_pair": 1.0,
+        "contact_ke": 1000.0,
+        "contact_kd": 1.0,
+        "soft_contact_margin": 0.001,
+        "cell_m": 0.005,
+        "particle_radius": 0.0025,
+        "correct_mass": true,
+        "nu": 0.45,
+        "E_pa": [
+          7000.0,
+          15000.0,
+          25000.0
+        ]
+      },
+      "frozen_check": true,
+      "rig_pre_edit_sha256": "11011fb9e53544d4da75f1ad1e17932ccfc9d867e81eb8c146eb994209156475",
+      "newton_commit": "b74df534"
+    },
+    "captured_at": "2026-08-28T17:07:26+0900",
+    "wall_clock_s": 2207.0
+  },
+  "anchors": [
+    {
+      "name": "E15_F0.6",
+      "E_pa": 15000.0,
+      "grip_force_n": 0.6,
+      "expected_label": "slip",
+      "unanimous_label": "slip",
+      "unanimous": true,
+      "hold_slip_mm_mean": 2.21,
+      "hold_slip_mm_spread": 0.02,
+      "dvf_mean": 0.0,
+      "p99_mean": 0.0721,
+      "seeds": [
+        {
+          "seed": 0,
+          "label": "slip",
+          "hold_slip_mm": 2.2,
+          "dvf": 0.0,
+          "p99": 0.0693,
+          "peak_principal_strain": 0.0811,
+          "final_com_rise_mm": 47.6,
+          "finite": true,
+          "strain_field": "reports/logs/vbd/g0_baseline_fields/15000_0.6_s0.npz",
+          "com_z_trajectory": "reports/logs/vbd/g0_baseline_fields/15000_0.6_s0_traj.npz"
+        },
+        {
+          "seed": 1,
+          "label": "slip",
+          "hold_slip_mm": 2.22,
+          "dvf": 0.0,
+          "p99": 0.0749,
+          "peak_principal_strain": 0.1171,
+          "final_com_rise_mm": 47.6,
+          "finite": true,
+          "strain_field": "reports/logs/vbd/g0_baseline_fields/15000_0.6_s1.npz",
+          "com_z_trajectory": "reports/logs/vbd/g0_baseline_fields/15000_0.6_s1_traj.npz"
+        },
+        {
+          "seed": 2,
+          "label": "slip",
+          "hold_slip_mm": 2.21,
+          "dvf": 0.0,
+          "p99": 0.0722,
+          "peak_principal_strain": 0.1242,
+          "final_com_rise_mm": 47.6,
+          "finite": true,
+          "strain_field": "reports/logs/vbd/g0_baseline_fields/15000_0.6_s2.npz",
+          "com_z_trajectory": "reports/logs/vbd/g0_baseline_fields/15000_0.6_s2_traj.npz"
+        }
+      ]
+    },
+    {
+      "name": "E15_F1.2",
+      "E_pa": 15000.0,
+      "grip_force_n": 1.2,
+      "expected_label": "intact",
+      "unanimous_label": "intact",
+      "unanimous": true,
+      "hold_slip_mm_mean": 0.6433,
+      "hold_slip_mm_spread": 0.03,
+      "dvf_mean": 0.0,
+      "p99_mean": 0.0722,
+      "seeds": [
+        {
+          "seed": 0,
+          "label": "intact",
+          "hold_slip_mm": 0.63,
+          "dvf": 0.0,
+          "p99": 0.0693,
+          "peak_principal_strain": 0.0811,
+          "final_com_rise_mm": 48.9,
+          "finite": true,
+          "strain_field": "reports/logs/vbd/g0_baseline_fields/15000_1.2_s0.npz",
+          "com_z_trajectory": "reports/logs/vbd/g0_baseline_fields/15000_1.2_s0_traj.npz"
+        },
+        {
+          "seed": 1,
+          "label": "intact",
+          "hold_slip_mm": 0.66,
+          "dvf": 0.0,
+          "p99": 0.075,
+          "peak_principal_strain": 0.1171,
+          "final_com_rise_mm": 49.0,
+          "finite": true,
+          "strain_field": "reports/logs/vbd/g0_baseline_fields/15000_1.2_s1.npz",
+          "com_z_trajectory": "reports/logs/vbd/g0_baseline_fields/15000_1.2_s1_traj.npz"
+        },
+        {
+          "seed": 2,
+          "label": "intact",
+          "hold_slip_mm": 0.64,
+          "dvf": 0.0,
+          "p99": 0.0722,
+          "peak_principal_strain": 0.1242,
+          "final_com_rise_mm": 48.9,
+          "finite": true,
+          "strain_field": "reports/logs/vbd/g0_baseline_fields/15000_1.2_s2.npz",
+          "com_z_trajectory": "reports/logs/vbd/g0_baseline_fields/15000_1.2_s2_traj.npz"
+        }
+      ]
+    },
+    {
+      "name": "E7_F2.0",
+      "E_pa": 7000.0,
+      "grip_force_n": 2.0,
+      "expected_label": "damage",
+      "unanimous_label": "damage",
+      "unanimous": true,
+      "hold_slip_mm_mean": 1.09,
+      "hold_slip_mm_spread": 0.05,
+      "dvf_mean": 0.036241,
+      "p99_mean": 0.1885,
+      "seeds": [
+        {
+          "seed": 0,
+          "label": "damage",
+          "hold_slip_mm": 1.1,
+          "dvf": 0.042643,
+          "p99": 0.194,
+          "peak_principal_strain": 0.2587,
+          "final_com_rise_mm": 48.1,
+          "finite": true,
+          "strain_field": "reports/logs/vbd/g0_baseline_fields/7000_2.0_s0.npz",
+          "com_z_trajectory": "reports/logs/vbd/g0_baseline_fields/7000_2.0_s0_traj.npz"
+        },
+        {
+          "seed": 1,
+          "label": "damage",
+          "hold_slip_mm": 1.11,
+          "dvf": 0.039388,
+          "p99": 0.1909,
+          "peak_principal_strain": 0.2505,
+          "final_com_rise_mm": 48.1,
+          "finite": true,
+          "strain_field": "reports/logs/vbd/g0_baseline_fields/7000_2.0_s1.npz",
+          "com_z_trajectory": "reports/logs/vbd/g0_baseline_fields/7000_2.0_s1_traj.npz"
+        },
+        {
+          "seed": 2,
+          "label": "damage",
+          "hold_slip_mm": 1.06,
+          "dvf": 0.026693,
+          "p99": 0.1807,
+          "peak_principal_strain": 0.2357,
+          "final_com_rise_mm": 48.2,
+          "finite": true,
+          "strain_field": "reports/logs/vbd/g0_baseline_fields/7000_2.0_s2.npz",
+          "com_z_trajectory": "reports/logs/vbd/g0_baseline_fields/7000_2.0_s2_traj.npz"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "all_anchors_unanimous": true,
+    "labels_match_expected": true
+  }
+}
