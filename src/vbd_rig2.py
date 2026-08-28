@@ -45,11 +45,12 @@ class Vbd2Config:
     mu_pair: float = 1.0               # soft_contact_mu AND pad shape mu -> avg 1.0
     friction_epsilon: float = 2.0e-4
     full_surface_contact: bool = True
+    soft_contact_margin: float = 1.0e-3   # consult recipe ~1mm (was 10mm -> pads hovered)
     # resolution
     cell_m: float = 0.008              # h = 8 mm
     particle_radius: float = 0.003     # r = 3 mm
     # solver
-    substeps: int = 20
+    substeps: int = 40                 # ruling: substep-doubling shows 40 converges (<2mm)
     vbd_iterations: int = 10
     # schedule [s]
     ramp_s: float = 0.8
@@ -108,7 +109,7 @@ class Vbd2Rig:
             rigid_body_particle_contact_buffer_size=8192,
         )
         self.collision_pipeline = newton.CollisionPipeline(
-            self.model, broad_phase="nxn", soft_contact_margin=0.01,
+            self.model, broad_phase="nxn", soft_contact_margin=cfg.soft_contact_margin,
             enable_rigid_soft_full_surface_contact=cfg.full_surface_contact,
         )
         self.state_0 = self.model.state()
@@ -198,13 +199,26 @@ class Vbd2Rig:
         com = self._com(); lo, hi = self._bounds()
         pq = self.state_0.particle_q.numpy()[self.soft_start:self.soft_end]
         bq = self.state_0.body_q.numpy()
+        bqd = self.state_0.body_qd.numpy()
+        FH = 0.006  # pad half-thickness (hy)
+        left_y = float(bq[1][1]); right_y = float(bq[2][1])
+        # pad-block penetration: block +y/-y faces vs each pad inner face. >0 = real contact.
+        block_ymax = float(pq[:, 1].max()); block_ymin = float(pq[:, 1].min())
+        pen_left = block_ymax - (left_y - FH)     # left pad at +y; inner face = left_y - FH
+        pen_right = (right_y + FH) - block_ymin   # right pad at -y; inner face = right_y + FH
+        # per-pad normal force estimate: penalty contact Fn = contact_ke * penetration (clamped >=0)
+        fn_left = self.cfg.contact_ke * max(0.0, pen_left)
+        fn_right = self.cfg.contact_ke * max(0.0, pen_right)
+        # finger linear-y speed (equilibrium check: ~0 in hold => Fn ~ applied joint_f)
+        fvy = float(max(abs(bqd[1][4]) if bqd.shape[1] > 4 else 0.0, abs(bqd[2][4]) if bqd.shape[1] > 4 else 0.0))
         return {"t": self.sim_time, "com": com.tolist(), "com_z": float(com[2]),
                 "com_rise": float(com[2] - self.initial_com[2]),
                 "bbox": [float(hi[i] - lo[i]) for i in range(3)],
                 "finite": bool(np.all(np.isfinite(pq))),
                 "palm_z": self._palm_z(),
-                "left_y": float(bq[1][1]), "right_y": float(bq[2][1]),
-                "gap_m": float(abs(bq[1][1] - bq[2][1]))}
+                "left_y": left_y, "right_y": right_y, "gap_m": float(abs(left_y - right_y)),
+                "pen_left_mm": pen_left * 1000.0, "pen_right_mm": pen_right * 1000.0,
+                "fn_left_n": fn_left, "fn_right_n": fn_right, "finger_vy": fvy}
 
 
 def run_vbd2(cfg: Vbd2Config, snap_dir: str | None = None):
