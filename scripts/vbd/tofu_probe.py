@@ -33,9 +33,11 @@ def tofu_cfg(E, F, eps=2e-4, substeps=40, cell_m=0.005):
                       soft_contact_margin=1.0e-3, substeps=substeps, lift_s=2.5, hold_s=5.0, lift_height_m=0.05)
 
 
-def run_cell(E, F, eps=2e-4, snap_dir=None, thr=PLACEHOLDER_EPS_DAMAGE, substeps=40, cell_m=0.005):
+def run_cell(E, F, eps=2e-4, snap_dir=None, thr=PLACEHOLDER_EPS_DAMAGE, substeps=40, cell_m=0.005,
+             save_field=None, seed=0):
     from src.vbd_rig2 import Vbd2Rig, FPS, GRAB_Z
     cfg = tofu_cfg(E, F, eps, substeps=substeps, cell_m=cell_m)
+    cfg.seed = seed
     rig = Vbd2Rig(cfg)
     t_ramp = cfg.ramp_s; t_pre = cfg.ramp_s + cfg.preload_s
     t_lift = t_pre + cfg.lift_s; t_end = t_lift + cfg.hold_s
@@ -62,6 +64,10 @@ def run_cell(E, F, eps=2e-4, snap_dir=None, thr=PLACEHOLDER_EPS_DAMAGE, substeps
             np.savez_compressed(os.path.join(snap_dir, f"f_{si:04d}.npz"),
                                 particle_q=s0.particle_q.numpy()[rig.soft_start:rig.soft_end].astype(np.float32),
                                 body_q=s0.body_q.numpy().astype(np.float32), t=np.float64(rig.sim_time)); si += 1
+    if save_field:
+        sf, sv = rig.strain_field()
+        os.makedirs(os.path.dirname(save_field), exist_ok=True)
+        np.savez_compressed(save_field, max_principal_strain=sf, tet_rest_vol=sv)
     hold = [s for s in series if s["phase"] == "hold"]
     slip = max((s["rel_slip_mm"] for s in hold), default=999)
     fvy = float(np.mean([s["finger_vy"] for s in hold])) if hold else 999

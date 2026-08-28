@@ -52,6 +52,7 @@ class Vbd2Config:
     # solver
     substeps: int = 40                 # ruling: substep-doubling shows 40 converges (<2mm)
     vbd_iterations: int = 10
+    correct_mass: bool = True          # fix add_soft_grid +42% mass over-lumping -> intended density*volume
     # schedule [s]
     ramp_s: float = 0.8
     preload_s: float = 1.0
@@ -96,6 +97,22 @@ class Vbd2Rig:
         builder.color()
         self.model = builder.finalize()
 
+        # FIX add_soft_grid mass over-lumping (+42%): total soft mass MUST equal
+        # density * volume. Rescale soft particle_mass/inv_mass to the intended
+        # total so the block is the correct 64 g (4 cm / density 1000), not 91 g.
+        if getattr(cfg, "correct_mass", True):
+            tp = self.model.tet_poses.numpy()
+            block_vol = float((1.0 / (6.0 * np.abs(np.linalg.det(tp)) + 1e-30)).sum())
+            pm = self.model.particle_mass.numpy()
+            cur = float(pm[self.soft_start:self.soft_end].sum())
+            intended = cfg.density * block_vol
+            if cur > 0:
+                scale = intended / cur
+                pm[self.soft_start:self.soft_end] *= scale
+                self.model.particle_mass.assign(pm)
+                inv = np.where(pm > 0, 1.0 / np.where(pm > 0, pm, 1.0), 0.0).astype(np.float32)
+                self.model.particle_inv_mass.assign(inv)
+
         self.model.soft_contact_ke = cfg.contact_ke
         self.model.soft_contact_kd = cfg.contact_kd
         self.model.soft_contact_mu = cfg.mu_pair
@@ -118,6 +135,13 @@ class Vbd2Rig:
         self.contacts = self.collision_pipeline.contacts()
         newton.eval_fk(self.model, self.model.joint_q, self.model.joint_qd, self.state_0)
         wp.copy(self.state_1.body_q, self.state_0.body_q)
+
+        # seeded initial jitter (reproducible per-seed variation for 3-seed confirmation)
+        if getattr(cfg, "seed", 0):
+            rng = np.random.default_rng(cfg.seed)
+            pq = self.state_0.particle_q.numpy()
+            pq[self.soft_start:self.soft_end] += rng.normal(0.0, 2.0e-4, (self.soft_end - self.soft_start, 3)).astype(np.float32)
+            self.state_0.particle_q.assign(pq)
 
         qs = self.model.joint_q_start.numpy()
         tqs = self.model.joint_target_q_start.numpy()
@@ -150,6 +174,17 @@ class Vbd2Rig:
         dmg = float(v[maxp > threshold].sum() / v.sum())
         return {"max_principal_strain": float(maxp.max()), "p99_vol_weighted_strain": p99,
                 "damaged_vol_frac": dmg, "threshold": threshold}
+
+    def strain_field(self):
+        """Per-tet max principal Green-Lagrange strain (raw field) + rest volumes,
+        for storage / post-hoc damage labeling."""
+        pq = self.state_0.particle_q.numpy()
+        ti = self.tet_idx
+        x0 = pq[ti[:, 0]]
+        Ds = np.stack([pq[ti[:, 1]] - x0, pq[ti[:, 2]] - x0, pq[ti[:, 3]] - x0], axis=-1)
+        F = Ds @ self.tet_poses
+        E = 0.5 * (np.transpose(F, (0, 2, 1)) @ F - np.eye(3))
+        return np.linalg.eigvalsh(E)[:, -1].astype(np.float32), self.tet_rest_vol.astype(np.float32)
 
     def contact_count(self):
         try:
