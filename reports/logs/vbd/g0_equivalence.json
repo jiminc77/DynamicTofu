@@ -1,0 +1,279 @@
+{
+  "gate": "G0_prime_equivalence",
+  "result": "PASS",
+  "n_pass": 9,
+  "n_total": 9,
+  "criterion": {
+    "label": "identical per seed",
+    "hold_slip_mm_tol": 0.15,
+    "com_z_rms_mm_tol": 0.5,
+    "p99_tol": 0.02,
+    "dvf_nondamage": "exact zero",
+    "dvf_damage_amended": "same-side-of-0.5% AND (within baseline seed range widened by 20% of range OR |delta|<=0.01 abs), whichever looser",
+    "amendment_ref": "ralph/DECISIONS.md 2026-08-28 G0' DVF tolerance mis-spec (external ruling)"
+  },
+  "provenance": {
+    "git_sha": "ccb8477a4b8ee59ca6ac3bf24600d814506d1e49",
+    "newton_commit": "b74df534",
+    "pre_edit_rig_sha256": "11011fb9e53544d4da75f1ad1e17932ccfc9d867e81eb8c146eb994209156475",
+    "post_edit_rig_sha256": "b8c4768ae6d32e87917bac6fc167ca24a9b76ec766dc806c4640ba81eed48a03",
+    "substeps": 80,
+    "production_config": {
+      "frozen_config": {
+        "substeps": 80,
+        "friction_epsilon": 0.0002,
+        "mu_pair": 1.0,
+        "contact_ke": 1000.0,
+        "contact_kd": 1.0,
+        "soft_contact_margin": 0.001,
+        "cell_m": 0.005,
+        "particle_radius": 0.0025,
+        "correct_mass": true,
+        "nu": 0.45,
+        "E_pa": [
+          7000.0,
+          15000.0,
+          25000.0
+        ]
+      },
+      "frozen_check": true,
+      "rig_pre_edit_sha256": "11011fb9e53544d4da75f1ad1e17932ccfc9d867e81eb8c146eb994209156475",
+      "newton_commit": "b74df534"
+    },
+    "baseline_json": "reports/logs/vbd/g0_baseline.json",
+    "evaluated_at": "2026-08-28T18:43:52+0900"
+  },
+  "anchors": [
+    {
+      "name": "E15_F0.6",
+      "E_pa": 15000.0,
+      "grip_force_n": 0.6,
+      "dvf_widened_range": [
+        0.0,
+        0.0
+      ],
+      "seeds": [
+        {
+          "seed": 0,
+          "label": "slip",
+          "base_label": "slip",
+          "label_ok": true,
+          "hold_slip_mm": 2.13,
+          "base_hold_slip_mm": 2.2,
+          "slip_ok": true,
+          "com_z_rms_mm": 0.0527,
+          "rms_ok": true,
+          "dvf": 0.0,
+          "base_dvf": 0.0,
+          "dvf_widened_range": [
+            0.0,
+            0.0
+          ],
+          "dvf_pass": true,
+          "p99": 0.0693,
+          "base_p99": 0.0693,
+          "p99_ok": true,
+          "cell_pass": true
+        },
+        {
+          "seed": 1,
+          "label": "slip",
+          "base_label": "slip",
+          "label_ok": true,
+          "hold_slip_mm": 2.15,
+          "base_hold_slip_mm": 2.22,
+          "slip_ok": true,
+          "com_z_rms_mm": 0.054,
+          "rms_ok": true,
+          "dvf": 0.0,
+          "base_dvf": 0.0,
+          "dvf_widened_range": [
+            0.0,
+            0.0
+          ],
+          "dvf_pass": true,
+          "p99": 0.0749,
+          "base_p99": 0.0749,
+          "p99_ok": true,
+          "cell_pass": true
+        },
+        {
+          "seed": 2,
+          "label": "slip",
+          "base_label": "slip",
+          "label_ok": true,
+          "hold_slip_mm": 2.11,
+          "base_hold_slip_mm": 2.21,
+          "slip_ok": true,
+          "com_z_rms_mm": 0.0583,
+          "rms_ok": true,
+          "dvf": 0.0,
+          "base_dvf": 0.0,
+          "dvf_widened_range": [
+            0.0,
+            0.0
+          ],
+          "dvf_pass": true,
+          "p99": 0.0722,
+          "base_p99": 0.0722,
+          "p99_ok": true,
+          "cell_pass": true
+        }
+      ]
+    },
+    {
+      "name": "E15_F1.2",
+      "E_pa": 15000.0,
+      "grip_force_n": 1.2,
+      "dvf_widened_range": [
+        0.0,
+        0.0
+      ],
+      "seeds": [
+        {
+          "seed": 0,
+          "label": "intact",
+          "base_label": "intact",
+          "label_ok": true,
+          "hold_slip_mm": 0.63,
+          "base_hold_slip_mm": 0.63,
+          "slip_ok": true,
+          "com_z_rms_mm": 0.0579,
+          "rms_ok": true,
+          "dvf": 0.0,
+          "base_dvf": 0.0,
+          "dvf_widened_range": [
+            0.0,
+            0.0
+          ],
+          "dvf_pass": true,
+          "p99": 0.0693,
+          "base_p99": 0.0693,
+          "p99_ok": true,
+          "cell_pass": true
+        },
+        {
+          "seed": 1,
+          "label": "intact",
+          "base_label": "intact",
+          "label_ok": true,
+          "hold_slip_mm": 0.65,
+          "base_hold_slip_mm": 0.66,
+          "slip_ok": true,
+          "com_z_rms_mm": 0.0491,
+          "rms_ok": true,
+          "dvf": 0.0,
+          "base_dvf": 0.0,
+          "dvf_widened_range": [
+            0.0,
+            0.0
+          ],
+          "dvf_pass": true,
+          "p99": 0.0753,
+          "base_p99": 0.075,
+          "p99_ok": true,
+          "cell_pass": true
+        },
+        {
+          "seed": 2,
+          "label": "intact",
+          "base_label": "intact",
+          "label_ok": true,
+          "hold_slip_mm": 0.64,
+          "base_hold_slip_mm": 0.64,
+          "slip_ok": true,
+          "com_z_rms_mm": 0.1212,
+          "rms_ok": true,
+          "dvf": 0.0,
+          "base_dvf": 0.0,
+          "dvf_widened_range": [
+            0.0,
+            0.0
+          ],
+          "dvf_pass": true,
+          "p99": 0.0722,
+          "base_p99": 0.0722,
+          "p99_ok": true,
+          "cell_pass": true
+        }
+      ]
+    },
+    {
+      "name": "E7_F2.0",
+      "E_pa": 7000.0,
+      "grip_force_n": 2.0,
+      "dvf_widened_range": [
+        0.023503,
+        0.045833
+      ],
+      "seeds": [
+        {
+          "seed": 0,
+          "label": "damage",
+          "base_label": "damage",
+          "label_ok": true,
+          "hold_slip_mm": 1.12,
+          "base_hold_slip_mm": 1.1,
+          "slip_ok": true,
+          "com_z_rms_mm": 0.0627,
+          "rms_ok": true,
+          "dvf": 0.042969,
+          "base_dvf": 0.042643,
+          "dvf_widened_range": [
+            0.023503,
+            0.045833
+          ],
+          "dvf_pass": true,
+          "p99": 0.1933,
+          "base_p99": 0.194,
+          "p99_ok": true,
+          "cell_pass": true
+        },
+        {
+          "seed": 1,
+          "label": "damage",
+          "base_label": "damage",
+          "label_ok": true,
+          "hold_slip_mm": 1.15,
+          "base_hold_slip_mm": 1.11,
+          "slip_ok": true,
+          "com_z_rms_mm": 0.095,
+          "rms_ok": true,
+          "dvf": 0.041992,
+          "base_dvf": 0.039388,
+          "dvf_widened_range": [
+            0.023503,
+            0.045833
+          ],
+          "dvf_pass": true,
+          "p99": 0.1921,
+          "base_p99": 0.1909,
+          "p99_ok": true,
+          "cell_pass": true
+        },
+        {
+          "seed": 2,
+          "label": "damage",
+          "base_label": "damage",
+          "label_ok": true,
+          "hold_slip_mm": 1.06,
+          "base_hold_slip_mm": 1.06,
+          "slip_ok": true,
+          "com_z_rms_mm": 0.0727,
+          "rms_ok": true,
+          "dvf": 0.027344,
+          "base_dvf": 0.026693,
+          "dvf_widened_range": [
+            0.023503,
+            0.045833
+          ],
+          "dvf_pass": true,
+          "p99": 0.1778,
+          "base_p99": 0.1807,
+          "p99_ok": true,
+          "cell_pass": true
+        }
+      ]
+    }
+  ]
+}
