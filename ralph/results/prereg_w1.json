@@ -460,6 +460,26 @@
       "acceptance_test": "a=1 row monotone in F + intact at 0.8-1.5N (realized ~0.65) before screen resumes",
       "receipt": "reports/vbd/slip_metric_issue.md",
       "scope": "slip label only; damage/drop unchanged"
+    },
+    {
+      "date": "2026-08-29",
+      "id": "judgment-v2.3-FINAL-FROZEN",
+      "authority": "external ruling (final)",
+      "kind": "FINAL frozen judgment metric",
+      "slip": "hold-z creep [4.3,9.3] vs grip>2mm OR transport x-z [settle vs 9.30]>2mm OR drop/eject OR grasp-frame lateral escape>10mm",
+      "damage": "post-grip-completion(1.80s) DVF>=0.005 latched before drop; threshold+precedence unchanged; dvf_wholetrial observable",
+      "y_handling": "grasp-frame y (block vs finger midpoint) labels escape>10mm; palm-frame y = common-mode assembly_drift (demoted rig artifact)",
+      "f08_rig_offset": "E7/F0.8 slip (hold_z ~2.0mm) is an accepted within-rig offset vs frozen intact(1.32mm); contraction claims within-rig vs a=1 reference column",
+      "frozen": "METRIC FROZEN -- any further anomaly is a STOP, no self-iteration",
+      "a1_reference_row_E7": {
+        "0.4": "slip",
+        "0.6": "slip",
+        "0.8": "slip",
+        "1.0": "intact",
+        "1.2": "intact",
+        "1.5": "intact",
+        "2.0": "damage"
+      }
     }
   ]
 }

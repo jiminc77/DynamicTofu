@@ -326,3 +326,13 @@ The pre-registered transport slip label (slip3d = max-3D gripper-relative displa
 3. GPU RUN-TO-RUN NON-DETERMINISM (recorded prominently): transport trials are NOT deterministic (unlike the quasi-static hold). Therefore the 3-seed boundary rule and the two-thirds band rule stay MANDATORY, and the T-EXT trigger evaluates on CONFIRMED labels only.
 4. Pre-register as PREREG_W1 post-registration amendment 2 (this) with slip_metric_issue.md as receipt BEFORE resuming; then resume from stored cells.
 5. Scope: slip label only. Damage (DVF>=0.5% at eps1>0.15, latched) and drop criteria UNCHANGED.
+
+## 2026-08-28/29 -- FINAL judgment (v2.3 + grip-completion damage window) -- METRIC FROZEN
+
+External ruling on the two residual decisions:
+1. F0.8 BOUNDARY SHIFT: ACCEPTED. hold_z 2.02/2.01/2.06/2.09 (reproducible) -> slip vs frozen intact 1.32mm; a real, small (+0.7mm) rig-chain offset at E7's most marginal cell (G0'-prime anchors did not cover it). Conditions: (a) KNOWN RIG-OFFSET NOTE in band report + paper -- the frozen quasi-static band remains valid FOR ITS RIG; the W1 phase diagram is internally consistent on the W1 rig; (b) ALL W1 CONTRACTION CLAIMS are measured WITHIN-RIG against the W1 a=1 row as the reference column, NEVER against the frozen band; (c) on-the-line cells get standard 3-seed two-thirds, no special-casing.
+2. DAMAGE WINDOW: post-lift(4.30s) flipped E7/F2.0 damage->intact (crush occurs during preload/lift). Ruling's pre-described fallback ADOPTED: latch damage from GRIP-COMPLETION 1.80s (preload-end). Validated: F2.0 damage (dvf 0.03548, dmg_t 1.817s sustained crush) + F0.8 seed1 spurious damage cleared (dvf 0). Excludes seed-unstable first-contact spike (pre-1.80s), keeps sustained crush. Threshold 0.005 + damage-before-drop precedence unchanged. dvf_wholetrial kept as observable.
+
+FINAL FROZEN judgment v2.3: slip iff hold-window z-creep [4.3,9.3] vs pre-lift grip >2mm OR transport-window x-z [settle vs t=9.30] >2mm OR drop/eject OR grasp-frame lateral escape >10mm; damage iff post-grip-completion(1.80s) DVF>=0.005 latched before drop; else intact. Grasp-frame y (block vs finger midpoint) labels; palm-frame y is common-mode assembly_drift (demoted rig artifact). METRIC IS NOW FROZEN -- any further metric anomaly is a STOP (no further self-iteration).
+
+Validated a=1 E7 reference row: F0.4 slip, F0.6 slip, F0.8 slip(3-seed unanimous), F1.0 intact, F1.2 intact, F1.5 intact, F2.0 damage.
