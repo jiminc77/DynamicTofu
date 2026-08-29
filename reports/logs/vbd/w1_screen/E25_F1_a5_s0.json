@@ -1,0 +1,136 @@
+{
+  "schema": "w1_screen_cell.v1",
+  "status": "ok",
+  "E_pa": 25000.0,
+  "grip_force_n": 1.0,
+  "seed": 0,
+  "commanded_a_peak_m_s2": 5.0,
+  "realized_accel_m_s2": 3.2586233956471595,
+  "realized_source": "cell",
+  "axis_map_realized_accel_m_s2": 3.1825,
+  "hold_slip_z_mm": 1.2036599218845367,
+  "transport_slip_xz_mm": 10.571564952660475,
+  "transport_x_res_mm": -2.0804020620851635,
+  "transport_z_res_mm": -10.364840221073893,
+  "transport_y_res_mm": 6.4873171199771384,
+  "grasp_frame_y_res_mm": 0.0008756243106391695,
+  "assembly_drift_mm": 21.94102902801317,
+  "escape_mode": null,
+  "slip_perm_tangential_mm": 11.755758250879017,
+  "x_res_mm": -2.0805101412059277,
+  "z_res_mm": -11.570191424753931,
+  "y_res_mm": 21.94102902801317,
+  "slip_perm_x_mm": 2.0804020620851635,
+  "slip3d_max_mm": 13.390253805857492,
+  "yz_residual_mm": 12.227640664639257,
+  "legacy_hold_slip_mm": 1.2036599218845367,
+  "settle_end_block_x": -0.0019591456123938165,
+  "settle_end_palm_x": 9.98894879305428e-07,
+  "ref_block_x": 0.00012029830395476893,
+  "ref_palm_x": 4.074914272678143e-08,
+  "grip_ref_com": [
+    0.00012082248576916754,
+    0.002165671903640032,
+    0.02236022986471653
+  ],
+  "grip_ref_palm": [
+    4.568518363612384e-07,
+    -2.1782374515222358e-10,
+    0.029687484726309776
+  ],
+  "transport_ref_com": [
+    0.00012029830395476893,
+    0.017619382590055466,
+    0.07092056423425674
+  ],
+  "transport_ref_palm": [
+    4.074914272678143e-08,
+    -1.4394443415000069e-09,
+    0.07945317029953003
+  ],
+  "settle_end_com": [
+    -0.0019591456123938165,
+    0.02410670111162795,
+    0.060568397864699364
+  ],
+  "settle_end_palm": [
+    9.98894879305428e-07,
+    -3.7848995928143246e-11,
+    0.07946584415104654
+  ],
+  "label": "slip",
+  "dvf": 0.0,
+  "dvf_wholetrial": 0.0,
+  "damage_window": "grip_completion_preload_end",
+  "lift_end_s": 1.8,
+  "damage_latch_t": null,
+  "drop_t": null,
+  "damage_after_drop": false,
+  "p99_strain": 0.027752458260941634,
+  "peak_strain": 0.13488152623176575,
+  "validity_gate": {
+    "summary": {
+      "per_pad": {
+        "left": {
+          "vg1_max_rel_disp_mm": 0.2550370991230011,
+          "vg2_zero_record_substeps": 762,
+          "vg3_overflow_substeps": 0,
+          "certified": false
+        },
+        "right": {
+          "vg1_max_rel_disp_mm": 0.25544512271881104,
+          "vg2_zero_record_substeps": 762,
+          "vg3_overflow_substeps": 0,
+          "certified": false
+        }
+      },
+      "cfl_max_substep_mm": 0.0
+    },
+    "certified": false
+  },
+  "ejected": false,
+  "per_phase_strain_maxima": {
+    "ramp": 0.13488152623176575,
+    "preload": 0.0324663408100605,
+    "lift": 0.032796818763017654,
+    "hold": 0.02268081158399582,
+    "accel_out": 0.08277533203363419,
+    "cruise_out": 0.08404365181922913,
+    "decel_out": 0.11811891943216324,
+    "dwell": 0.04304838180541992,
+    "accel_back": 0.07725712656974792,
+    "cruise_back": 0.09054245799779892,
+    "decel_back": 0.0954689085483551,
+    "settle": 0.036411091685295105
+  },
+  "health": {
+    "finite": true,
+    "finger_vy_hold_mean": 0.003289848566055298,
+    "contact_count_min": 0,
+    "cfl_max_substep_mm": 0.0,
+    "zero_command_realized_accel_magnitude": null
+  },
+  "git_sha": "28f424810016e14aa6f95dea87a6d7d818c5178c",
+  "prereg_sha256": "6ae3ed56859f875fc7862050eac6a10b9ff5287b9e23559d87c8e15a55f95821",
+  "frozen_config": {
+    "substeps": 80,
+    "friction_epsilon": 0.0002,
+    "mu_pair": 1.0,
+    "contact_ke": 1000.0,
+    "contact_kd": 1.0,
+    "soft_contact_margin": 0.001,
+    "cell_m": 0.005,
+    "particle_radius": 0.0025,
+    "correct_mass": true,
+    "nu": 0.45,
+    "E_pa": [
+      7000.0,
+      15000.0,
+      25000.0
+    ]
+  },
+  "frozen_check": true,
+  "rig_pre_edit_sha256": "11011fb9e53544d4da75f1ad1e17932ccfc9d867e81eb8c146eb994209156475",
+  "newton_commit": "b74df534",
+  "msg": null
+}
