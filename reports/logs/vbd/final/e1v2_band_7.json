@@ -42,7 +42,7 @@
       "0.8": "slip",
       "1": "intact",
       "1.2": "intact",
-      "1.5": "intact",
+      "1.5": "damage",
       "2": "damage"
     },
     "5": {
@@ -103,47 +103,57 @@
     },
     "a1_F0.8": {
       "label": "slip",
-      "n_seeds": 1,
-      "confirmation": "provisional_seed0",
+      "n_seeds": 3,
+      "confirmation": "two_thirds_majority",
       "realized_accel_m_s2": 0.681,
       "source_receipts": [
-        "reports/logs/vbd/w1_screen/E7_F0.8_a1_s0.json"
+        "reports/logs/vbd/w1_screen/E7_F0.8_a1_s0.json",
+        "reports/logs/vbd/w1_screen/E7_F0.8_a1_s1.json",
+        "reports/logs/vbd/w1_screen/E7_F0.8_a1_s2.json"
       ]
     },
     "a1_F1": {
       "label": "intact",
-      "n_seeds": 1,
-      "confirmation": "provisional_seed0",
+      "n_seeds": 3,
+      "confirmation": "two_thirds_majority",
       "realized_accel_m_s2": 0.681,
       "source_receipts": [
-        "reports/logs/vbd/w1_screen/E7_F1_a1_s0.json"
+        "reports/logs/vbd/w1_screen/E7_F1_a1_s0.json",
+        "reports/logs/vbd/w1_screen/E7_F1_a1_s1.json",
+        "reports/logs/vbd/w1_screen/E7_F1_a1_s2.json"
       ]
     },
     "a1_F1.2": {
       "label": "intact",
-      "n_seeds": 1,
-      "confirmation": "provisional_seed0",
+      "n_seeds": 3,
+      "confirmation": "two_thirds_majority",
       "realized_accel_m_s2": 0.681,
       "source_receipts": [
-        "reports/logs/vbd/w1_screen/E7_F1.2_a1_s0.json"
+        "reports/logs/vbd/w1_screen/E7_F1.2_a1_s0.json",
+        "reports/logs/vbd/w1_screen/E7_F1.2_a1_s1.json",
+        "reports/logs/vbd/w1_screen/E7_F1.2_a1_s2.json"
       ]
     },
     "a1_F1.5": {
       "label": "intact",
-      "n_seeds": 1,
-      "confirmation": "provisional_seed0",
+      "n_seeds": 3,
+      "confirmation": "two_thirds_majority",
       "realized_accel_m_s2": 0.681,
       "source_receipts": [
-        "reports/logs/vbd/w1_screen/E7_F1.5_a1_s0.json"
+        "reports/logs/vbd/w1_screen/E7_F1.5_a1_s0.json",
+        "reports/logs/vbd/w1_screen/E7_F1.5_a1_s1.json",
+        "reports/logs/vbd/w1_screen/E7_F1.5_a1_s2.json"
       ]
     },
     "a1_F2": {
       "label": "damage",
-      "n_seeds": 1,
-      "confirmation": "provisional_seed0",
+      "n_seeds": 3,
+      "confirmation": "two_thirds_majority",
       "realized_accel_m_s2": 0.681,
       "source_receipts": [
-        "reports/logs/vbd/w1_screen/E7_F2_a1_s0.json"
+        "reports/logs/vbd/w1_screen/E7_F2_a1_s0.json",
+        "reports/logs/vbd/w1_screen/E7_F2_a1_s1.json",
+        "reports/logs/vbd/w1_screen/E7_F2_a1_s2.json"
       ]
     },
     "a2.5_F0.4": {
@@ -166,47 +176,57 @@
     },
     "a2.5_F0.8": {
       "label": "slip",
-      "n_seeds": 1,
-      "confirmation": "provisional_seed0",
+      "n_seeds": 3,
+      "confirmation": "two_thirds_majority",
       "realized_accel_m_s2": 1.647,
       "source_receipts": [
-        "reports/logs/vbd/w1_screen/E7_F0.8_a2.5_s0.json"
+        "reports/logs/vbd/w1_screen/E7_F0.8_a2.5_s0.json",
+        "reports/logs/vbd/w1_screen/E7_F0.8_a2.5_s1.json",
+        "reports/logs/vbd/w1_screen/E7_F0.8_a2.5_s2.json"
       ]
     },
     "a2.5_F1": {
       "label": "intact",
-      "n_seeds": 1,
-      "confirmation": "provisional_seed0",
+      "n_seeds": 3,
+      "confirmation": "two_thirds_majority",
       "realized_accel_m_s2": 1.647,
       "source_receipts": [
-        "reports/logs/vbd/w1_screen/E7_F1_a2.5_s0.json"
+        "reports/logs/vbd/w1_screen/E7_F1_a2.5_s0.json",
+        "reports/logs/vbd/w1_screen/E7_F1_a2.5_s1.json",
+        "reports/logs/vbd/w1_screen/E7_F1_a2.5_s2.json"
       ]
     },
     "a2.5_F1.2": {
       "label": "intact",
-      "n_seeds": 1,
-      "confirmation": "provisional_seed0",
+      "n_seeds": 3,
+      "confirmation": "two_thirds_majority",
       "realized_accel_m_s2": 1.647,
       "source_receipts": [
-        "reports/logs/vbd/w1_screen/E7_F1.2_a2.5_s0.json"
+        "reports/logs/vbd/w1_screen/E7_F1.2_a2.5_s0.json",
+        "reports/logs/vbd/w1_screen/E7_F1.2_a2.5_s1.json",
+        "reports/logs/vbd/w1_screen/E7_F1.2_a2.5_s2.json"
       ]
     },
     "a2.5_F1.5": {
-      "label": "intact",
-      "n_seeds": 1,
-      "confirmation": "provisional_seed0",
+      "label": "damage",
+      "n_seeds": 3,
+      "confirmation": "two_thirds_majority",
       "realized_accel_m_s2": 1.647,
       "source_receipts": [
-        "reports/logs/vbd/w1_screen/E7_F1.5_a2.5_s0.json"
+        "reports/logs/vbd/w1_screen/E7_F1.5_a2.5_s0.json",
+        "reports/logs/vbd/w1_screen/E7_F1.5_a2.5_s1.json",
+        "reports/logs/vbd/w1_screen/E7_F1.5_a2.5_s2.json"
       ]
     },
     "a2.5_F2": {
       "label": "damage",
-      "n_seeds": 1,
-      "confirmation": "provisional_seed0",
+      "n_seeds": 3,
+      "confirmation": "two_thirds_majority",
       "realized_accel_m_s2": 1.647,
       "source_receipts": [
-        "reports/logs/vbd/w1_screen/E7_F2_a2.5_s0.json"
+        "reports/logs/vbd/w1_screen/E7_F2_a2.5_s0.json",
+        "reports/logs/vbd/w1_screen/E7_F2_a2.5_s1.json",
+        "reports/logs/vbd/w1_screen/E7_F2_a2.5_s2.json"
       ]
     },
     "a5_F0.4": {
@@ -238,29 +258,35 @@
     },
     "a5_F1": {
       "label": "damage",
-      "n_seeds": 1,
-      "confirmation": "provisional_seed0",
+      "n_seeds": 3,
+      "confirmation": "two_thirds_majority",
       "realized_accel_m_s2": 3.1825,
       "source_receipts": [
-        "reports/logs/vbd/w1_screen/E7_F1_a5_s0.json"
+        "reports/logs/vbd/w1_screen/E7_F1_a5_s0.json",
+        "reports/logs/vbd/w1_screen/E7_F1_a5_s1.json",
+        "reports/logs/vbd/w1_screen/E7_F1_a5_s2.json"
       ]
     },
     "a5_F1.2": {
       "label": "damage",
-      "n_seeds": 1,
-      "confirmation": "provisional_seed0",
+      "n_seeds": 3,
+      "confirmation": "two_thirds_majority",
       "realized_accel_m_s2": 3.1825,
       "source_receipts": [
-        "reports/logs/vbd/w1_screen/E7_F1.2_a5_s0.json"
+        "reports/logs/vbd/w1_screen/E7_F1.2_a5_s0.json",
+        "reports/logs/vbd/w1_screen/E7_F1.2_a5_s1.json",
+        "reports/logs/vbd/w1_screen/E7_F1.2_a5_s2.json"
       ]
     },
     "a5_F1.5": {
       "label": "damage",
-      "n_seeds": 1,
-      "confirmation": "provisional_seed0",
+      "n_seeds": 3,
+      "confirmation": "two_thirds_majority",
       "realized_accel_m_s2": 3.1825,
       "source_receipts": [
-        "reports/logs/vbd/w1_screen/E7_F1.5_a5_s0.json"
+        "reports/logs/vbd/w1_screen/E7_F1.5_a5_s0.json",
+        "reports/logs/vbd/w1_screen/E7_F1.5_a5_s1.json",
+        "reports/logs/vbd/w1_screen/E7_F1.5_a5_s2.json"
       ]
     },
     "a5_F2": {
@@ -427,29 +453,35 @@
     },
     "a30_F1": {
       "label": "damage",
-      "n_seeds": 1,
-      "confirmation": "provisional_seed0",
+      "n_seeds": 3,
+      "confirmation": "two_thirds_majority",
       "realized_accel_m_s2": 19.846,
       "source_receipts": [
-        "reports/logs/vbd/w1_screen/E7_F1_a30_s0.json"
+        "reports/logs/vbd/w1_screen/E7_F1_a30_s0.json",
+        "reports/logs/vbd/w1_screen/E7_F1_a30_s1.json",
+        "reports/logs/vbd/w1_screen/E7_F1_a30_s2.json"
       ]
     },
     "a30_F1.2": {
       "label": "damage",
-      "n_seeds": 1,
-      "confirmation": "provisional_seed0",
+      "n_seeds": 3,
+      "confirmation": "two_thirds_majority",
       "realized_accel_m_s2": 19.846,
       "source_receipts": [
-        "reports/logs/vbd/w1_screen/E7_F1.2_a30_s0.json"
+        "reports/logs/vbd/w1_screen/E7_F1.2_a30_s0.json",
+        "reports/logs/vbd/w1_screen/E7_F1.2_a30_s1.json",
+        "reports/logs/vbd/w1_screen/E7_F1.2_a30_s2.json"
       ]
     },
     "a30_F1.5": {
       "label": "damage",
-      "n_seeds": 1,
-      "confirmation": "provisional_seed0",
+      "n_seeds": 3,
+      "confirmation": "two_thirds_majority",
       "realized_accel_m_s2": 19.846,
       "source_receipts": [
-        "reports/logs/vbd/w1_screen/E7_F1.5_a30_s0.json"
+        "reports/logs/vbd/w1_screen/E7_F1.5_a30_s0.json",
+        "reports/logs/vbd/w1_screen/E7_F1.5_a30_s1.json",
+        "reports/logs/vbd/w1_screen/E7_F1.5_a30_s2.json"
       ]
     },
     "a30_F2": {
@@ -512,7 +544,7 @@
     "planned_primary_cells": 42
   },
   "provenance": {
-    "git_sha": "880f5e3213bff5f802d657dad8193de40df81842",
+    "git_sha": "592378df78f48d9e5cea96649ec16d7dee94aed0",
     "prereg_sha256": "6ae3ed56859f875fc7862050eac6a10b9ff5287b9e23559d87c8e15a55f95821"
   }
 }

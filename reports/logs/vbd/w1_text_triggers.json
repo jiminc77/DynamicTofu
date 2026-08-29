@@ -3,8 +3,8 @@
   "assumption": "Literal prereg topology table: trigger complete certified all-slip rows and single-flip slip-to-intact rows with intact at F=2.0; run both extension forces for either action. Other, incomplete, or uncertified-deciding rows do not trigger.",
   "cap_rows": 8,
   "coverage": {
-    "present_receipts": 21,
-    "complete_rows": 3
+    "present_receipts": 238,
+    "complete_rows": 18
   },
   "triggered_rows": []
 }

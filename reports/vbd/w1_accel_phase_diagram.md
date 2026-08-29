@@ -13,7 +13,7 @@ Contraction comparisons are within-rig, relative to the a=1 reference row (inclu
 | 6.4019 (a=10) | slip | slip | slip | damage | damage | damage | damage |
 | 12.8892 (a=20) | slip | slip | slip | damage | damage | damage | damage |
 | 19.846 (a=30) | slip | slip | slip | damage | damage | damage | damage |
-| 1.647 (a=2.5) | slip | slip | slip | intact | intact | intact | damage |
+| 1.647 (a=2.5) | slip | slip | slip | intact | intact | damage | damage |
 
 ## E=15 kPa
 
