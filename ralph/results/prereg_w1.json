@@ -480,6 +480,15 @@
         "1.5": "intact",
         "2.0": "damage"
       }
+    },
+    {
+      "date": "2026-08-30",
+      "id": "VG-channel-scoping-amendment3",
+      "authority": "external Ruling 8 (BINDING)",
+      "ruling_file": "ralph/RULING-VG-20260830.md",
+      "change": "W1 certification := finite AND vg3==0 (VG scoped to pad contact-field channel; W1 labels use state-log channel). vg2 demoted to diagnostic. vg1 binds pad-channel/W2 claims only.",
+      "result": "all 126 cells certified; classifier AUTHORIZED; verdict P-B CLOSURE; contraction descriptive. No label/band/paper numbers change.",
+      "hard_stop": "future vg1 violation on an intact pad-row -> STOP+escalate"
     }
   ]
 }
