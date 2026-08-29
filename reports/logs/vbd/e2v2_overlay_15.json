@@ -1,0 +1,77 @@
+{
+  "E_kPa": 15,
+  "series": [
+    {
+      "commanded_accel_m_s2": 1.0,
+      "realized_accel_m_s2": 0.6808366094316416,
+      "centroid_excursion_mm": {
+        "left": 0.2294890111230858,
+        "right": 0.2197775209170287
+      },
+      "peak_lr_asymmetry": {
+        "abs_count_difference": 0,
+        "centroid_y_offset_mm": 16.992832642327073
+      }
+    },
+    {
+      "commanded_accel_m_s2": 2.5,
+      "realized_accel_m_s2": 1.6485009874615528,
+      "centroid_excursion_mm": {
+        "left": 0.7331761735518463,
+        "right": 0.6639078839329854
+      },
+      "peak_lr_asymmetry": {
+        "abs_count_difference": 0,
+        "centroid_y_offset_mm": 16.99365303944956
+      }
+    },
+    {
+      "commanded_accel_m_s2": 5.0,
+      "realized_accel_m_s2": 3.1798545803340965,
+      "centroid_excursion_mm": {
+        "left": 3.399454073029109,
+        "right": 3.412336658022585
+      },
+      "peak_lr_asymmetry": {
+        "abs_count_difference": 4,
+        "centroid_y_offset_mm": 17.01014484188247
+      }
+    },
+    {
+      "commanded_accel_m_s2": 10.0,
+      "realized_accel_m_s2": 6.400739295141718,
+      "centroid_excursion_mm": {
+        "left": 9.164834962309984,
+        "right": 9.127596525619209
+      },
+      "peak_lr_asymmetry": {
+        "abs_count_difference": 6,
+        "centroid_y_offset_mm": 17.006254579236955
+      }
+    },
+    {
+      "commanded_accel_m_s2": 20.0,
+      "realized_accel_m_s2": 12.864958814211613,
+      "centroid_excursion_mm": {
+        "left": 9.454733030047795,
+        "right": 9.542068622894131
+      },
+      "peak_lr_asymmetry": {
+        "abs_count_difference": 0,
+        "centroid_y_offset_mm": 17.060753942113987
+      }
+    },
+    {
+      "commanded_accel_m_s2": 30.0,
+      "realized_accel_m_s2": null,
+      "centroid_excursion_mm": {
+        "left": 8.101272312183912,
+        "right": 8.17479236937608
+      },
+      "peak_lr_asymmetry": {
+        "abs_count_difference": 0,
+        "centroid_y_offset_mm": 17.0600966385775
+      }
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "E_kPa": 25,
+  "series": [
+    {
+      "commanded_accel_m_s2": 1.0,
+      "realized_accel_m_s2": 0.6801928792680674,
+      "centroid_excursion_mm": {
+        "left": 0.14455028456343386,
+        "right": 0.3614082129561681
+      },
+      "peak_lr_asymmetry": {
+        "abs_count_difference": 0,
+        "centroid_y_offset_mm": 16.99286783588267
+      }
+    },
+    {
+      "commanded_accel_m_s2": 2.5,
+      "realized_accel_m_s2": 1.5935746154614066,
+      "centroid_excursion_mm": {
+        "left": 0.5988563616492807,
+        "right": 0.49849019449297627
+      },
+      "peak_lr_asymmetry": {
+        "abs_count_difference": 0,
+        "centroid_y_offset_mm": 16.996157512054612
+      }
+    },
+    {
+      "commanded_accel_m_s2": 5.0,
+      "realized_accel_m_s2": 3.2134396689277143,
+      "centroid_excursion_mm": {
+        "left": 3.35688711916131,
+        "right": 3.2505194412741534
+      },
+      "peak_lr_asymmetry": {
+        "abs_count_difference": 8,
+        "centroid_y_offset_mm": 17.018939884540202
+      }
+    },
+    {
+      "commanded_accel_m_s2": 10.0,
+      "realized_accel_m_s2": 6.400566867419332,
+      "centroid_excursion_mm": {
+        "left": 8.982601439675035,
+        "right": 8.942265310472719
+      },
+      "peak_lr_asymmetry": {
+        "abs_count_difference": 0,
+        "centroid_y_offset_mm": 17.013800543709173
+      }
+    },
+    {
+      "commanded_accel_m_s2": 20.0,
+      "realized_accel_m_s2": 12.969905989510027,
+      "centroid_excursion_mm": {
+        "left": 10.43810297995514,
+        "right": 10.495177499177146
+      },
+      "peak_lr_asymmetry": {
+        "abs_count_difference": 0,
+        "centroid_y_offset_mm": 17.0029791469565
+      }
+    },
+    {
+      "commanded_accel_m_s2": 30.0,
+      "realized_accel_m_s2": null,
+      "centroid_excursion_mm": {
+        "left": 8.502785816339042,
+        "right": 8.444684233266713
+      },
+      "peak_lr_asymmetry": {
+        "abs_count_difference": 0,
+        "centroid_y_offset_mm": 16.997752293863993
+      }
+    }
+  ]
+}
