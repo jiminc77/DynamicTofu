@@ -7,6 +7,7 @@ Run in the Newton environment (CPU authoring only):
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import shutil
 import subprocess
@@ -25,12 +26,13 @@ from scripts.vbd.w1_transport import run_transport_cell
 BAND_DIR = ROOT / "reports/logs/vbd/final"
 OUT_DIR = ROOT / "reports/vbd/clips"
 REPORT = ROOT / "reports/vbd/w3_clips.md"
+MANIFEST = OUT_DIR / "w3_manifest.json"
 
 # Requested coordinates and required final-band labels. Selection is checked at
 # runtime so this authoring script cannot silently misrepresent a changed band.
 REQUESTS = {
     "intact": {"E": 15, "a": 1.0, "F": 1.2, "label": "intact"},
-    "slip": {"E": 15, "a": 20.0, "F": 1.2, "label": "slip"},
+    "slip": {"E": 15, "a": 30.0, "F": 1.2, "label": "slip"},
     "damage": {"E": 7, "a": 5.0, "F": 2.0, "label": "damage"},
 }
 KEY_TIMES = {
@@ -92,6 +94,48 @@ def _contact_sheet(key_paths: list[Path], output: Path) -> None:
     sheet.save(output)
 
 
+def assert_label_reproduced(source_label: str, rerun_label: str, scene: str) -> None:
+    """Fail closed when a fresh run does not reproduce its final-band label."""
+    if rerun_label != source_label:
+        raise RuntimeError(
+            f"{scene}: rerun label {rerun_label!r} does not match "
+            f"final-band label {source_label!r}"
+        )
+
+
+def _sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def assemble_manifest(results: list[dict], git_commit: str) -> dict:
+    """Build the durable, JSON-safe render evidence manifest."""
+    scenes = []
+    for result in results:
+        key_paths = [Path(path) for path in result["key_paths"]]
+        mp4_path = Path(result["mp4"]) if result.get("mp4") else None
+        scenes.append({
+            "scene": result["scene"],
+            "E": result["E"],
+            "a": result["a"],
+            "F": result["F"],
+            "seed": result["seed"],
+            "source_final_band_label": result["label"],
+            "rerun_label": result["rerun_label"],
+            "label_reproduced": result["rerun_label"] == result["label"],
+            "realized_accel": result["realized"],
+            "mp4": str(mp4_path.relative_to(ROOT)) if mp4_path else None,
+            "key_frames": [
+                {"path": str(path.relative_to(ROOT)), "sha256": _sha256(path)}
+                for path in key_paths
+            ],
+            "sha256": {
+                "mp4": _sha256(mp4_path) if mp4_path else None,
+                "key_frames": {path.name: _sha256(path) for path in key_paths},
+            },
+        })
+    return {"scenes": scenes, "git_commit": git_commit}
+
+
 def render_scene(cell: dict) -> dict:
     scene = cell["scene"]
     raw_dir = OUT_DIR / f"w3_{scene}_snapshots"
@@ -104,6 +148,8 @@ def render_scene(cell: dict) -> dict:
 
     receipt = run_transport_cell(cell["E"] * 1000, cell["F"], cell["a"], 0,
                                  snap_dir=raw_dir)
+    rerun_label = receipt["label"]
+    assert_label_reproduced(cell["label"], rerun_label, scene)
     snapshots = sorted(raw_dir.glob("*.npz"))
     if not snapshots:
         raise RuntimeError("transport rerun produced no snapshots")
@@ -129,8 +175,9 @@ def render_scene(cell: dict) -> dict:
         encoded = result.returncode == 0
     if not encoded:
         _contact_sheet(keys, OUT_DIR / f"w3_{scene}_contact_sheet.png")
-    return {**cell, "rerun_label": receipt["label"], "encoded": encoded,
-            "frames": frame_dir, "keys": key_dir}
+    return {**cell, "seed": 0, "rerun_label": rerun_label, "encoded": encoded,
+            "mp4": mp4 if encoded else None, "frames": frame_dir, "keys": key_dir,
+            "key_paths": keys}
 
 
 def _write_report(results: list[dict]) -> None:
@@ -141,7 +188,9 @@ def _write_report(results: list[dict]) -> None:
                  if result["encoded"] else
                  f"`reports/vbd/clips/w3_{result['scene']}.png-seq/` and contact sheet")
         rows.append(f"| {result['scene']} | E{result['E']} | {result['a']:g} | "
-                    f"{result['F']:g} | {result['label']} | {result['realized']:.4g} | {media} |")
+                    f"{result['F']:g} | {result['label']} | {result['rerun_label']} | "
+                    f"{str(result['rerun_label'] == result['label']).lower()} | "
+                    f"{result['realized']:.4g} | {media} |")
     REPORT.write_text(
         "# W3 transport clips\n\n"
         "These scenes re-run selected cells from the final W1 bands with the frozen "
@@ -150,8 +199,8 @@ def _write_report(results: list[dict]) -> None:
         "force (1.2 N), seed, and protocol, with only commanded acceleration changed. "
         "Across all three scenes the gripper setup/protocol is unchanged; the damage branch "
         "uses the pre-registered higher force and E7 material.\n\n"
-        "| scene | material | commanded a (m/s²) | F (N) | final-band label | realized a (m/s²) | projection |\n"
-        "|---|---:|---:|---:|---|---:|---|\n" + "\n".join(rows) +
+        "| scene | material | commanded a (m/s²) | F (N) | source label | rerun label | label reproduced | realized a (m/s²) | projection |\n"
+        "|---|---:|---:|---:|---|---|---|---:|---|\n" + "\n".join(rows) +
         "\n\nEach projection is the standard side `(y,z)` plus front `(x,z)` view. Key "
         "frames are under `reports/vbd/clips/w3_<scene>_keys/` at grip, lift, hold, "
         "accel-out peak, dwell, return, and settle boundaries. If ffmpeg/libx264 is "
@@ -180,6 +229,13 @@ def main(argv=None) -> int:
             failures.append((name, exc))
             print(f"{name}: ERROR {type(exc).__name__}: {exc}", file=sys.stderr)
     if results:
+        manifest = assemble_manifest(
+            results,
+            subprocess.check_output(
+                ["git", "-C", str(ROOT), "rev-parse", "HEAD"], text=True
+            ).strip(),
+        )
+        MANIFEST.write_text(json.dumps(manifest, indent=2) + "\n")
         _write_report(results)
     return 1 if failures else 0
 

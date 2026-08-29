@@ -26,6 +26,7 @@ MATERIALS = (7, 15, 25)
 ACCELS = (1, 2.5, 5, 10, 20, 30)
 OUT = ROOT / "reports/logs/vbd/e2v2_tactile.json"
 RAW_DIR = ROOT / "reports/logs/vbd/e2v2_tactile_raw"
+FALSIFIER_OUT = ROOT / "reports/logs/vbd/e2v2_falsifier.json"
 
 
 def unavailable_tangential_ratio():
@@ -71,6 +72,36 @@ def material_summary(per_cell):
         rows.sort(key=lambda row: row["commanded_accel_m_s2"])
         output[str(E)] = rows
     return output
+
+
+def reduce_falsifier(cells, low_a=1.0, high_a=10.0):
+    """Reduce endpoint replicates using each cell's peak excursion over both pads."""
+    endpoints = {}
+    for acceleration in (low_a, high_a):
+        values = []
+        for cell in cells:
+            if float(cell["a"]) != acceleration:
+                continue
+            excursions = [value for value in cell["centroid_excursion_mm"].values()
+                          if value is not None]
+            if excursions:
+                values.append(float(max(excursions)))
+        values.sort()
+        endpoints[f"{acceleration:g}"] = {
+            "n": len(values), "centroid_excursion_mm": values,
+            "range_mm": [values[0], values[-1]] if values else None,
+            "median_mm": float(np.median(values)) if values else None,
+        }
+    low = endpoints[f"{low_a:g}"]
+    high = endpoints[f"{high_a:g}"]
+    complete = low["n"] == 3 and high["n"] == 3
+    non_overlap = bool(
+        complete and (high["range_mm"][0] > low["range_mm"][1]
+                      or low["range_mm"][0] > high["range_mm"][1]))
+    difference = (high["median_mm"] - low["median_mm"]) if complete else None
+    return {"endpoints": endpoints, "strict_non_overlap": non_overlap,
+            "signed_median_difference_mm_high_minus_low": difference,
+            "peak_tangential_ratio": unavailable_tangential_ratio()}
 
 
 def _contact_frame(rig, t):
@@ -188,6 +219,39 @@ def _write_raw_npz(E, F, a, seed, series):
     return path
 
 
+def _raw_path(E, F, a, seed):
+    return RAW_DIR / f"E{int(E)}_F{float(F):g}_a{float(a):g}_s{int(seed)}.npz"
+
+
+def _cell_from_raw(E, F, a, seed, path):
+    with np.load(path, allow_pickle=False) as data:
+        series = [json.loads(value) for value in data["per_frame_json"].tolist()]
+    return {"status": "ok", "E_kPa": int(E), "F": float(F), "a": float(a),
+            "seed": int(seed), "per_frame_series": series,
+            "centroid_excursion_mm": centroid_excursion_mm(series),
+            "raw_npz": str(path.relative_to(ROOT))}
+
+
+def run_falsifier(resume=False):
+    cells = []
+    for a in (1, 10):
+        for seed in (0, 1, 2):
+            path = _raw_path(15, 1.2, a, seed)
+            if resume and path.exists():
+                cells.append(_cell_from_raw(15, 1.2, a, seed, path))
+                continue
+            cells.append(run_tactile_cell(15, 1.2, a, seed))
+    result = {"schema": "e2v2_falsifier.v1", **reduce_falsifier(cells),
+              "cells": [{"E_kPa": cell["E_kPa"], "F": cell["F"], "a": cell["a"],
+                         "seed": cell["seed"], "centroid_excursion_mm":
+                             cell["centroid_excursion_mm"],
+                         "raw_npz": cell["raw_npz"]} for cell in cells],
+              "raw_npz_files": [cell["raw_npz"] for cell in cells]}
+    FALSIFIER_OUT.parent.mkdir(parents=True, exist_ok=True)
+    FALSIFIER_OUT.write_text(json.dumps(result, indent=2, allow_nan=False) + "\n")
+    return result
+
+
 def run_grid():
     cells = []
     for E in MATERIALS:
@@ -240,6 +304,9 @@ def main(argv=None):
     mode.add_argument("--smoke", action="store_true")
     mode.add_argument("--grid", action="store_true")
     mode.add_argument("--report", action="store_true")
+    mode.add_argument("--falsifier", action="store_true")
+    parser.add_argument("--resume", action="store_true",
+                        help="with --falsifier, reuse existing per-cell raw NPZs")
     args = parser.parse_args(argv)
     if args.smoke:
         cell = run_tactile_cell(15, 1.2, 5, 0)
@@ -252,6 +319,8 @@ def main(argv=None):
         return 0 if finite else 1
     if args.grid:
         run_grid()
+    elif args.falsifier:
+        run_falsifier(resume=args.resume)
     else:
         write_report()
     return 0

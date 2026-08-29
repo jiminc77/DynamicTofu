@@ -4,6 +4,7 @@ from scripts.vbd.w2_tactile_vbd import (
     UNAVAILABLE_REASON,
     centroid_excursion_mm,
     material_summary,
+    reduce_falsifier,
     unavailable_tangential_ratio,
 )
 
@@ -55,3 +56,17 @@ def test_material_summary_groups_and_orders_successful_cells():
     assert [row["commanded_accel_m_s2"] for row in summary["7"]] == [1.0, 5.0]
     assert summary["15"][0]["realized_accel_m_s2"] == 0.9
     assert summary["25"] == []
+
+
+def test_falsifier_reducer_detects_non_overlap_and_signed_median():
+    cells = []
+    for acceleration, values in ((1, [1.0, 2.0, 3.0]), (10, [5.0, 7.0, 9.0])):
+        for value in values:
+            cells.append({"a": acceleration,
+                          "centroid_excursion_mm": {"left": value, "right": value - 0.5}})
+    result = reduce_falsifier(cells)
+    assert result["endpoints"]["1"]["range_mm"] == [1.0, 3.0]
+    assert result["endpoints"]["10"]["range_mm"] == [5.0, 9.0]
+    assert result["strict_non_overlap"] is True
+    assert result["signed_median_difference_mm_high_minus_low"] == pytest.approx(5.0)
+    assert result["peak_tangential_ratio"]["reason"] == UNAVAILABLE_REASON
