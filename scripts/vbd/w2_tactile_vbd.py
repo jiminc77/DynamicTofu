@@ -25,6 +25,7 @@ UNAVAILABLE_REASON = "UNAVAILABLE: ATTR=GEOMETRY_ONLY, per-pad contact forces no
 MATERIALS = (7, 15, 25)
 ACCELS = (1, 2.5, 5, 10, 20, 30)
 OUT = ROOT / "reports/logs/vbd/e2v2_tactile.json"
+RAW_DIR = ROOT / "reports/logs/vbd/e2v2_tactile_raw"
 
 
 def unavailable_tangential_ratio():
@@ -32,18 +33,27 @@ def unavailable_tangential_ratio():
 
 
 def centroid_excursion_mm(series):
-    """Maximum per-pad displacement from its first available window centroid."""
+    """Maximum pad-frame displacement from the first available centroid."""
     result = {}
     for pad in ("left", "right"):
-        points = [(frame["t"], frame["pads"][pad]["centroid"])
-                  for frame in series if frame["pads"][pad]["centroid"] is not None]
+        points = [frame["pads"][pad]["centroid_pad"]
+                  for frame in series if frame["pads"][pad]["centroid_pad"] is not None]
         if not points:
             result[pad] = None
             continue
-        reference = np.asarray(points[0][1], dtype=float)
+        reference = np.asarray(points[0], dtype=float)
         result[pad] = float(max(np.linalg.norm(np.asarray(point) - reference)
-                                for _, point in points) * 1000.0)
+                                for point in points) * 1000.0)
     return result
+
+
+def peak_lr_asymmetry(series):
+    """Peak rigid-translation-invariant L-R geometry asymmetry."""
+    counts = [frame["asymmetry"]["abs_count_difference"] for frame in series]
+    offsets = [frame["asymmetry"]["centroid_y_offset_pad_m"] for frame in series
+               if frame["asymmetry"]["centroid_y_offset_pad_m"] is not None]
+    return {"abs_count_difference": max(counts) if counts else None,
+            "centroid_y_offset_mm": max(offsets) * 1000.0 if offsets else None}
 
 
 def material_summary(per_cell):
@@ -56,7 +66,8 @@ def material_summary(per_cell):
                 continue
             rows.append({"commanded_accel_m_s2": cell["a"],
                          "realized_accel_m_s2": cell.get("realized_accel"),
-                         "centroid_excursion_mm": cell["centroid_excursion_mm"]})
+                         "centroid_excursion_mm": cell["centroid_excursion_mm"],
+                         "peak_lr_asymmetry": cell["peak_lr_asymmetry"]})
         rows.sort(key=lambda row: row["commanded_accel_m_s2"])
         output[str(E)] = rows
     return output
@@ -69,6 +80,7 @@ def _contact_frame(rig, t):
     indices = contacts.soft_contact_indices.numpy()
     bary = contacts.soft_contact_barycentric.numpy()
     q = rig.state_0.particle_q.numpy()
+    body_q = rig.state_0.body_q.numpy()
     usable = min(max(count, 0), len(shapes))
     shape_body = rig.model.shape_body.numpy()
     pad_shapes = {
@@ -76,6 +88,7 @@ def _contact_frame(rig, t):
         "right": int(np.flatnonzero(shape_body == rig.b_right)[0]),
     }
     pads = {}
+    pad_bodies = {"left": rig.b_left, "right": rig.b_right}
     for name, shape_id in pad_shapes.items():
         points = []
         for record in range(usable):
@@ -89,19 +102,27 @@ def _contact_frame(rig, t):
             points.append(np.sum(q[ids[valid]] * weights[:, None], axis=0))
         if points:
             patch = np.asarray(points)
-            centroid = np.mean(patch, axis=0)
+            centroid_world = np.mean(patch, axis=0)
+            pad_position = np.asarray(body_q[pad_bodies[name]][:3], dtype=float)
+            patch_pad = patch - pad_position
+            centroid_pad = np.mean(patch_pad, axis=0)
             extent = float(np.linalg.norm(np.max(patch, axis=0) - np.min(patch, axis=0)))
-            pads[name] = {"soft_contact_count": len(points), "centroid": centroid.tolist(),
-                          "extent_m": extent}
+            pads[name] = {"soft_contact_count": len(points),
+                          "centroid_world": centroid_world.tolist(),
+                          "centroid_pad": centroid_pad.tolist(), "extent_pad_m": extent,
+                          "pad_world_position": pad_position.tolist()}
         else:
-            pads[name] = {"soft_contact_count": 0, "centroid": None, "extent_m": None}
+            pads[name] = {"soft_contact_count": 0, "centroid_world": None,
+                          "centroid_pad": None, "extent_pad_m": None,
+                          "pad_world_position":
+                              np.asarray(body_q[pad_bodies[name]][:3], dtype=float).tolist()}
     lc, rc = pads["left"]["soft_contact_count"], pads["right"]["soft_contact_count"]
-    ly, ry = pads["left"]["centroid"], pads["right"]["centroid"]
+    ly, ry = pads["left"]["centroid_pad"], pads["right"]["centroid_pad"]
     centroid_y_offset = None if ly is None or ry is None else abs(float(ly[1]) - float(ry[1]))
     m = rig.metrics()
     return {"t": float(t), "pads": pads,
             "asymmetry": {"abs_count_difference": abs(lc - rc),
-                           "centroid_y_offset_m": centroid_y_offset},
+                           "centroid_y_offset_pad_m": centroid_y_offset},
             "palm": {"position": list(map(float, m["palm_pos"])),
                      "velocity_x_m_s": float(m["palm_vx"])}}
 
@@ -138,9 +159,12 @@ def run_tactile_cell(E, F, a, seed):
     realized = tracking.get("realized_accel_m_s2")
     for frame in series:
         frame["realized_accel_m_s2"] = realized
+    raw_path = _write_raw_npz(E, F, a, seed, series)
     return {"status": receipt.get("status", "ok"), "E_kPa": int(E), "F": float(F),
             "a": float(a), "seed": int(seed), "realized_accel": realized,
             "per_frame_series": series, "centroid_excursion_mm": centroid_excursion_mm(series),
+            "peak_lr_asymmetry": peak_lr_asymmetry(series),
+            "raw_npz": str(raw_path.relative_to(ROOT)),
             "peak_tangential_ratio": unavailable_tangential_ratio(),
             "git_sha": receipt.get("git_sha"), "prereg_sha256": receipt.get("prereg_sha256")}
 
@@ -149,8 +173,19 @@ def _error_cell(E, F, a, seed, exc):
     return {"status": "error", "E_kPa": E, "F": F, "a": a, "seed": seed,
             "realized_accel": None, "per_frame_series": [],
             "centroid_excursion_mm": {"left": None, "right": None},
+            "peak_lr_asymmetry": {"abs_count_difference": None,
+                                  "centroid_y_offset_mm": None},
             "peak_tangential_ratio": unavailable_tangential_ratio(),
             "error": f"{type(exc).__name__}: {exc}"}
+
+
+def _write_raw_npz(E, F, a, seed, series):
+    """Persist the exact JSON-compatible per-frame observations durably."""
+    RAW_DIR.mkdir(parents=True, exist_ok=True)
+    path = RAW_DIR / f"E{int(E)}_F{float(F):g}_a{float(a):g}_s{int(seed)}.npz"
+    np.savez_compressed(path, per_frame_json=np.asarray(
+        [json.dumps(frame, allow_nan=False) for frame in series]))
+    return path
 
 
 def run_grid():
@@ -184,11 +219,12 @@ def write_report():
     overlay_dir = ROOT / "reports/logs/vbd"
     for E in MATERIALS:
         rows = summary.get(str(E), [])
-        report += [f"## E={E} kPa", "", "| commanded a | realized a | left excursion (mm) | right excursion (mm) |",
-                   "|---:|---:|---:|---:|"]
+        report += [f"## E={E} kPa", "", "| commanded a | realized a | left excursion (mm) | right excursion (mm) | peak count asym. | peak centroid-y asym. (mm) |",
+                   "|---:|---:|---:|---:|---:|---:|"]
         for row in rows:
             excursion = row["centroid_excursion_mm"]
-            report.append(f"| {row['commanded_accel_m_s2']:g} | {row['realized_accel_m_s2']} | {excursion['left']} | {excursion['right']} |")
+            asym = row["peak_lr_asymmetry"]
+            report.append(f"| {row['commanded_accel_m_s2']:g} | {row['realized_accel_m_s2']} | {excursion['left']} | {excursion['right']} | {asym['abs_count_difference']} | {asym['centroid_y_offset_mm']} |")
         report.append("")
         (overlay_dir / f"e2v2_overlay_{E}.json").write_text(
             json.dumps({"E_kPa": E, "series": rows}, indent=2, allow_nan=False) + "\n")
