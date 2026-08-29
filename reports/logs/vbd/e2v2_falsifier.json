@@ -1,28 +1,113 @@
 {
-  "1": {
-    "seeds": [
-      0.2452900992384611,
-      0.3035412080524647,
-      0.2862417815003972
-    ],
-    "min": 0.2452900992384611,
-    "max": 0.3035412080524647,
-    "median": 0.2862417815003972
+  "schema": "e2v2_falsifier.v1",
+  "endpoints": {
+    "1": {
+      "n": 3,
+      "centroid_excursion_mm": [
+        0.2452900992384611,
+        0.2862417815003972,
+        0.3035412080524647
+      ],
+      "range_mm": [
+        0.2452900992384611,
+        0.3035412080524647
+      ],
+      "median_mm": 0.2862417815003972
+    },
+    "10": {
+      "n": 3,
+      "centroid_excursion_mm": [
+        9.066595923724604,
+        9.149133430598908,
+        9.188016835698912
+      ],
+      "range_mm": [
+        9.066595923724604,
+        9.188016835698912
+      ],
+      "median_mm": 9.149133430598908
+    }
   },
-  "10": {
-    "seeds": [
-      9.149133430598908,
-      9.188016835698912,
-      9.066595923724604
-    ],
-    "min": 9.066595923724604,
-    "max": 9.188016835698912,
-    "median": 9.149133430598908
+  "strict_non_overlap": true,
+  "signed_median_difference_mm_high_minus_low": 8.862891649098511,
+  "peak_tangential_ratio": {
+    "value": null,
+    "reason": "UNAVAILABLE: ATTR=GEOMETRY_ONLY, per-pad contact forces not attributable"
   },
-  "falsifier": {
-    "endpoints": "a=1 vs a=10 (E15,F1.2)",
-    "non_overlap": true,
-    "signed_median_diff_mm": 8.862891649098511,
-    "peak_tangential_ratio": "UNAVAILABLE (geometry-only)"
-  }
+  "cells": [
+    {
+      "E_kPa": 15,
+      "F": 1.2,
+      "a": 1.0,
+      "seed": 0,
+      "centroid_excursion_mm": {
+        "left": 0.2452900992384611,
+        "right": 0.23232964052723545
+      },
+      "raw_npz": "reports/logs/vbd/e2v2_tactile_raw/E15_F1.2_a1_s0.npz"
+    },
+    {
+      "E_kPa": 15,
+      "F": 1.2,
+      "a": 1.0,
+      "seed": 1,
+      "centroid_excursion_mm": {
+        "left": 0.3035412080524647,
+        "right": 0.14729809891928142
+      },
+      "raw_npz": "reports/logs/vbd/e2v2_tactile_raw/E15_F1.2_a1_s1.npz"
+    },
+    {
+      "E_kPa": 15,
+      "F": 1.2,
+      "a": 1.0,
+      "seed": 2,
+      "centroid_excursion_mm": {
+        "left": 0.2862417815003972,
+        "right": 0.2651560832484346
+      },
+      "raw_npz": "reports/logs/vbd/e2v2_tactile_raw/E15_F1.2_a1_s2.npz"
+    },
+    {
+      "E_kPa": 15,
+      "F": 1.2,
+      "a": 10.0,
+      "seed": 0,
+      "centroid_excursion_mm": {
+        "left": 9.149133430598908,
+        "right": 9.030303019666894
+      },
+      "raw_npz": "reports/logs/vbd/e2v2_tactile_raw/E15_F1.2_a10_s0.npz"
+    },
+    {
+      "E_kPa": 15,
+      "F": 1.2,
+      "a": 10.0,
+      "seed": 1,
+      "centroid_excursion_mm": {
+        "left": 9.131285831364814,
+        "right": 9.188016835698912
+      },
+      "raw_npz": "reports/logs/vbd/e2v2_tactile_raw/E15_F1.2_a10_s1.npz"
+    },
+    {
+      "E_kPa": 15,
+      "F": 1.2,
+      "a": 10.0,
+      "seed": 2,
+      "centroid_excursion_mm": {
+        "left": 9.066595923724604,
+        "right": 8.997459654910331
+      },
+      "raw_npz": "reports/logs/vbd/e2v2_tactile_raw/E15_F1.2_a10_s2.npz"
+    }
+  ],
+  "raw_npz_files": [
+    "reports/logs/vbd/e2v2_tactile_raw/E15_F1.2_a1_s0.npz",
+    "reports/logs/vbd/e2v2_tactile_raw/E15_F1.2_a1_s1.npz",
+    "reports/logs/vbd/e2v2_tactile_raw/E15_F1.2_a1_s2.npz",
+    "reports/logs/vbd/e2v2_tactile_raw/E15_F1.2_a10_s0.npz",
+    "reports/logs/vbd/e2v2_tactile_raw/E15_F1.2_a10_s1.npz",
+    "reports/logs/vbd/e2v2_tactile_raw/E15_F1.2_a10_s2.npz"
+  ]
 }
