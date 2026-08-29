@@ -35,3 +35,10 @@ UNAVAILABLE: ATTR=GEOMETRY_ONLY, per-pad contact forces not attributable
 | 20 | 12.969905989510027 | 10.43810297995514 | 10.495177499177146 | 0 | 17.0029791469565 |
 | 30 | None | 8.502785816339042 | 8.444684233266713 | 0 | 16.997752293863993 |
 
+
+## Falsifier (3-seed endpoint non-overlap) -- PASS
+Tactile proxy = pad-frame contact-centroid excursion (mm). Endpoints E15/F1.2, a=1 vs a=10, 3 seeds each:
+- a=1 (realized ~0.68 m/s^2): centroid excursion [0.25, 0.30, 0.29] mm -> range 0.25-0.30
+- a=10 (realized ~6.4 m/s^2): centroid excursion [9.15, 9.19, 9.07] mm -> range 9.07-9.19
+STRICT NON-OVERLAP: True (9.07 > 0.30). Signed median difference: +8.86 mm (a=10 - a=1).
+Conclusion: the geometry-only tactile proxy is a reproducible, strongly accel-sensitive signal. Peak tangential/normal ratio: UNAVAILABLE (ATTR=GEOMETRY_ONLY; never fabricated).
