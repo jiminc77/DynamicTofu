@@ -609,6 +609,8 @@ def run_confirm(resume=False):
     try:
         axis_map = load_axis_map(axis_path)
         plan = json.loads(plan_path.read_text())
+        if isinstance(plan, dict):
+            plan = plan.get("cells", [])  # w1_confirm_list.json is {schema, coverage, cells:[...]}
         if not isinstance(plan, list):
             raise ValueError("confirmation plan must be a list")
         grid = expand_confirm_plan(plan)
