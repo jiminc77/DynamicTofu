@@ -46,7 +46,9 @@ Frozen W1/W2/W3 results generated from the committed receipts. Labels: **I** = i
 | E15 intact cells | 5 | 4 | 0 | 0 | 0 | 0 |
 | E25 intact cells | 5 | 4 | 1 | 0 | 0 | 0 |
 
-The within-rig reference therefore contracts as E7 **3 → 2 → 0**, E15 **5 → 4 → 0**, and E25 **5 → 4 → 1 → 0** as realized acceleration increases.
+The within-rig reference therefore contracts as E7 **3 → 2 → 0**, E15 **5 → 4 → 0**, and E25 **5 → 4 → 1 → 0** as realized acceleration increases (OBSERVED; labels are 3-seed-confirmed, 0 UNRESOLVED).
+
+**Pre-registered classifier verdict = INCONCLUSIVE (result is DESCRIPTIVE/PROVISIONAL, not P-A CONTRACTION).** Per PREREG_W1.md, uncertified evidence never supports the classifier and the classifier order begins INCONCLUSIVE. All 126 cells fail VG certification via vg2 (*zero record-dropout substeps per pad*) alone — a bar not achievable with VBD soft-contact flicker (even intact cells drop ~11–15% of substeps), whereas vg1 relative displacement is met (0.07–0.12 mm ≤ 0.5 mm). The contraction above is thus reported as observed/descriptive; the formal classifier is INCONCLUSIVE pending an external ruling that amends the vg2 certification rule or root-causes vg2. Escalated (see HANDOFF_STATE Unresolved).
 
 **Known F0.8 rig offset:** the frozen quasi-static band remains valid for its rig. The W1 phase diagram is internally consistent on the W1 rig, and contraction is measured within-rig against the W1 `a=1` row rather than against the frozen band.
 
