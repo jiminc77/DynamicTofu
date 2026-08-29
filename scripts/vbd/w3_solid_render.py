@@ -7,6 +7,8 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import inspect
+import json
 import shutil
 import subprocess
 import sys
@@ -33,6 +35,7 @@ PAD_HALF_EXTENTS = np.array((0.022, 0.006, 0.022))
 # visually joins the pads; the real palm body pose still drives its placement.
 PALM_PROXY_HALF_EXTENTS = np.array((0.008, 0.060, 0.008))
 GROUND_Z = 0.0
+EXPECTED_DENSE_FRAMES = 696  # 11.6 s * 60 simulation frames/s
 BOX_FACES = np.array(((0, 1, 3, 2), (4, 6, 7, 5), (0, 4, 5, 1),
                       (2, 3, 7, 6), (0, 2, 6, 4), (1, 5, 7, 3)))
 
@@ -77,7 +80,8 @@ def _box(pose: np.ndarray, half: np.ndarray) -> np.ndarray:
     return signs * half @ _rotation(pose[3:]).T + pose[:3]
 
 
-def _add_solid(ax, triangles: np.ndarray, view: str, base=(0.91, 0.72, 0.30)) -> None:
+def _add_solid(ax, triangles: np.ndarray, view: str, base=(0.91, 0.72, 0.30),
+               zorder: int = 1) -> None:
     direction = np.array((0.0, 1.0, 0.0)) if view == "side" else np.array((-1.0, 0.0, 0.0))
     depth = triangles.mean(axis=1) @ direction
     order = np.argsort(depth)  # far to near for painter's algorithm
@@ -86,7 +90,8 @@ def _add_solid(ax, triangles: np.ndarray, view: str, base=(0.91, 0.72, 0.30)) ->
     light = np.clip(0.35 + 0.65 * np.abs(normals @ np.array((0.35, -0.45, 0.82))), 0.25, 1.0)
     colors = np.clip(np.asarray(base)[None, :] * light[:, None], 0, 1)
     ax.add_collection3d(Poly3DCollection(triangles[order], facecolors=colors[order],
-                                         edgecolors=(0.28, 0.20, 0.08, 0.20), linewidths=0.18))
+                                         edgecolors=(0.28, 0.20, 0.08, 0.20),
+                                         linewidths=0.18, zorder=zorder))
 
 
 def _draw_frame(snapshot: Path, boundary: np.ndarray, output: Path) -> None:
@@ -106,11 +111,18 @@ def _draw_frame(snapshot: Path, boundary: np.ndarray, output: Path) -> None:
     limits = ((xmid-span/2, xmid+span/2), (-0.085, 0.085), (-0.008, 0.115))
     fig = plt.figure(figsize=(12, 5), dpi=120, facecolor="#101218")
     for number, (view, title) in enumerate((("side", "SIDE  x–z"), ("front", "FRONT  y–z")), 1):
-        ax = fig.add_subplot(1, 2, number, projection="3d", facecolor="#101218")
-        _add_solid(ax, tofu, view)
+        ax = fig.add_subplot(1, 2, number, projection="3d",
+                             facecolor="#101218", computed_zorder=False)
         for corners, color in boxes:
+            side = view == "side"
             ax.add_collection3d(Poly3DCollection(corners[BOX_FACES], facecolors=color,
-                                                 edgecolors=(0.08, 0.08, 0.10), linewidths=0.5))
+                                                 edgecolors=color if side else (0.08, 0.08, 0.10),
+                                                 linewidths=1.15 if side else 0.5,
+                                                 alpha=0.10 if side else 1.0,
+                                                 zorder=1 if side else 2))
+        # In side view the 44 mm near pad would occlude the 40 mm tofu. Draw
+        # translucent pad outlines first and force the shaded tofu above them.
+        _add_solid(ax, tofu, view, zorder=10 if view == "side" else 1)
         gx = np.linspace(*limits[0], 2); gy = np.linspace(*limits[1], 2)
         xx, yy = np.meshgrid(gx, gy)
         ax.plot_surface(xx, yy, np.full_like(xx, GROUND_Z), color=(0.25, 0.27, 0.30), alpha=0.45)
@@ -129,7 +141,9 @@ def _draw_frame(snapshot: Path, boundary: np.ndarray, output: Path) -> None:
 
 
 def render_scene(scene: str, boundary: np.ndarray) -> Path:
-    snapshots = sorted((OUT_DIR / f"w3_{scene}_snapshots").glob("f_*.npz"))
+    dense_dir = OUT_DIR / f"w3_{scene}_dense"
+    snapshot_dir = dense_dir if dense_dir.exists() else OUT_DIR / f"w3_{scene}_snapshots"
+    snapshots = sorted(snapshot_dir.glob("f_*.npz"))
     if not snapshots:
         raise FileNotFoundError(f"no frozen snapshots for {scene}")
     frame_dir = OUT_DIR / f"w3_{scene}_solid.png-seq"
@@ -145,12 +159,60 @@ def render_scene(scene: str, boundary: np.ndarray) -> Path:
         index = int(np.argmin(np.abs(np.asarray(times) - target)))
         shutil.copy2(frame_dir / f"{snapshots[index].stem}.png", key_dir / f"{name}.png")
     output = OUT_DIR / f"w3_{scene}_solid.mp4"
-    result = subprocess.run(("/usr/bin/ffmpeg", "-y", "-framerate", "30", "-i",
-                             str(frame_dir / "f_%04d.png"), "-c:v", "libx264",
+    # Dense captures are real 60 Hz simulation frames; ffmpeg drops alternate
+    # frames for a 30 fps presentation without changing physical playback time.
+    input_fps = "60" if snapshot_dir == dense_dir else "7.5"
+    result = subprocess.run(("/usr/bin/ffmpeg", "-y", "-framerate", input_fps, "-i",
+                             str(frame_dir / "f_%04d.png"), "-vf", "fps=30",
+                             "-c:v", "libx264",
                              "-pix_fmt", "yuv420p", str(output)), capture_output=True, text=True)
     if result.returncode:
         raise RuntimeError(f"ffmpeg failed for {scene}: {result.stderr[-1000:]}")
     return output
+
+
+def _dense_run_transport_cell():
+    """Clone the frozen runner in memory, changing only snapshot cadence 8 -> 1.
+
+    The source module remains untouched. The exact-match replacement fails
+    closed if its saving condition changes, rather than silently altering any
+    solver, material, contact, protocol, or judgment behavior.
+    """
+    from scripts.vbd import w1_transport
+
+    source = inspect.getsource(w1_transport.run_transport_cell)
+    old = "if snap_dir and frame_index % 8 == 0:"
+    if source.count(old) != 1:
+        raise RuntimeError("frozen run_transport_cell snapshot condition changed")
+    namespace = dict(w1_transport.__dict__)
+    exec(compile(source.replace(old, "if snap_dir and frame_index % 1 == 0:"),
+                 str(Path(w1_transport.__file__)), "exec"), namespace)
+    return namespace["run_transport_cell"]
+
+
+def dense_capture() -> None:
+    """Re-run the three frozen cells and save every real simulation frame."""
+    manifest = json.loads((OUT_DIR / "w3_manifest.json").read_text())
+    entries = {entry["scene"]: entry for entry in manifest["scenes"]}
+    run_transport_cell = _dense_run_transport_cell()
+    for scene in SCENES:
+        entry = entries[scene]
+        if not entry.get("label_reproduced") or entry["rerun_label"] != entry["source_final_band_label"]:
+            raise RuntimeError(f"{scene}: source manifest does not reproduce its label")
+        dense_dir = OUT_DIR / f"w3_{scene}_dense"
+        if dense_dir.exists():
+            shutil.rmtree(dense_dir)
+        dense_dir.mkdir(parents=True)
+        receipt = run_transport_cell(float(entry["E"]) * 1000.0, float(entry["F"]),
+                                     float(entry["a"]), int(entry["seed"]),
+                                     snap_dir=dense_dir)
+        if receipt["label"] != entry["source_final_band_label"]:
+            raise RuntimeError(
+                f"{scene}: dense rerun label {receipt['label']!r} != "
+                f"source label {entry['source_final_band_label']!r}"
+            )
+        count = len(list(dense_dir.glob("f_*.npz")))
+        print(f"{scene}: {count} dense simulation frames (maximum {EXPECTED_DENSE_FRAMES})")
 
 
 def main() -> int:
@@ -158,7 +220,12 @@ def main() -> int:
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--render", action="store_true", help="render all three scenes")
     group.add_argument("--scene", choices=SCENES, help="render one scene")
+    group.add_argument("--dense-capture", action="store_true",
+                       help="GPU rerun all frozen scenes, saving every simulation frame")
     args = parser.parse_args()
+    if args.dense_capture:
+        dense_capture()
+        return 0
     with np.load(TOPOLOGY) as topology:
         tets = topology["tet_idx"]
         n_particles = int(topology["n_particles"])
