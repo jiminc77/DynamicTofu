@@ -37,10 +37,17 @@ report, and wait — the fallback switch (to the Genesis stack) is decided exter
   Franka from the start, for downstream reusability) and lifted 5 cm without solver
   blow-up; `particle_Jp` readout works (a deliberate crush shows damage_fraction
   rising; a gentle hold does not); σ_Y ∈ {2000, 3333, 6000} Pa changes the crushing
-  force monotonically.
+  force monotonically. **Video evidence required (user order 2026-08-27): the
+  receipt ships rendered clips — (a) gentle grasp-and-lift, (b) deliberate crush
+  with Jp rising — ~5–10 s mp4 each at `reports/media/gn2_*.mp4`, plus 3–5 key
+  frames (png) per clip. The human verifies simulator quality frame by frame.
+  Rendering must not block physics: if the offscreen render path fights back,
+  deliver key frames from any working path and record the deviation.**
 - **G-N3 by 2026-08-30 noon** — one full E1 cell end-to-end: trapezoidal transport
   with reversal, judgment v1 labels emitted, per-trial JSON written, wall-time
   per trial measured and reported (this number sizes the sweep schedule).
+  **Video evidence required: one full-cell transport clip (mp4 at
+  `reports/media/gn3_*.mp4`) + key frames, same rules as G-N2.**
 
 ## Judgment v1 (pre-registered; no post-hoc widening of any window or threshold)
 

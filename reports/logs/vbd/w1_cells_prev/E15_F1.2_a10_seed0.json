@@ -1,0 +1,151 @@
+{
+  "E_pa": 15000.0,
+  "grip_force_n": 1.2,
+  "seed": 0,
+  "commanded_a_peak_m_s2": 10.0,
+  "tracking": {
+    "plateaus": {
+      "accel_out": {
+        "a_fit": 6.386358823094731,
+        "abs_err": 0.36136411769052695,
+        "n_samples": 6,
+        "r2": 0.9996483514986748
+      },
+      "decel_out": {
+        "a_fit": -6.450789315359612,
+        "abs_err": 0.3549210684640388,
+        "n_samples": 6,
+        "r2": 0.999319068980301
+      },
+      "accel_back": {
+        "a_fit": -6.366920471191089,
+        "abs_err": 0.36330795288089107,
+        "n_samples": 6,
+        "r2": 0.9989430557926353
+      },
+      "decel_back": {
+        "a_fit": 6.506709541592956,
+        "abs_err": 0.3493290458407044,
+        "n_samples": 6,
+        "r2": 0.9991465467079561
+      }
+    },
+    "max_abs_relative_error": 0.36330795288089107,
+    "samples_valid": true,
+    "pass": false,
+    "realized_accel_m_s2": 6.418574069227171
+  },
+  "realized_F_g_n": 0.0,
+  "slip3d_mm": 37.78340598268126,
+  "legacy_hold_slip_mm": 0.38101524114608765,
+  "dvf": 0.05273436958852975,
+  "damage_latched": true,
+  "label": "damage",
+  "p99_strain": 0.06970387256722879,
+  "peak_strain": 0.3557102382183075,
+  "per_phase_strain_maxima": {
+    "ramp": 0.12978339195251465,
+    "preload": 0.06995890289545059,
+    "lift": 0.06727764755487442,
+    "hold": 0.04471032693982124,
+    "accel_out": 0.27004364132881165,
+    "cruise_out": 0.288802832365036,
+    "decel_out": 0.28845205903053284,
+    "dwell": 0.10620572417974472,
+    "accel_back": 0.18385754525661469,
+    "cruise_back": 0.2824559807777405,
+    "decel_back": 0.3557102382183075,
+    "settle": 0.10612484067678452
+  },
+  "validity_gate": {
+    "summary": {
+      "per_pad": {
+        "left": {
+          "vg1_max_rel_disp_mm": 0.4966835379600525,
+          "vg2_zero_record_substeps": 717,
+          "vg3_overflow_substeps": 0,
+          "certified": false
+        },
+        "right": {
+          "vg1_max_rel_disp_mm": 0.4961085617542267,
+          "vg2_zero_record_substeps": 717,
+          "vg3_overflow_substeps": 0,
+          "certified": false
+        }
+      },
+      "cfl_max_substep_mm": 0.0
+    },
+    "certified": false
+  },
+  "health": {
+    "finite": true,
+    "finger_vy_hold_mean": 0.002176612615585327,
+    "contact_count_min": 0,
+    "cfl_max_substep_mm": 0.0,
+    "zero_command_realized_accel_magnitude": null
+  },
+  "phase_timestamps": {
+    "accel_out": {
+      "expected_s": 9.3,
+      "hit_s": 9.300000000000042,
+      "error_s": 4.085620730620576e-14
+    },
+    "cruise_out": {
+      "expected_s": 9.5,
+      "hit_s": 9.500000000000052,
+      "error_s": 5.1514348342607263e-14
+    },
+    "decel_out": {
+      "expected_s": 9.6,
+      "hit_s": 9.600000000000056,
+      "error_s": 5.684341886080802e-14
+    },
+    "dwell": {
+      "expected_s": 9.799999999999999,
+      "hit_s": 9.800000000000066,
+      "error_s": 6.750155989720952e-14
+    },
+    "accel_back": {
+      "expected_s": 10.1,
+      "hit_s": 10.100000000000081,
+      "error_s": 8.171241461241152e-14
+    },
+    "cruise_back": {
+      "expected_s": 10.299999999999999,
+      "hit_s": 10.300000000000091,
+      "error_s": 9.237055564881302e-14
+    },
+    "decel_back": {
+      "expected_s": 10.399999999999999,
+      "hit_s": 10.400000000000096,
+      "error_s": 9.769962616701378e-14
+    },
+    "settle": {
+      "expected_s": 10.599999999999998,
+      "hit_s": 10.600000000000106,
+      "error_s": 1.0835776720341528e-13
+    }
+  },
+  "git_sha": "a186cc660247648ae1608f434bec3c3489e97b6b",
+  "prereg_sha256": "47541607bf1487e01266efef5580dcbd8d163356a3c18ba9c4079c0708707446",
+  "frozen_config": {
+    "substeps": 80,
+    "friction_epsilon": 0.0002,
+    "mu_pair": 1.0,
+    "contact_ke": 1000.0,
+    "contact_kd": 1.0,
+    "soft_contact_margin": 0.001,
+    "cell_m": 0.005,
+    "particle_radius": 0.0025,
+    "correct_mass": true,
+    "nu": 0.45,
+    "E_pa": [
+      7000.0,
+      15000.0,
+      25000.0
+    ]
+  },
+  "frozen_check": true,
+  "rig_pre_edit_sha256": "11011fb9e53544d4da75f1ad1e17932ccfc9d867e81eb8c146eb994209156475",
+  "newton_commit": "b74df534"
+}
