@@ -1,0 +1,167 @@
+{
+  "scenes": [
+    {
+      "scene": "intact",
+      "E": 15,
+      "a": 1.0,
+      "F": 1.2,
+      "seed": 0,
+      "source_final_band_label": "intact",
+      "rerun_label": "intact",
+      "label_reproduced": true,
+      "realized_accel": 0.681,
+      "mp4": "reports/vbd/clips/w3_intact.mp4",
+      "key_frames": [
+        {
+          "path": "reports/vbd/clips/w3_intact_keys/grip.png",
+          "sha256": "b22139196d2118e94f3b69d412176efc55517a42174afb754d7d86f33c344667"
+        },
+        {
+          "path": "reports/vbd/clips/w3_intact_keys/lift.png",
+          "sha256": "4b44cdbddd93bea66d62bb8c56ebde110ffca8c15f01bec5c42ede4fd639eac0"
+        },
+        {
+          "path": "reports/vbd/clips/w3_intact_keys/hold.png",
+          "sha256": "2921488e1b743aeca2c0a4c4ae873e0b93657b56c0369c2ad426c7ac8c946561"
+        },
+        {
+          "path": "reports/vbd/clips/w3_intact_keys/accel_out_peak.png",
+          "sha256": "2921488e1b743aeca2c0a4c4ae873e0b93657b56c0369c2ad426c7ac8c946561"
+        },
+        {
+          "path": "reports/vbd/clips/w3_intact_keys/dwell.png",
+          "sha256": "b36ef8aba86677b5ef581f835097c257a1c25e4cd135cab05dbd7ba30adbebd7"
+        },
+        {
+          "path": "reports/vbd/clips/w3_intact_keys/return.png",
+          "sha256": "9eb4654a4a6e0261aa2307d3e8ec5e7b82760661360bd7f6d91a546bf28e7939"
+        },
+        {
+          "path": "reports/vbd/clips/w3_intact_keys/settle.png",
+          "sha256": "ce7368417c727cabcab7826bc9746ddea34b1ca34342f28e0a1e2336199db69f"
+        }
+      ],
+      "sha256": {
+        "mp4": "7beaeefa97e9274b55f6d41a21865b8f97880ca8cf9b0ecc44638e884fc285e9",
+        "key_frames": {
+          "grip.png": "b22139196d2118e94f3b69d412176efc55517a42174afb754d7d86f33c344667",
+          "lift.png": "4b44cdbddd93bea66d62bb8c56ebde110ffca8c15f01bec5c42ede4fd639eac0",
+          "hold.png": "2921488e1b743aeca2c0a4c4ae873e0b93657b56c0369c2ad426c7ac8c946561",
+          "accel_out_peak.png": "2921488e1b743aeca2c0a4c4ae873e0b93657b56c0369c2ad426c7ac8c946561",
+          "dwell.png": "b36ef8aba86677b5ef581f835097c257a1c25e4cd135cab05dbd7ba30adbebd7",
+          "return.png": "9eb4654a4a6e0261aa2307d3e8ec5e7b82760661360bd7f6d91a546bf28e7939",
+          "settle.png": "ce7368417c727cabcab7826bc9746ddea34b1ca34342f28e0a1e2336199db69f"
+        }
+      }
+    },
+    {
+      "scene": "slip",
+      "E": 15,
+      "a": 30.0,
+      "F": 1.2,
+      "seed": 0,
+      "source_final_band_label": "slip",
+      "rerun_label": "slip",
+      "label_reproduced": true,
+      "realized_accel": 19.846,
+      "mp4": "reports/vbd/clips/w3_slip.mp4",
+      "key_frames": [
+        {
+          "path": "reports/vbd/clips/w3_slip_keys/grip.png",
+          "sha256": "cbdfe0b89e0e4b0fa87396cf3afe2b70dabc2f975b873c7371b494f33ea3d8bb"
+        },
+        {
+          "path": "reports/vbd/clips/w3_slip_keys/lift.png",
+          "sha256": "ec412ca92a8e6d7112c52ed05d574be33e16e19ab973867b56950f01155f301a"
+        },
+        {
+          "path": "reports/vbd/clips/w3_slip_keys/hold.png",
+          "sha256": "62504d0e756ccaf77ba135be0023999e3d8befedd91ba5b04204e3c3c8ad0db8"
+        },
+        {
+          "path": "reports/vbd/clips/w3_slip_keys/accel_out_peak.png",
+          "sha256": "62504d0e756ccaf77ba135be0023999e3d8befedd91ba5b04204e3c3c8ad0db8"
+        },
+        {
+          "path": "reports/vbd/clips/w3_slip_keys/dwell.png",
+          "sha256": "62504d0e756ccaf77ba135be0023999e3d8befedd91ba5b04204e3c3c8ad0db8"
+        },
+        {
+          "path": "reports/vbd/clips/w3_slip_keys/return.png",
+          "sha256": "62504d0e756ccaf77ba135be0023999e3d8befedd91ba5b04204e3c3c8ad0db8"
+        },
+        {
+          "path": "reports/vbd/clips/w3_slip_keys/settle.png",
+          "sha256": "62504d0e756ccaf77ba135be0023999e3d8befedd91ba5b04204e3c3c8ad0db8"
+        }
+      ],
+      "sha256": {
+        "mp4": "22bc570186e2d4ed1cf234ec845abbb4f3da170677a3bc57f07d5dda7c42db1c",
+        "key_frames": {
+          "grip.png": "cbdfe0b89e0e4b0fa87396cf3afe2b70dabc2f975b873c7371b494f33ea3d8bb",
+          "lift.png": "ec412ca92a8e6d7112c52ed05d574be33e16e19ab973867b56950f01155f301a",
+          "hold.png": "62504d0e756ccaf77ba135be0023999e3d8befedd91ba5b04204e3c3c8ad0db8",
+          "accel_out_peak.png": "62504d0e756ccaf77ba135be0023999e3d8befedd91ba5b04204e3c3c8ad0db8",
+          "dwell.png": "62504d0e756ccaf77ba135be0023999e3d8befedd91ba5b04204e3c3c8ad0db8",
+          "return.png": "62504d0e756ccaf77ba135be0023999e3d8befedd91ba5b04204e3c3c8ad0db8",
+          "settle.png": "62504d0e756ccaf77ba135be0023999e3d8befedd91ba5b04204e3c3c8ad0db8"
+        }
+      }
+    },
+    {
+      "scene": "damage",
+      "E": 7,
+      "a": 5.0,
+      "F": 2.0,
+      "seed": 0,
+      "source_final_band_label": "damage",
+      "rerun_label": "damage",
+      "label_reproduced": true,
+      "realized_accel": 3.1825,
+      "mp4": "reports/vbd/clips/w3_damage.mp4",
+      "key_frames": [
+        {
+          "path": "reports/vbd/clips/w3_damage_keys/grip.png",
+          "sha256": "89cc101c8536d7471d96b9e18bac94d573c844d966d4ac626133bcb56777b5a3"
+        },
+        {
+          "path": "reports/vbd/clips/w3_damage_keys/lift.png",
+          "sha256": "63c779fd160de79f2aa3a46b0c7c2a48fa1ac62e4a351942d2c61d010ef24cc3"
+        },
+        {
+          "path": "reports/vbd/clips/w3_damage_keys/hold.png",
+          "sha256": "246eb6678a349c84a673b61f13d8b43313a60c61e25c793281ae3e3b36e81181"
+        },
+        {
+          "path": "reports/vbd/clips/w3_damage_keys/accel_out_peak.png",
+          "sha256": "246eb6678a349c84a673b61f13d8b43313a60c61e25c793281ae3e3b36e81181"
+        },
+        {
+          "path": "reports/vbd/clips/w3_damage_keys/dwell.png",
+          "sha256": "2f712f86b1a1f5a0ef49d50c394d711d178e0286e20e2e508c78c464f26d41a5"
+        },
+        {
+          "path": "reports/vbd/clips/w3_damage_keys/return.png",
+          "sha256": "3ce4db30e7c6fddb5deafbfd8adf115d74558a477d76ddd51e1c53755572b569"
+        },
+        {
+          "path": "reports/vbd/clips/w3_damage_keys/settle.png",
+          "sha256": "eb091fcd0b1649a41732efaf11a581a0e8b3771b3ba71a9340d0910905718726"
+        }
+      ],
+      "sha256": {
+        "mp4": "01a1916d76f119ba6f1bec98afc4c591da5c0c0b2fa1a41140064c82026dae4b",
+        "key_frames": {
+          "grip.png": "89cc101c8536d7471d96b9e18bac94d573c844d966d4ac626133bcb56777b5a3",
+          "lift.png": "63c779fd160de79f2aa3a46b0c7c2a48fa1ac62e4a351942d2c61d010ef24cc3",
+          "hold.png": "246eb6678a349c84a673b61f13d8b43313a60c61e25c793281ae3e3b36e81181",
+          "accel_out_peak.png": "246eb6678a349c84a673b61f13d8b43313a60c61e25c793281ae3e3b36e81181",
+          "dwell.png": "2f712f86b1a1f5a0ef49d50c394d711d178e0286e20e2e508c78c464f26d41a5",
+          "return.png": "3ce4db30e7c6fddb5deafbfd8adf115d74558a477d76ddd51e1c53755572b569",
+          "settle.png": "eb091fcd0b1649a41732efaf11a581a0e8b3771b3ba71a9340d0910905718726"
+        }
+      }
+    }
+  ],
+  "git_commit": "d5e02d4210cc8bfbdc064cd903fadc43f0e8453a"
+}
