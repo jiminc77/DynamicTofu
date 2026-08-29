@@ -1,0 +1,56 @@
+{
+  "verdict": "P-B CLOSURE",
+  "certification_rule": "finite AND vg3==0",
+  "present_certified_cells": "126/126",
+  "present_vg_strict_cells": 0,
+  "per_material": [
+    {
+      "E": 7,
+      "closure_commanded_a_star": 5.0,
+      "closure_realized_a_star": 3.1825,
+      "intact_cells_by_a": [
+        3,
+        2,
+        0,
+        0,
+        0,
+        0
+      ],
+      "persists": true
+    },
+    {
+      "E": 15,
+      "closure_commanded_a_star": 5.0,
+      "closure_realized_a_star": 3.1825,
+      "intact_cells_by_a": [
+        5,
+        4,
+        0,
+        0,
+        0,
+        0
+      ],
+      "persists": true
+    },
+    {
+      "E": 25,
+      "closure_commanded_a_star": 10.0,
+      "closure_realized_a_star": 6.4019,
+      "intact_cells_by_a": [
+        5,
+        4,
+        1,
+        0,
+        0,
+        0
+      ],
+      "persists": true
+    }
+  ],
+  "contraction_descriptive": {
+    "E7": "3->2->0",
+    "E15": "5->4->0",
+    "E25": "5->4->1->0"
+  },
+  "ruling_ref": "ralph/RULING-VG-20260830.md (Amendment 3)"
+}

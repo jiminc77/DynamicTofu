@@ -548,11 +548,12 @@
       "a5_F2"
     ],
     "failed": [],
-    "present_certified_cells": 0,
+    "present_certified_cells": 42,
+    "present_vg_strict_cells": 0,
     "planned_primary_cells": 42
   },
   "provenance": {
-    "git_sha": "592378df78f48d9e5cea96649ec16d7dee94aed0",
-    "prereg_sha256": "6ae3ed56859f875fc7862050eac6a10b9ff5287b9e23559d87c8e15a55f95821"
+    "git_sha": "c41ff21d13aae28effc79c033aa80bf53d80ad10",
+    "prereg_sha256": "c3bb02e33ceeeaf611bb0b934b4a78789f1086fd859d8d3d2886cd1d6560d00d"
   }
 }

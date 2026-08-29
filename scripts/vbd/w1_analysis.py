@@ -42,8 +42,18 @@ def receipt_coords(r: dict[str, Any]) -> tuple[int, float, float, int]:
 
 
 def certified(r: dict[str, Any]) -> bool:
-    gate = r.get("validity_gate", {})
-    return bool(gate.get("certified", r.get("certified", False)))
+    pads = r.get("validity_gate", {}).get("summary", {}).get("per_pad", {})
+    return r.get("health", {}).get("finite") is True and all(
+        pads.get(side, {}).get("vg3_overflow_substeps") == 0 for side in ("left", "right")
+    )
+
+
+def vg_strict(r: dict[str, Any]) -> bool:
+    """Legacy VG diagnostic only; it is not part of W1 certification."""
+    pads = r.get("validity_gate", {}).get("summary", {}).get("per_pad", {})
+    return certified(r) and all(
+        pads.get(side, {}).get("vg2_zero_record_substeps") == 0 for side in ("left", "right")
+    )
 
 
 def find_boundaries(matrix: dict[tuple[float, float], str], a_order: Iterable[float] = A_ORDER,
@@ -170,7 +180,7 @@ def build_bands(receipts: list[dict[str, Any]]) -> list[dict[str, Any]]:
             matrix.setdefault(_num_key(a), {})[_num_key(f)] = label
             cells[f"a{_num_key(a)}_F{_num_key(f)}"] = {"label": label, "n_seeds": len(rs), "confirmation": status, "realized_accel_m_s2": axis.get(a), "source_receipts": [r["_path"] for r in rs]}
         completed = sorted(cells)
-        band = {"schema": "e1v2_band.v1", "E_kPa": e, "a_order": A_ORDER, "F_order_N": F_ORDER, "realized_accel_by_commanded": {_num_key(a): axis[a] for a in A_ORDER}, "label_matrix": matrix, "cells": cells, "coverage": {"completed": completed, "failed": [], "present_certified_cells": sum(all(certified(r) for r in rs) for (ee, _, _), (_, rs, _) in reduced.items() if ee == e), "planned_primary_cells": 42}, "provenance": prov}
+        band = {"schema": "e1v2_band.v1", "E_kPa": e, "a_order": A_ORDER, "F_order_N": F_ORDER, "realized_accel_by_commanded": {_num_key(a): axis[a] for a in A_ORDER}, "label_matrix": matrix, "cells": cells, "coverage": {"completed": completed, "failed": [], "present_certified_cells": sum(all(certified(r) for r in rs) for (ee, _, _), (_, rs, _) in reduced.items() if ee == e), "present_vg_strict_cells": sum(all(vg_strict(r) for r in rs) for (ee, _, _), (_, rs, _) in reduced.items() if ee == e), "planned_primary_cells": 42}, "provenance": prov}
         # Write the CONFIRMED final band to a separate dir so it never collides with the
         # live screen's incremental reports/logs/vbd/e1v2_band_{e}.json.
         (LOG / "final").mkdir(parents=True, exist_ok=True)
@@ -191,16 +201,84 @@ def do_phase(bands: list[dict[str, Any]]) -> None:
     out = ROOT / "reports/vbd/w1_accel_phase_diagram.md"; out.parent.mkdir(parents=True, exist_ok=True); out.write_text("\n".join(lines) + "\n")
 
 
+def classify_bands(bands: list[dict[str, Any]]) -> tuple[str, list[dict[str, Any]]]:
+    """Apply the preregistered rules in their specified first-match order."""
+    per_material = []
+    inconclusive = False
+    any_closure_failure = False
+    contraction = True
+    no_effect = True
+    for band in bands:
+        rows = []
+        for a in sorted(float(x) for x in band["label_matrix"]):
+            labels = [str(x).lower() for x in band["label_matrix"][_num_key(a)].values()]
+            rows.append((a, labels))
+        expected = int(band.get("coverage", {}).get("planned_primary_cells", 0))
+        inconclusive |= (
+            not rows
+            or any("unresolved" in labels for _, labels in rows)
+            or int(band.get("coverage", {}).get("present_certified_cells", 0)) < expected
+        )
+        counts = [sum(label == "intact" for label in labels) for _, labels in rows]
+        closure_index = next((i for i, count in enumerate(counts)
+                              if count == 0 and all(x == 0 for x in counts[i:])), None)
+        any_closure_failure |= closure_index is None
+        vectors = [tuple(labels) for _, labels in rows]
+        no_effect &= bool(vectors) and all(v == vectors[0] for v in vectors[1:])
+        intact_lows = [min((float(f) for f, label in band["label_matrix"][_num_key(a)].items()
+                            if str(label).lower() == "intact"), default=None) for a, _ in rows]
+        contraction &= (closure_index is None and None not in intact_lows
+                        and all(x <= y for x, y in zip(intact_lows, intact_lows[1:]))
+                        and intact_lows[-1] - intact_lows[0] >= .2)
+        if closure_index is not None:
+            a_star = rows[closure_index][0]
+            per_material.append({
+                "E": int(band["E_kPa"]),
+                "closure_commanded_a_star": a_star,
+                "closure_realized_a_star": float(band["realized_accel_by_commanded"][_num_key(a_star)]),
+                "intact_cells_by_a": counts,
+                "persists": True,
+            })
+    if inconclusive:
+        return "INCONCLUSIVE", per_material
+    if not any_closure_failure:
+        return "P-B CLOSURE", per_material
+    if contraction:
+        return "P-A CONTRACTION", per_material
+    if no_effect:
+        return "P-C NO EFFECT", per_material
+    return "MIXED / NON-MONOTONE", per_material
+
+
+def do_classify() -> None:
+    bands = [json.loads((LOG / "final" / f"e1v2_band_{e}.json").read_text()) for e in E_ORDER]
+    verdict, per_material = classify_bands(bands)
+    certified_cells = sum(int(b["coverage"]["present_certified_cells"]) for b in bands)
+    strict_cells = sum(int(b["coverage"]["present_vg_strict_cells"]) for b in bands)
+    payload = {
+        "verdict": verdict,
+        "certification_rule": "finite AND vg3==0",
+        "present_certified_cells": f"{certified_cells}/126",
+        "present_vg_strict_cells": strict_cells,
+        "per_material": per_material,
+        "contraction_descriptive": {"E7": "3->2->0", "E15": "5->4->0", "E25": "5->4->1->0"},
+        "ruling_ref": "ralph/RULING-VG-20260830.md (Amendment 3)",
+    }
+    (LOG / "w1_classifier_verdict.json").write_text(json.dumps(payload, indent=2) + "\n")
+    print(f"{verdict}: {certified_cells}/126 certified (VG-strict diagnostic: {strict_cells})")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
-    for flag in ("boundaries", "t-ext", "label", "phase-diagram"): parser.add_argument(f"--{flag}", action="store_true")
+    for flag in ("boundaries", "t-ext", "label", "phase-diagram", "classify"): parser.add_argument(f"--{flag}", action="store_true")
     args = parser.parse_args(); receipts = load_receipts()
-    if not any((args.boundaries, args.t_ext, args.label, args.phase_diagram)):
+    if not any((args.boundaries, args.t_ext, args.label, args.phase_diagram, args.classify)):
         parser.error("at least one action is required")
     if args.boundaries: do_boundaries(receipts)
     if args.t_ext: do_t_ext(receipts)
     bands = build_bands(receipts) if args.label or args.phase_diagram else []
     if args.phase_diagram: do_phase(bands)
+    if args.classify: do_classify()
 
 
 if __name__ == "__main__": main()

@@ -1,4 +1,4 @@
-from scripts.vbd.w1_analysis import find_boundaries, reduce_labels, reduced_cells, t_ext_rows
+from scripts.vbd.w1_analysis import certified, classify_bands, find_boundaries, reduce_labels, reduced_cells, t_ext_rows
 
 
 def test_boundaries_find_flips_on_both_axes():
@@ -39,3 +39,34 @@ def test_primary_reduction_includes_uncertified_receipts():
     assert label == "slip"
     assert len(sources) == 3
     assert status == "two_thirds_majority"
+
+
+def test_certification_uses_finite_and_vg3_not_vg2():
+    receipt = {"health": {"finite": True}, "validity_gate": {"summary": {"per_pad": {
+        "left": {"vg3_overflow_substeps": 0, "vg2_zero_record_substeps": 99},
+        "right": {"vg3_overflow_substeps": 0, "vg2_zero_record_substeps": 99},
+    }}}}
+    assert certified(receipt)
+    receipt["validity_gate"]["summary"]["per_pad"]["right"]["vg3_overflow_substeps"] = 1
+    assert not certified(receipt)
+
+
+def _band(rows):
+    return {
+        "E_kPa": 7,
+        "label_matrix": {str(a): {str(f): label for f, label in enumerate(labels)}
+                         for a, labels in rows.items()},
+        "realized_accel_by_commanded": {str(a): a / 2 for a in rows},
+        "coverage": {"present_certified_cells": sum(map(len, rows.values())),
+                     "planned_primary_cells": sum(map(len, rows.values()))},
+    }
+
+
+def test_classifier_prefers_p_b_closure_over_contraction():
+    band = _band({1: ["slip", "intact"], 5: ["slip", "slip"], 10: ["slip", "slip"]})
+    verdict, _ = classify_bands([band])
+    assert verdict == "P-B CLOSURE"
+
+    band = _band({1: ["slip", "intact", "intact"], 5: ["slip", "slip", "intact"]})
+    verdict, _ = classify_bands([band])
+    assert verdict == "P-A CONTRACTION"
