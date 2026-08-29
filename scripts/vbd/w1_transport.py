@@ -62,6 +62,20 @@ def pending_screen_cells(grid, receipt_dir, resume):
     )]
 
 
+def expand_confirm_plan(plan):
+    """Expand confirmation coordinates into screen-compatible seed cells."""
+    expanded = []
+    for item in plan:
+        E = int(item["E_kPa"])
+        acceleration = float(item["commanded_a_peak_m_s2"])
+        force = float(item["grip_force_n"])
+        seeds = item["seeds_to_run"]
+        if not isinstance(seeds, list) or not seeds:
+            raise ValueError("each confirmation cell requires non-empty seeds_to_run")
+        expanded.extend((E, acceleration, force, int(seed)) for seed in seeds)
+    return expanded
+
+
 def screen_receipt_name(E_kpa, a, F, seed=0):
     return f"E{E_kpa}_F{F:g}_a{a:g}_s{seed}.json"
 
@@ -583,6 +597,43 @@ def run_screen(material=None, resume=False):
     return 0
 
 
+def run_confirm(resume=False):
+    axis_path = ROOT / "reports/logs/vbd/g_trk_axis.json"
+    plan_path = ROOT / "reports/logs/vbd/w1_confirm_list.json"
+    if not axis_path.exists():
+        print(f"STOP: missing passed G-TRK axis map: {axis_path}")
+        return 1
+    if not plan_path.exists():
+        print(f"STOP: missing confirmation plan: {plan_path}")
+        return 1
+    try:
+        axis_map = load_axis_map(axis_path)
+        plan = json.loads(plan_path.read_text())
+        if not isinstance(plan, list):
+            raise ValueError("confirmation plan must be a list")
+        grid = expand_confirm_plan(plan)
+    except (OSError, KeyError, TypeError, ValueError, RuntimeError) as exc:
+        print(f"STOP: invalid confirmation input: {exc}")
+        return 1
+    receipt_dir = ROOT / "reports/logs/vbd/w1_screen"
+    receipt_dir.mkdir(parents=True, exist_ok=True)
+    pending = pending_screen_cells(grid, receipt_dir, resume)
+    done = len(grid) - len(pending)
+    total = len(grid)
+    started = time.monotonic()
+    for E_kpa, acceleration, force, seed in pending:
+        raw = run_cell_isolated(E_kpa * 1000, force, acceleration, seed)
+        receipt = screen_cell_receipt(raw, axis_map)
+        path = receipt_dir / screen_receipt_name(E_kpa, acceleration, force, seed)
+        path.write_text(json.dumps(_json_safe(receipt), indent=2, allow_nan=False) + "\n")
+        done += 1
+        elapsed = time.monotonic() - started
+        print(f"CONFIRM E{E_kpa} a{acceleration:g} F{force:g} s{seed} -> "
+              f"{receipt['label']} realized={receipt['realized_accel_m_s2']:.4g} "
+              f"({done}/{total} done, {elapsed:.1f}s)")
+    return 0
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser()
     mode = parser.add_mutually_exclusive_group(required=True)
@@ -590,10 +641,13 @@ def main(argv=None):
     mode.add_argument("--tracking-ladder", action="store_true")
     mode.add_argument("--cell", nargs=4, metavar=("E_KPA", "F_N", "A", "SEED"))
     mode.add_argument("--screen", action="store_true")
+    mode.add_argument("--confirm", action="store_true")
     parser.add_argument("--noise-floor", action="store_true")
     parser.add_argument("--material", type=int, choices=(7, 15, 25))
     parser.add_argument("--resume", action="store_true")
     args = parser.parse_args(argv)
+    if args.confirm:
+        return run_confirm(args.resume)
     if args.screen:
         return run_screen(args.material, args.resume)
     if args.cell:

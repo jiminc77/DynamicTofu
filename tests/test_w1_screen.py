@@ -64,3 +64,20 @@ def test_realized_falls_back_to_axis_map():
     cell = RUNNER.screen_cell_receipt(_receipt(None), {10.0: 6.4019})
     assert cell["realized_accel_m_s2"] == 6.4019
     assert cell["realized_source"] == "axis_map"
+
+
+def test_confirm_plan_expansion_names_and_resume(tmp_path):
+    plan = [
+        {"E_kPa": 7, "commanded_a_peak_m_s2": 2.5,
+         "grip_force_n": 0.8, "seeds_to_run": [1, 2]},
+        {"E_kPa": 25, "commanded_a_peak_m_s2": 10,
+         "grip_force_n": 1.2, "seeds_to_run": [2]},
+    ]
+    grid = RUNNER.expand_confirm_plan(plan)
+    assert grid == [(7, 2.5, 0.8, 1), (7, 2.5, 0.8, 2),
+                    (25, 10.0, 1.2, 2)]
+    assert RUNNER.screen_receipt_name(*grid[0]) == "E7_F0.8_a2.5_s1.json"
+    existing = tmp_path / RUNNER.screen_receipt_name(*grid[1])
+    existing.write_text("{}")
+    assert RUNNER.pending_screen_cells(grid, tmp_path, True) == [grid[0], grid[2]]
+    assert RUNNER.pending_screen_cells(grid, tmp_path, False) == grid
