@@ -9,3 +9,13 @@ These scenes re-run selected cells from the final W1 bands with the frozen trans
 | damage | E7 | 5 | 2 | damage | damage | true | 3.183 | `reports/vbd/clips/w3_damage.mp4` |
 
 Each projection is the standard side `(y,z)` plus front `(x,z)` view. Key frames are under `reports/vbd/clips/w3_<scene>_keys/` at grip, lift, hold, accel-out peak, dwell, return, and settle boundaries. If ffmpeg/libx264 is unavailable, the PNG sequence remains authoritative and a key-frame contact sheet is emitted.
+
+## Solid-surface render (presentation)
+
+| scene | presentation render |
+|---|---|
+| intact | `reports/vbd/clips/w3_intact_solid.mp4` |
+| slip | `reports/vbd/clips/w3_slip_solid.mp4` |
+| damage | `reports/vbd/clips/w3_damage_solid.mp4` |
+
+Surface = boundary triangles of the frozen tet mesh, shaded by depth, physics unchanged (reused label-reproduced snapshots), same seed/config; `rerun_label==source` per `w3_manifest.json`. The two solid pads use the simulated box geometry `(hx, hy, hz) = (0.022, 0.006, 0.022) m`, and the ground is the simulated plane at `z=0`. Palm = presentation proxy, non-physical; only the two pads and the tofu are simulated. Each frame presents side `(x,z)`, looking along `-y`, beside front `(y,z)`, looking along `+x`; seven nearest-snapshot key frames are under `reports/vbd/clips/w3_<scene>_solid_keys/`.
