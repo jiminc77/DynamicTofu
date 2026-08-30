@@ -6,7 +6,9 @@ class is replaced process-locally with PandaRig.
 from __future__ import annotations
 
 import argparse
+import inspect
 import json
+import shutil
 import sys
 from pathlib import Path
 
@@ -18,18 +20,44 @@ sys.path.insert(0, str(ROOT))
 from scripts.vbd import w1_transport
 from src.vbd_rig_panda import PandaRig
 
+PANDA_DEMO_SCENES = (
+    {"scene": "intact", "E_kpa": 15.0, "F": 1.2, "a": 1.0, "seed": 0,
+     "expected_label": "intact"},
+    {"scene": "slip", "E_kpa": 15.0, "F": 1.2, "a": 30.0, "seed": 0,
+     "expected_label": "slip"},
+    {"scene": "damage", "E_kpa": 7.0, "F": 2.0, "a": 5.0, "seed": 0,
+     "expected_label": "damage"},
+)
+
+
+def _panda_pad_shapes(rig):
+    """Select the sole particle-colliding shape on each visualized finger."""
+    import newton
+
+    bodies = rig.model.shape_body.numpy()
+    flags = rig.model.shape_flags.numpy()
+    particle = int(newton.ShapeFlags.COLLIDE_PARTICLES)
+    left = np.flatnonzero((bodies == rig.b_left) & ((flags & particle) != 0))
+    right = np.flatnonzero((bodies == rig.b_right) & ((flags & particle) != 0))
+    if len(left) != 1 or len(right) != 1:
+        raise RuntimeError("expected exactly one particle-colliding pad per finger")
+    return int(left[0]), int(right[0])
+
 
 def run_panda_cell(E: float, F: float, a_peak: float, seed: int, couple: bool = True):
     import src.vbd_rig2 as frozen_rig
 
     original = frozen_rig.Vbd2Rig
+    original_pad_shapes = w1_transport._pad_shapes
     frozen_rig.Vbd2Rig = lambda cfg: PandaRig(cfg, couple=couple)
+    w1_transport._pad_shapes = _panda_pad_shapes
     try:
         receipt = w1_transport.run_transport_cell(
             E, F, a_peak, seed, substeps=80, cell_m=0.005
         )
     finally:
         frozen_rig.Vbd2Rig = original
+        w1_transport._pad_shapes = original_pad_shapes
     receipt["rig"] = "panda"
     receipt["finger_coupling_enabled"] = bool(couple)
     receipt["commanded_per_pad_force_n"] = float(F)
@@ -115,6 +143,105 @@ def run_grip_diagnostic(rig_name: str, couple: bool = True):
     return path, rows
 
 
+def _capture_runner(extended_slip=False):
+    """Clone the production loop, changing capture cadence/termination only."""
+    source = inspect.getsource(w1_transport.run_transport_cell)
+    cadence = "if snap_dir and frame_index % 8 == 0:"
+    if source.count(cadence) != 1:
+        raise RuntimeError("production snapshot condition changed; refusing dense capture")
+    source = source.replace(cadence, "if snap_dir and frame_index % 1 == 0:")
+    if extended_slip:
+        stop = ('            if gross_slip_mm(m, transport_reference) > GROSS_SLIP_MM:\n'
+                '                series.append(m)\n'
+                '                ejected = True\n'
+                '                if drop_t is None:\n'
+                '                    drop_t = float(m["t"])\n'
+                '                break')
+        keep = ('            if gross_slip_mm(m, transport_reference) > GROSS_SLIP_MM:\n'
+                '                if not ejected:\n'
+                '                    ejected = True\n'
+                '                    if drop_t is None:\n'
+                '                        drop_t = float(m["t"])\n'
+                '                # Dense render capture continues after first ejection.')
+        if source.count(stop) != 1:
+            raise RuntimeError("production ejection block changed; refusing extended capture")
+        source = source.replace(stop, keep)
+    namespace = dict(w1_transport.__dict__)
+    namespace["_pad_shapes"] = _panda_pad_shapes
+    exec(compile(source, str(Path(w1_transport.__file__)), "exec"), namespace)
+    return namespace["run_transport_cell"]
+
+
+def dense_capture():
+    """Capture every Panda simulation frame for the three fail-closed demos."""
+    import src.vbd_rig2 as frozen_rig
+
+    out = ROOT / "reports/vbd/clips/panda"
+    out.mkdir(parents=True, exist_ok=True)
+    metadata = {}
+
+    def panda_factory(cfg):
+        rig = PandaRig(cfg)
+        if not metadata:
+            metadata["body_index_to_label"] = {
+                str(i): label for i, label in enumerate(rig.model.body_label)
+            }
+            metadata["body_rows"] = {
+                "fr3_hand": rig.b_palm,
+                "fr3_leftfinger": rig.b_left,
+                "fr3_rightfinger": rig.b_right,
+                "carriage": rig.b_carriage,
+            }
+            metadata["pad_shape_half_extents_m"] = {
+                "hx": 0.022, "hy": 0.006, "hz": 0.022
+            }
+        return rig
+
+    normal_run = _capture_runner(False)
+    slip_run = _capture_runner(True)
+    original = frozen_rig.Vbd2Rig
+    entries = []
+    try:
+        frozen_rig.Vbd2Rig = panda_factory
+        for spec in PANDA_DEMO_SCENES:
+            scene = spec["scene"]
+            target = out / f"w3_{scene}_dense"
+            if target.exists():
+                shutil.rmtree(target)
+            target.mkdir(parents=True)
+            runner = slip_run if scene == "slip" else normal_run
+            receipt = runner(
+                spec["E_kpa"] * 1000.0, spec["F"], spec["a"], spec["seed"],
+                substeps=80, cell_m=0.005, snap_dir=target,
+            )
+            reproduced = receipt["label"] == spec["expected_label"]
+            frames = sorted(target.glob("f_*.npz"))
+            entry = {
+                **spec, "rerun_label": receipt["label"],
+                "label_reproduced": reproduced, "n_frames": len(frames),
+                "drop_t": receipt.get("drop_t"),
+                "capture_dir": str(target.relative_to(ROOT)),
+                "continued_after_ejection": scene == "slip",
+            }
+            entries.append(entry)
+            if not reproduced:
+                raise RuntimeError(
+                    f"{scene}: Panda dense label {receipt['label']!r} != "
+                    f"{spec['expected_label']!r}"
+                )
+    finally:
+        frozen_rig.Vbd2Rig = original
+    manifest = {
+        "schema": "w3_panda_manifest.v1", "rig": "panda",
+        "frame_contents": ["particle_q", "body_q", "t"],
+        **metadata, "scenes": entries,
+    }
+    path = out / "w3_panda_manifest.json"
+    path.write_text(json.dumps(manifest, indent=2, allow_nan=False) + "\n")
+    print(json.dumps(manifest, indent=2, allow_nan=False))
+    return path
+
+
 def write_receipt(receipt: dict) -> Path:
     out = ROOT / "reports/logs/vbd/panda"
     out.mkdir(parents=True, exist_ok=True)
@@ -133,11 +260,17 @@ def main() -> int:
     group.add_argument("--cell", nargs=4, metavar=("E_KPA", "F_N", "A", "SEED"))
     group.add_argument("--smoke", action="store_true")
     group.add_argument("--diag", choices=("panda", "frozen"))
+    group.add_argument("--dense-capture", action="store_true")
     parser.add_argument(
         "--no-couple", action="store_true",
         help="disable Panda per-substep symmetry projection for diagnosis",
     )
     args = parser.parse_args()
+    if args.dense_capture:
+        if args.no_couple:
+            parser.error("--no-couple is not valid for the fidelity capture")
+        dense_capture()
+        return 0
     if args.diag:
         if args.no_couple and args.diag != "panda":
             parser.error("--no-couple applies only to the Panda rig")

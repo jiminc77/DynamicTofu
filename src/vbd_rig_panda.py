@@ -23,6 +23,7 @@ import numpy as np
 import warp as wp
 
 import newton
+from newton._src.utils.mesh import load_meshes_from_file
 from src.vbd_rig2 import BLOCK_EDGE_M, FINGER_HALF, FPS, GRAB_Z, Vbd2Config, lame_from_E_nu
 
 BLOCK_BOTTOM_Z = 0.002
@@ -126,8 +127,16 @@ class PandaRig:
         self.b_left = body_by_label["fr3/fr3_leftfinger"]
         self.b_right = body_by_label["fr3/fr3_rightfinger"]
         shape_body = self.model.shape_body.numpy()
-        left_shapes = np.flatnonzero(shape_body == self.b_left)
-        right_shapes = np.flatnonzero(shape_body == self.b_right)
+        shape_flags = self.model.shape_flags.numpy()
+        # Visual-only Franka meshes share the finger bodies. Select the sole
+        # particle-colliding shape: the frozen replacement pad.
+        particle_flag = int(newton.ShapeFlags.COLLIDE_PARTICLES)
+        left_shapes = np.flatnonzero(
+            (shape_body == self.b_left) & ((shape_flags & particle_flag) != 0)
+        )
+        right_shapes = np.flatnonzero(
+            (shape_body == self.b_right) & ((shape_flags & particle_flag) != 0)
+        )
         if len(left_shapes) != 1 or len(right_shapes) != 1:
             raise RuntimeError("expected exactly one replacement pad shape per Panda finger")
         self.s_left = int(left_shapes[0])
@@ -262,6 +271,37 @@ class PandaRig:
         self.j_right = joints["fr3/fr3_finger_joint2"]
         left, right = bodies["fr3/fr3_leftfinger"], bodies["fr3/fr3_rightfinger"]
         self._panda_hand_label = "palm"  # fr3_hand collapsed into palm
+        # Real Franka render geometry, mounted wrist-up/fingers-down. The source
+        # URDF visual origins are identity; the pi-x wrist mount is the physical
+        # hand-to-carriage orientation. These shapes are visible sites only:
+        # neither rigid nor particle collision is enabled.
+        visual_cfg = newton.ModelBuilder.ShapeConfig(
+            density=0.0, is_visible=True, has_shape_collision=False,
+            has_particle_collision=False,
+        )
+        finger_visual_xform = wp.transform(
+            wp.vec3(0.0, 0.0, 0.0), wp.quat_rpy(np.pi, 0.0, 0.0)
+        )
+        # The hand link was collapsed into the z-stage palm. Reapply the
+        # authored 58.4 mm hand-to-finger datum after reversing the wrist mount,
+        # placing the white hand above the downward-extending finger meshes.
+        hand_visual_xform = wp.transform(
+            wp.vec3(0.0, 0.0, 0.0584), wp.quat_rpy(np.pi, 0.0, 0.0)
+        )
+        visual_root = asset / "meshes" / "robot_ee" / "franka_hand_white" / "visual"
+        visual_specs = (
+            (palm, visual_root / "hand.dae", hand_visual_xform, wp.vec3(0.88, 0.88, 0.88)),
+            (left, visual_root / "finger.dae", finger_visual_xform, wp.vec3(0.78, 0.78, 0.78)),
+            (right, visual_root / "finger.dae", finger_visual_xform, wp.vec3(0.78, 0.78, 0.78)),
+        )
+        for body, path, xform, color in visual_specs:
+            for mesh in load_meshes_from_file(
+                str(path), scale=(1.0, 1.0, 1.0), maxhullvert=None
+            ):
+                builder.add_shape_mesh(
+                    body, mesh=mesh, xform=xform, cfg=visual_cfg,
+                    color=color,
+                )
         # Finger origins are 58.4 mm above the hand frame. Offset the replacement
         # pads back to the hand origin, matching the frozen pad centre at GRAB_Z.
         pad_xform = wp.transform(
