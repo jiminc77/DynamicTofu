@@ -1,6 +1,6 @@
 import numpy as np
 
-from scripts.vbd.w3_pro_render import pad_contact_footprint
+from scripts.vbd.w3_pro_render import pad_contact_footprint, pad_taxel_depth
 
 
 def test_pad_frame_projection_threshold_and_centroid():
@@ -19,3 +19,8 @@ def test_pad_frame_projection_threshold_and_centroid():
 
     np.testing.assert_allclose(points, local[:2, (0, 2)])
     np.testing.assert_allclose(centroid, [0.0, 0.0], atol=1e-15)
+
+    grid, count = pad_taxel_depth(local + pose[:3], pose, 1.0)
+    assert count == 2
+    assert np.count_nonzero(grid) == 2
+    assert np.isclose(grid.max(), 0.003)

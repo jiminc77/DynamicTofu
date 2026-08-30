@@ -1,0 +1,11 @@
+{
+  "scene": "slip",
+  "frames": 696,
+  "t_first": 0.016666666666666666,
+  "t_last": 11.600000000000156,
+  "ejected": true,
+  "drop_t": 9.400000000000047,
+  "label": "slip",
+  "source_label": "slip",
+  "note": "render-only capture continued past the 15 mm gross-slip termination; per-step physics identical to the frozen runner; ejection event recorded at drop_t. No renderer-side temporal interpolation."
+}

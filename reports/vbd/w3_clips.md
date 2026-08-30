@@ -70,3 +70,41 @@ simulated tofu and two physical pads remain opaque. Thus presentation dressing
 cannot visually masquerade as, or fully occlude, simulated geometry. Video and
 key-frame PNGs use the same final HUD/tactile post-composite path; all seven
 keys are overwritten on each encode to prevent stale pre-overlay images.
+
+## Video v3 professor demo
+
+| scene | v3 render |
+|---|---|
+| intact | `reports/vbd/clips/w3_intact_v3.mp4` |
+| slip | `reports/vbd/clips/w3_slip_v3.mp4` |
+| damage | `reports/vbd/clips/w3_damage_v3.mp4` |
+
+V3 retains the fixed cameras, translucent presentation dressing, damage strain
+color, HUD, and frozen physics above. Slip alone uses the stored extended
+`w3_slip_dense_ext/` capture and its `capture_meta.json`: normal playback to
+9.25 s, labeled x4 frame-repetition slow motion over [9.25, 9.55] s, normal
+post-ejection playback through the recorded fall, then a 30-frame (0.5 s)
+freeze. There is no renderer interpolation and no physics recapture.
+The slip v3 viewpoint is presentation-only and two-phase: it retains the
+tight, fixed v2 event camera through 9.55 s, then eases over 0.40 s into a
+second fixed aftermath camera widened/panned around the recorded ejected-tofu
+travel. Only the viewpoint interpolates; every displayed physics state remains
+an unmodified captured frame.
+
+The v3 tactile display is an 8x8 taxel penetration-depth geometry proxy, never
+force or pressure (`ATTR=GEOMETRY_ONLY`). Boundary vertices within the same
+3 mm inner-face proximity band and 44x44 mm pad face are binned uniformly by
+pad-local x and z into 8 cells per axis. Each taxel stores
+`max(0, 0.003 - abs(local_y - sign*0.006))` in metres, reduced by maximum over
+vertices in that cell (zero when empty), and is shown with a monotonically
+increasing blue-to-yellow map normalized to the fixed [0, 0.6 mm] geometry-
+proxy color range (values above 0.6 mm clamp to yellow). The selected count and
+true, unscaled per-frame maximum depth remain numeric readouts.
+
+Each v3 clip starts with a 45-frame card and ends with a 30-frame outcome card:
+`W3 - INTACT` / `Same grip (1.2 N), slow transport (realized 0.7 m/s2) - safe`;
+`W3 - SLIP` / `Same grip (1.2 N), fast transport (realized 19.8 m/s2) - ejected
+0.1 s after motion starts`; `W3 - DAMAGE` / `Excessive grip (2.0 N) - material
+damage`. Smoke: `.venv-render/bin/python scripts/vbd/w3_pro_render.py --smoke
+--v3`; full encode: `.venv-render/bin/python scripts/vbd/w3_pro_render.py
+--render --v3`.
