@@ -215,6 +215,70 @@ def dense_capture() -> None:
         print(f"{scene}: {count} dense simulation frames (maximum {EXPECTED_DENSE_FRAMES})")
 
 
+def _extended_slip_run_transport_cell():
+    """Clone the frozen runner: dense cadence AND continue past gross-slip ejection.
+
+    Per-step physics is UNTOUCHED. Two output/termination-only changes:
+      (a) snapshot cadence 8 -> 1 (every real simulation frame);
+      (b) the render capture no longer TERMINATES the trial at the 15 mm
+          gross-slip threshold, so the real post-ejection separation and fall
+          are captured. The ejection event (ejected=True, drop_t) is still
+          recorded at first crossing, preserving the slip mechanism/label.
+    Fails closed if either exact source block changed.
+    """
+    from scripts.vbd import w1_transport
+
+    source = inspect.getsource(w1_transport.run_transport_cell)
+    cad = "if snap_dir and frame_index % 8 == 0:"
+    brk = ('            if gross_slip_mm(m, transport_reference) > GROSS_SLIP_MM:\n'
+           '                series.append(m)\n'
+           '                ejected = True\n'
+           '                if drop_t is None:\n'
+           '                    drop_t = float(m["t"])\n'
+           '                break')
+    brk_new = ('            if gross_slip_mm(m, transport_reference) > GROSS_SLIP_MM:\n'
+               '                if not ejected:\n'
+               '                    ejected = True\n'
+               '                    if drop_t is None:\n'
+               '                        drop_t = float(m["t"])\n'
+               '                # extended render capture: do not terminate at ejection')
+    if source.count(cad) != 1 or source.count(brk) != 1:
+        raise RuntimeError("frozen runner capture/termination block changed; refuse to guess")
+    modified = source.replace(cad, "if snap_dir and frame_index % 1 == 0:").replace(brk, brk_new)
+    namespace = dict(w1_transport.__dict__)
+    exec(compile(modified, str(Path(w1_transport.__file__)), "exec"), namespace)
+    return namespace["run_transport_cell"]
+
+
+def dense_capture_extended(scene: str = "slip") -> None:
+    """Capture the slip scene continued past ejection for the v3 aftermath/fall."""
+    manifest = json.loads((OUT_DIR / "w3_manifest.json").read_text())
+    entry = {e["scene"]: e for e in manifest["scenes"]}[scene]
+    if not entry.get("label_reproduced") or entry["rerun_label"] != entry["source_final_band_label"]:
+        raise RuntimeError(f"{scene}: source manifest does not reproduce its label")
+    run = _extended_slip_run_transport_cell()
+    dense_dir = OUT_DIR / f"w3_{scene}_dense_ext"
+    if dense_dir.exists():
+        shutil.rmtree(dense_dir)
+    dense_dir.mkdir(parents=True)
+    receipt = run(float(entry["E"]) * 1000.0, float(entry["F"]), float(entry["a"]),
+                  int(entry["seed"]), snap_dir=dense_dir)
+    if not receipt.get("ejected"):
+        raise RuntimeError(f"{scene}: extended capture did not reproduce ejection "
+                           f"(label={receipt['label']!r}); refuse to ship a non-reproducing clip")
+    frames = sorted(dense_dir.glob("f_*.npz"))
+    times = [float(np.load(p)["t"]) for p in frames]
+    meta = {"scene": scene, "frames": len(frames),
+            "t_first": times[0] if times else None, "t_last": times[-1] if times else None,
+            "ejected": bool(receipt["ejected"]), "drop_t": receipt["drop_t"],
+            "label": receipt["label"], "source_label": entry["source_final_band_label"],
+            "note": ("render-only capture continued past the 15 mm gross-slip termination; "
+                     "per-step physics identical to the frozen runner; ejection event recorded "
+                     "at drop_t. No renderer-side temporal interpolation.")}
+    (dense_dir / "capture_meta.json").write_text(json.dumps(meta, indent=2) + "\n")
+    print(json.dumps(meta, indent=2))
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group(required=True)
@@ -222,9 +286,14 @@ def main() -> int:
     group.add_argument("--scene", choices=SCENES, help="render one scene")
     group.add_argument("--dense-capture", action="store_true",
                        help="GPU rerun all frozen scenes, saving every simulation frame")
+    group.add_argument("--dense-capture-ext", action="store_true",
+                       help="GPU rerun the slip scene continued past ejection (v3 fall/aftermath)")
     args = parser.parse_args()
     if args.dense_capture:
         dense_capture()
+        return 0
+    if args.dense_capture_ext:
+        dense_capture_extended("slip")
         return 0
     with np.load(TOPOLOGY) as topology:
         tets = topology["tet_idx"]
