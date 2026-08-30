@@ -29,8 +29,9 @@ BLOCK_BOTTOM_Z = 0.002
 
 
 class PandaRig:
-    def __init__(self, cfg: Vbd2Config):
+    def __init__(self, cfg: Vbd2Config, couple: bool = True):
         self.cfg = cfg
+        self.couple = bool(couple)
         self.fps = FPS
         self.frame_dt = 1.0 / FPS
         self.sim_substeps = cfg.substeps
@@ -318,19 +319,20 @@ class PandaRig:
             self.collision_pipeline.collide(self.state_0, self.contacts)
             self.solver.step(self.state_0, self.state_1, self.control, self.contacts, self.sim_dt)
             self.state_0, self.state_1 = self.state_1, self.state_0
-            # Software symmetric coupling in SolverVBD's integrated maximal
-            # coordinates. Preserve the VBD-computed finger gap and move only
-            # the pair's common-mode y so its midpoint coincides with the hand.
-            # Never run FK here: joint_q is stale in pure maximal-coordinate VBD
-            # and would reset the entire transported articulation.
-            bq = self.state_0.body_q.numpy()
-            left_y = bq[self.b_left, 1]
-            right_y = bq[self.b_right, 1]
-            half_gap = 0.5 * (left_y - right_y)
-            palm_y = bq[self.b_palm, 1]
-            bq[self.b_left, 1] = palm_y + half_gap
-            bq[self.b_right, 1] = palm_y - half_gap
-            self.state_0.body_q.assign(bq)
+            if self.couple:
+                # Software symmetric coupling in SolverVBD's integrated maximal
+                # coordinates. Preserve the VBD-computed finger gap and move only
+                # the pair's common-mode y so its midpoint coincides with the hand.
+                # Never run FK here: joint_q is stale in pure maximal-coordinate VBD
+                # and would reset the entire transported articulation.
+                bq = self.state_0.body_q.numpy()
+                left_y = bq[self.b_left, 1]
+                right_y = bq[self.b_right, 1]
+                half_gap = 0.5 * (left_y - right_y)
+                palm_y = bq[self.b_palm, 1]
+                bq[self.b_left, 1] = palm_y + half_gap
+                bq[self.b_right, 1] = palm_y - half_gap
+                self.state_0.body_q.assign(bq)
             for fn in self._substep_hooks:
                 fn(self, k)
         self.sim_time += self.frame_dt
