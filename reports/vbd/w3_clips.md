@@ -101,10 +101,12 @@ increasing blue-to-yellow map normalized to the fixed [0, 0.6 mm] geometry-
 proxy color range (values above 0.6 mm clamp to yellow). The selected count and
 true, unscaled per-frame maximum depth remain numeric readouts.
 
-Each v3 clip starts with a 45-frame card and ends with a 30-frame outcome card:
-`W3 - INTACT` / `Same grip (1.2 N), slow transport (realized 0.7 m/s2) - safe`;
-`W3 - SLIP` / `Same grip (1.2 N), fast transport (realized 19.8 m/s2) - ejected
-0.1 s after motion starts`; `W3 - DAMAGE` / `Excessive grip (2.0 N) - material
-damage`. Smoke: `.venv-render/bin/python scripts/vbd/w3_pro_render.py --smoke
+Each v3 clip starts with a 45-frame title/message card and ends with a
+30-frame verdict-only card. Intros are `W3 - INTACT` / `Same grip (1.2 N),
+slow transport (realized 0.7 m/s2) - safe`; `W3 - SLIP` / `Same grip (1.2 N),
+fast transport (realized 19.8 m/s2) - ejected 0.1 s after motion starts`; and
+`W3 - DAMAGE` / `Excessive grip (2.0 N) - material damage`. Ends are
+`OUTCOME: SAFE`, `OUTCOME: EJECTED`, and `OUTCOME: DAMAGED`, respectively.
+Smoke: `.venv-render/bin/python scripts/vbd/w3_pro_render.py --smoke
 --v3`; full encode: `.venv-render/bin/python scripts/vbd/w3_pro_render.py
 --render --v3`.

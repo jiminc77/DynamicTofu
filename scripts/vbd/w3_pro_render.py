@@ -319,13 +319,19 @@ def mpl_frame(q,bodies,t,scene,meta,boundary,tets,inv_dm,camera,xlim,v3=False):
 
 
 CARD_TEXT = {
-    "intact": ("W3 - INTACT", "Same grip (1.2 N), slow transport (realized 0.7 m/s2) - safe"),
-    "slip": ("W3 - SLIP", "Same grip (1.2 N), fast transport (realized 19.8 m/s2) - ejected 0.1 s after motion starts"),
-    "damage": ("W3 - DAMAGE", "Excessive grip (2.0 N) - material damage"),
+    "intact": ("W3 - INTACT",
+               "Same grip (1.2 N), slow transport (realized 0.7 m/s2) - safe",
+               "OUTCOME: SAFE"),
+    "slip": ("W3 - SLIP",
+             "Same grip (1.2 N), fast transport (realized 19.8 m/s2) - ejected 0.1 s after motion starts",
+             "OUTCOME: EJECTED"),
+    "damage": ("W3 - DAMAGE",
+               "Excessive grip (2.0 N) - material damage",
+               "OUTCOME: DAMAGED"),
 }
 
 
-def message_card(text, subtitle="Professor demonstration"):
+def message_card(text, subtitle=None):
     im=Image.new("RGB",(WIDTH,HEIGHT),(239,242,245)); d=ImageDraw.Draw(im)
     try:
         title=ImageFont.truetype("DejaVuSans-Bold.ttf",54 if len(text)<25 else 40)
@@ -338,7 +344,13 @@ def message_card(text, subtitle="Professor demonstration"):
     for line,box in zip(lines,boxes):
         d.text(((WIDTH-(box[2]-box[0]))/2,y),line,font=title,fill=(25,34,45))
         y+=line_height
-    box=d.textbbox((0,0),subtitle,font=sub); d.text(((WIDTH-(box[2]-box[0]))/2,385),subtitle,font=sub,fill=(65,75,86))
+    if subtitle:
+        subtitle_lines=textwrap.wrap(subtitle,width=76)
+        y=405
+        for line in subtitle_lines:
+            box=d.textbbox((0,0),line,font=sub)
+            d.text(((WIDTH-(box[2]-box[0]))/2,y),line,font=sub,fill=(65,75,86))
+            y+=36
     return np.asarray(im)
 
 
@@ -383,8 +395,8 @@ def render_scene(scene, smoke=False, v3=False):
         composed=renderer(q,b,t,scene,meta,boundary,tets,inv_dm,frame_camera,frame_xlim,v3)
         Image.fromarray(composed).save(out)
         if v3:
-            Image.fromarray(message_card(CARD_TEXT[scene][0])).save(CLIPS/f"w3_{scene}_v3_intro_smoke.png")
-            Image.fromarray(message_card(CARD_TEXT[scene][1],"Outcome")).save(CLIPS/f"w3_{scene}_v3_end_smoke.png")
+            Image.fromarray(message_card(CARD_TEXT[scene][0],CARD_TEXT[scene][1])).save(CLIPS/f"w3_{scene}_v3_intro_smoke.png")
+            Image.fromarray(message_card(CARD_TEXT[scene][2])).save(CLIPS/f"w3_{scene}_v3_end_smoke.png")
             if scene=="slip":
                 q2,b2,t2=load_frame(files[-1]); cam2,limits2=view_at(t2)
                 aftermath_frame=renderer(q2,b2,t2,scene,meta,boundary,tets,inv_dm,cam2,limits2,v3)
@@ -409,7 +421,7 @@ def render_scene(scene, smoke=False, v3=False):
     times=[]
     try:
         if v3:
-            intro=message_card(CARD_TEXT[scene][0])
+            intro=message_card(CARD_TEXT[scene][0],CARD_TEXT[scene][1])
             for _ in range(45): writer.append_data(intro)
         for i in indices:
             q,b,t=load_frame(files[i]); frame_camera,frame_xlim=view_at(t)
@@ -418,7 +430,7 @@ def render_scene(scene, smoke=False, v3=False):
                 kp=keys/f"{name}.png"
                 if abs(t-kt)<=1/60+.0001: Image.fromarray(frame).save(kp)
         if v3:
-            ending=message_card(CARD_TEXT[scene][1],"Outcome")
+            ending=message_card(CARD_TEXT[scene][2])
             for _ in range(30): writer.append_data(ending)
     finally: writer.close()
     # Always rewrite every key from a fully composed nearest real frame. This
