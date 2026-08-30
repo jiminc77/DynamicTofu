@@ -283,11 +283,13 @@ class PandaRig:
             wp.vec3(0.0, 0.0, 0.0), wp.quat_rpy(np.pi, 0.0, 0.0)
         )
         # The Collada hand mesh's long/approach axis is +Y (despite the URDF
-        # link approach being +Z). Rotate mesh +Y onto world +Z and translate
-        # its lower rail to the finger roots. This keeps the wrist flange above
-        # the carriage-facing side instead of laying the mesh on its side.
+        # link approach being +Z). Rotate mesh +Y onto world +Z, then yaw +90
+        # degrees about world Z so its authored X finger-slot axis maps to the
+        # fingers' world-Y prismatic axis. quat_rpy composes this world yaw with
+        # the +90-degree X roll as qz(+pi/2) * qx(+pi/2).
         hand_visual_xform = wp.transform(
-            wp.vec3(0.0, 0.0, 0.1620), wp.quat_rpy(0.5 * np.pi, 0.0, 0.0)
+            wp.vec3(0.0, 0.0, 0.1620),
+            wp.quat_rpy(0.5 * np.pi, 0.0, 0.5 * np.pi),
         )
         visual_root = asset / "meshes" / "robot_ee" / "franka_hand_white" / "visual"
         visual_specs = (

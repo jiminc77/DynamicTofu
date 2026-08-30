@@ -338,6 +338,9 @@ def add_tactile_insets(rgb, q, bodies, boundary, taxels=False, per_frame=False, 
         caption = ("force: validated collector @ 40 iter" if force_mode else "(geometry proxy)")
         draw.text((x0 + 8, y0 + 24), caption,font=tiny if force_mode else small,
                   fill=(75, 82, 90, 255))
+        if force_mode:
+            draw.text((x0 + 8, y0 + 35), "arrows = shear on pad from tofu",
+                      font=tiny,fill=(75,82,90,255))
         if taxels and not force_mode:
             draw.text((x0 + 8, y0 + 38), "ATTR=GEOMETRY_ONLY", font=small,
                       fill=(75, 82, 90, 255))
@@ -355,7 +358,10 @@ def add_tactile_insets(rgb, q, bodies, boundary, taxels=False, per_frame=False, 
             if FRAME_FORCE is None:
                 raise RuntimeError("v8 frame lacks force collector arrays")
             side_name="left" if label=="L" else "right"
-            grid=FRAME_FORCE["fn_"+side_name]
+            stored_normal=FRAME_FORCE["fn_"+side_name]
+            # Collector normal components use world +y. Convert to each pad's
+            # own inward normal: left is +y, mirrored right is -y.
+            grid=np.maximum(stored_normal if label=="L" else -stored_normal,0)
             shear=FRAME_FORCE["ft_"+side_name]
             net=FRAME_FORCE["net_"+side_name]
             stops=np.array(((.267,.005,.329),(.190,.407,.556),(.208,.719,.473),(.993,.906,.144)))
