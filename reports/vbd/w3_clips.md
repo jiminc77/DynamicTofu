@@ -35,8 +35,9 @@ Only the two pad boxes are physical gripper colliders. The palm housing and
 finger brackets are explicitly **render-only presentation dressing**, rigidly
 attached to recorded palm/pad poses; no robot arm is shown. Damage is colored
 by per-vertex averaged maximum-principal Green strain (tet deformation
-gradient from the first dense frame as the rest reference), blue-to-red over
-the fixed [0, 0.3] range; intact and slip are neutral. Slip playback repeats
+gradient from the first dense frame as the rest reference), opaque tofu
+amber-to-red over [0.10, 0.30], with a nonlinear ramp that retains amber at
+mid strain and reserves red for failure; intact and slip are neutral. Slip playback repeats
 the real dense frames from 9.20–9.40 s four times and shows a `SLOW MOTION x4`
 tag. This changes playback timing only.
 
@@ -46,3 +47,20 @@ against `w3_manifest.json`. Render environment: `.venv-render`; install with
 `.venv-render/bin/pip install -r requirements-render.txt`. Smoke:
 `.venv-render/bin/python scripts/vbd/w3_pro_render.py --smoke`. Full render:
 `PYOPENGL_PLATFORM=egl .venv-render/bin/python scripts/vbd/w3_pro_render.py --render`.
+
+Every composed frame also has two tactile inset panels side by side inside the
+bottom-right corner. These are
+`ATTR=GEOMETRY_ONLY` geometric proxies, **not simulated pressure**. For each
+recorded pad pose, the inner face is the local plane
+`y = sign(tofu_center_local_y) * 0.006 m`. A boundary-surface vertex is selected
+exactly when its perpendicular distance
+`abs(vertex_local_y - inner_face_y) <= 0.003 m`, and both
+`abs(vertex_local_x) <= 0.022 m` and `abs(vertex_local_z) <= 0.022 m`.
+The frozen `soft_contact_margin=1e-3 m` from `src/frozen_config.py` was tested
+first but yielded no surface vertices because the recorded soft surface sits
+about 1.85 mm proud of the collider face. The documented 3 mm visualization
+proximity band is the smallest whole-millimetre band that gives a stable,
+non-empty intact-hold footprint; it does not alter contact physics.
+Selected vertices are projected into pad-local transport-x/gravity-z, with a
+centroid cross and selected-vertex count. The overlay is post-composited in 2D,
+so its behavior is identical for EGL and matplotlib rendering.

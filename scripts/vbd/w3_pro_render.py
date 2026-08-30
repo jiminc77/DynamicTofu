@@ -23,6 +23,10 @@ SCENES = ("intact", "slip", "damage")
 KEY_TIMES = {"grip": 1.80, "lift": 4.30, "hold": 9.30, "accel_out_peak": 9.40,
              "dwell": 9.80, "return": 10.10, "settle": 10.60}
 PAD_HALF = np.array((.022, .006, .022))
+SOFT_CONTACT_MARGIN = 1e-3  # frozen src/frozen_config.py value
+# The stored surface sits about 1.85 mm proud of the collider face even under
+# firm grip. 3 mm is the smallest millimetre band yielding a stable footprint.
+CONTACT_PROXIMITY_BAND = 3e-3
 BOX_FACES = np.array(((0,1,3,2),(4,6,7,5),(0,4,5,1),(2,3,7,6),(0,2,6,4),(1,5,7,3)))
 WIDTH, HEIGHT, FPS = 1280, 720, 30
 
@@ -69,12 +73,18 @@ def load_frame(path):
     with np.load(path) as d: return np.array(d["particle_q"]),np.array(d["body_q"]),float(d["t"])
 
 
-def camera_for(files):
+def camera_for(files, scene):
     xs=[]
     for p in files:
         with np.load(p) as d: xs.append(float(d["body_q"][1,0]))
-    lo,hi=min(xs)-.10,max(xs)+.10; mid=(lo+hi)/2; span=hi-lo
-    target=np.array((mid,0,.050)); eye=target+np.array((.12,-max(.34,span*1.35),.20))
+    # Damage has a longer actual track than the other scenes, so the old fixed
+    # 10 cm padding made it tiny. Preserve its whole recorded excursion but use
+    # only presentation clearance around that used segment.
+    margin = .025 if scene == "damage" else .10
+    lo,hi=min(xs)-margin,max(xs)+margin; mid=(lo+hi)/2; span=hi-lo
+    target=np.array((mid,0,.050))
+    distance = max(.34, span * (.90 if scene == "damage" else 1.35))
+    eye=target+np.array((.12,-distance,.20))
     return look_at(eye,target), (lo,hi), eye, target
 
 
@@ -92,6 +102,15 @@ def vertex_strain(q,tets,inv_dm):
     total=np.zeros(len(q)); count=np.zeros(len(q))
     for k in range(4): np.add.at(total,tets[:,k],s); np.add.at(count,tets[:,k],1)
     return total/np.maximum(count,1)
+
+
+def damage_colors(strain):
+    """Opaque tofu amber -> failure red over [0.10, 0.30] Green strain."""
+    mix = np.clip((np.asarray(strain) - .10) / .20, 0, 1) ** 1.5
+    amber = np.array((.91, .61, .16))
+    red = np.array((.78, .06, .045))
+    rgb = amber + mix[:, None] * (red - amber)
+    return np.column_stack((rgb, np.ones(len(rgb))))
 
 
 def egl_available():
@@ -117,12 +136,76 @@ def add_hud(rgb, scene, t, meta, slow):
     return np.asarray(im)
 
 
+def pad_contact_footprint(vertices, pad_pose, inner_face_sign,
+                          margin=CONTACT_PROXIMITY_BAND):
+    """Select the geometry-only contact proxy and return pad-local x/z + centroid.
+
+    The inner face is local y = ``inner_face_sign * PAD_HALF[1]``. A vertex is
+    selected when its perpendicular face distance is <= the frozen soft-contact
+    proximity band and its local x/z projection lies on the 44 x 44 mm face.
+    """
+    local = (np.asarray(vertices) - pad_pose[:3]) @ rotation(pad_pose[3:])
+    on_face = np.abs(local[:, 1] - inner_face_sign * PAD_HALF[1]) <= margin
+    on_pad = (np.abs(local[:, 0]) <= PAD_HALF[0]) & (np.abs(local[:, 2]) <= PAD_HALF[2])
+    points = local[on_face & on_pad][:, (0, 2)]
+    centroid = points.mean(axis=0) if len(points) else None
+    return points, centroid
+
+
+def add_tactile_insets(rgb, q, bodies, boundary):
+    """Post-composite two geometry-proxy tactile footprint panels onto RGB."""
+    im = Image.fromarray(rgb); draw = ImageDraw.Draw(im, "RGBA")
+    try:
+        font = ImageFont.truetype("DejaVuSans.ttf", 13)
+        small = ImageFont.truetype("DejaVuSans.ttf", 11)
+    except OSError:
+        font = small = ImageFont.load_default()
+    surface_vertices = q[np.unique(boundary)]
+    tofu_center = surface_vertices.mean(axis=0)
+    panel_size, edge_margin, gap = 180, 18, 12
+    right_x = WIDTH - edge_margin - panel_size
+    left_x = right_x - gap - panel_size
+    for label, body_index, x0 in (("L", 2, left_x), ("R", 3, right_x)):
+        pose = bodies[body_index]
+        tofu_local = (tofu_center - pose[:3]) @ rotation(pose[3:])
+        inner_face_sign = 1.0 if tofu_local[1] >= 0 else -1.0
+        points, centroid = pad_contact_footprint(surface_vertices, pose, inner_face_sign)
+        y0, size = HEIGHT - edge_margin - panel_size, panel_size
+        draw.rounded_rectangle((x0, y0, x0 + size, y0 + size), 9,
+                               fill=(255, 255, 255, 232), outline=(45, 55, 65, 180), width=2)
+        draw.text((x0 + 8, y0 + 7), f"{label} pad contact footprint", font=font, fill=(20, 28, 36, 255))
+        draw.text((x0 + 8, y0 + 24), "(geometry proxy)", font=small, fill=(75, 82, 90, 255))
+        left, top, side = x0 + 31, y0 + 48, 116
+        draw.rectangle((left, top, left + side, top + side), fill=(231, 238, 244, 245),
+                       outline=(55, 65, 75, 220), width=1)
+        draw.line((left, top + side, left + side, top + side), fill=(20, 30, 40), width=2)
+        draw.line((left, top, left, top + side), fill=(20, 30, 40), width=2)
+        draw.text((left + side - 9, top + side + 2), "x", font=small, fill=(20, 30, 40))
+        draw.text((left - 13, top - 5), "z", font=small, fill=(20, 30, 40))
+        def pixel(p):
+            return (left + (p[0] / (.044) + .5) * side,
+                    top + (1 - (p[1] / (.044) + .5)) * side)
+        for point in points:
+            px, py = pixel(point)
+            draw.ellipse((px - 3, py - 3, px + 3, py + 3), fill=(25, 115, 190, 185))
+        if centroid is not None:
+            cx, cy = pixel(centroid)
+            draw.line((cx - 7, cy, cx + 7, cy), fill=(210, 30, 45, 255), width=2)
+            draw.line((cx, cy - 7, cx, cy + 7), fill=(210, 30, 45, 255), width=2)
+        draw.text((x0 + 150, y0 + 145), f"n={len(points)}", font=small, fill=(20, 28, 36, 255))
+    return np.asarray(im)
+
+
+def compose_overlays(rgb, q, bodies, boundary, scene, t, meta):
+    rgb = add_hud(rgb, scene, t, meta, scene == "slip" and 9.20 <= t <= 9.40)
+    return add_tactile_insets(rgb, q, bodies, boundary)
+
+
 def pyrender_frame(q,bodies,t,scene,meta,boundary,tets,inv_dm,camera,xlim):
     import pyrender, trimesh
     sc=pyrender.Scene(bg_color=(.95,.96,.97,1),ambient_light=(.42,.42,.42))
     if scene=="damage":
-        s=np.clip(vertex_strain(q,tets,inv_dm)/.30,0,1); import matplotlib
-        colors=(matplotlib.colormaps["coolwarm"](s)*255).astype(np.uint8)
+        colors=(damage_colors(vertex_strain(q,tets,inv_dm))*255).astype(np.uint8)
         tm=trimesh.Trimesh(q,boundary,vertex_colors=colors,process=False)
         mesh=pyrender.Mesh.from_trimesh(tm,smooth=True)
     else:
@@ -147,7 +230,7 @@ def pyrender_frame(q,bodies,t,scene,meta,boundary,tets,inv_dm,camera,xlim):
     sc.add(pyrender.PerspectiveCamera(yfov=np.deg2rad(34)),pose=camera)
     light=pyrender.DirectionalLight(color=np.ones(3),intensity=3.0); sc.add(light,pose=look_at(camera[:3,3],np.array((mid,0,.04))))
     r=pyrender.OffscreenRenderer(WIDTH,HEIGHT); rgb,_=r.render(sc,flags=pyrender.RenderFlags.RGBA); r.delete()
-    return add_hud(rgb[:,:,:3],scene,t,meta,scene=="slip" and 9.20<=t<=9.40)
+    return compose_overlays(rgb[:,:,:3], q, bodies, boundary, scene, t, meta)
 
 
 def mpl_frame(q,bodies,t,scene,meta,boundary,tets,inv_dm,camera,xlim):
@@ -157,7 +240,7 @@ def mpl_frame(q,bodies,t,scene,meta,boundary,tets,inv_dm,camera,xlim):
     fig=plt.figure(figsize=(12.8,7.2),dpi=100,facecolor="#f3f5f7"); ax=fig.add_subplot(projection="3d",facecolor="#f3f5f7")
     tri=q[boundary]; depth=tri.mean(1)@np.array((.2,-1,.3)); order=np.argsort(depth)
     if scene=="damage":
-        s=vertex_strain(q,tets,inv_dm); c=plt.get_cmap("coolwarm")(np.clip(s[boundary].mean(1)/.3,0,1))
+        s=vertex_strain(q,tets,inv_dm); c=damage_colors(s[boundary].mean(1))
     else: c=np.tile((.91,.66,.25,1),(len(tri),1))
     ax.add_collection3d(Poly3DCollection(tri[order],facecolors=c[order],edgecolors="none"))
     for pose,half,col in ((bodies[2],PAD_HALF,"#2e507a"),(bodies[3],PAD_HALF,"#2e507a"),(bodies[1],np.array((.017,.07,.009)),"#353b45")):
@@ -166,7 +249,7 @@ def mpl_frame(q,bodies,t,scene,meta,boundary,tets,inv_dm,camera,xlim):
     for x in np.arange(np.floor(xlim[0]/.05)*.05,xlim[1]+.05,.05): ax.plot([x,x],[-.2,.2],[0,0],color="#aeb4ba",lw=.6)
     ax.set(xlim=xlim,ylim=(-.20,.20),zlim=(0,.18)); ax.view_init(22,-70); ax.set_box_aspect((xlim[1]-xlim[0],.4,.18)); ax.set_axis_off()
     fig.canvas.draw(); rgb=np.asarray(fig.canvas.buffer_rgba())[:,:,:3].copy(); plt.close(fig)
-    return add_hud(rgb,scene,t,meta,scene=="slip" and 9.20<=t<=9.40)
+    return compose_overlays(rgb, q, bodies, boundary, scene, t, meta)
 
 
 def render_scene(scene, smoke=False):
@@ -177,7 +260,7 @@ def render_scene(scene, smoke=False):
     if len(first)!=n: raise ValueError("topology/trajectory particle mismatch")
     boundary=boundary_triangles(tets,first)
     if len(boundary)!=768: raise ValueError(f"expected 768 boundary triangles, got {len(boundary)}")
-    inv_dm=rest_poses(tets,first); camera,xlim,eye,target=camera_for(files); egl,status=egl_available()
+    inv_dm=rest_poses(tets,first); camera,xlim,eye,target=camera_for(files,scene); egl,status=egl_available()
     renderer=pyrender_frame if egl else mpl_frame
     if smoke:
         indices=[min(len(files)-1,len(files)//2)]; out=CLIPS/f"w3_{scene}_pro_smoke.png"
