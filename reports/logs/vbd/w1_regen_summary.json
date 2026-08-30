@@ -1,0 +1,1269 @@
+{
+  "schema": "w1_regen_summary.v1",
+  "field_dir": "reports/logs/vbd/w1_strain_fields",
+  "n_done": 126,
+  "n_error": 0,
+  "n_label_mismatch": 0,
+  "cells": [
+    {
+      "cell": "E7_a1_F0.4",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 347.6
+    },
+    {
+      "cell": "E7_a1_F0.6",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 315.2
+    },
+    {
+      "cell": "E7_a1_F0.8",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 522.3
+    },
+    {
+      "cell": "E7_a1_F1",
+      "status": "ok",
+      "stored_label": "intact",
+      "relabel": "intact",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 581.1
+    },
+    {
+      "cell": "E7_a1_F1.2",
+      "status": "ok",
+      "stored_label": "intact",
+      "relabel": "intact",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0013020830852678595,
+      "wall_s": 661.9
+    },
+    {
+      "cell": "E7_a1_F1.5",
+      "status": "ok",
+      "stored_label": "intact",
+      "relabel": "intact",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 310.6
+    },
+    {
+      "cell": "E7_a1_F2",
+      "status": "ok",
+      "stored_label": "damage",
+      "relabel": "damage",
+      "label_reproduced": true,
+      "stored_dvf": 0.03613281061218705,
+      "regen_dvf": 0.03613281077872051,
+      "wall_s": 400.1
+    },
+    {
+      "cell": "E15_a1_F0.4",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 352.7
+    },
+    {
+      "cell": "E15_a1_F0.6",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 310.4
+    },
+    {
+      "cell": "E15_a1_F0.8",
+      "status": "ok",
+      "stored_label": "intact",
+      "relabel": "intact",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 313.5
+    },
+    {
+      "cell": "E15_a1_F1",
+      "status": "ok",
+      "stored_label": "intact",
+      "relabel": "intact",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 321.9
+    },
+    {
+      "cell": "E15_a1_F1.2",
+      "status": "ok",
+      "stored_label": "intact",
+      "relabel": "intact",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 342.4
+    },
+    {
+      "cell": "E15_a1_F1.5",
+      "status": "ok",
+      "stored_label": "intact",
+      "relabel": "intact",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 339.7
+    },
+    {
+      "cell": "E15_a1_F2",
+      "status": "ok",
+      "stored_label": "intact",
+      "relabel": "intact",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 332.7
+    },
+    {
+      "cell": "E25_a1_F0.4",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 401.2
+    },
+    {
+      "cell": "E25_a1_F0.6",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 315.5
+    },
+    {
+      "cell": "E25_a1_F0.8",
+      "status": "ok",
+      "stored_label": "intact",
+      "relabel": "intact",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 411.6
+    },
+    {
+      "cell": "E25_a1_F1",
+      "status": "ok",
+      "stored_label": "intact",
+      "relabel": "intact",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 451.0
+    },
+    {
+      "cell": "E25_a1_F1.2",
+      "status": "ok",
+      "stored_label": "intact",
+      "relabel": "intact",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 457.3
+    },
+    {
+      "cell": "E25_a1_F1.5",
+      "status": "ok",
+      "stored_label": "intact",
+      "relabel": "intact",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 306.5
+    },
+    {
+      "cell": "E25_a1_F2",
+      "status": "ok",
+      "stored_label": "intact",
+      "relabel": "intact",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 308.7
+    },
+    {
+      "cell": "E7_a2.5_F0.4",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.03645832627647776,
+      "regen_dvf": 0.03645832627647776,
+      "wall_s": 257.9
+    },
+    {
+      "cell": "E7_a2.5_F0.6",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 307.8
+    },
+    {
+      "cell": "E7_a2.5_F0.8",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 308.1
+    },
+    {
+      "cell": "E7_a2.5_F1",
+      "status": "ok",
+      "stored_label": "intact",
+      "relabel": "intact",
+      "label_reproduced": true,
+      "stored_dvf": 0.0006510416259006622,
+      "regen_dvf": 0.0006510416259006622,
+      "wall_s": 309.9
+    },
+    {
+      "cell": "E7_a2.5_F1.2",
+      "status": "ok",
+      "stored_label": "intact",
+      "relabel": "intact",
+      "label_reproduced": true,
+      "stored_dvf": 0.0013020831130234369,
+      "regen_dvf": 0.0013020831130234369,
+      "wall_s": 309.1
+    },
+    {
+      "cell": "E7_a2.5_F1.5",
+      "status": "ok",
+      "stored_label": "intact",
+      "relabel": "intact",
+      "label_reproduced": true,
+      "stored_dvf": 0.0026041662260468737,
+      "regen_dvf": 0.0026041662260468737,
+      "wall_s": 308.9
+    },
+    {
+      "cell": "E7_a2.5_F2",
+      "status": "ok",
+      "stored_label": "damage",
+      "relabel": "damage",
+      "label_reproduced": true,
+      "stored_dvf": 0.05208332857325179,
+      "regen_dvf": 0.054361974749626715,
+      "wall_s": 276.6
+    },
+    {
+      "cell": "E15_a2.5_F0.4",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 265.8
+    },
+    {
+      "cell": "E15_a2.5_F0.6",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 431.2
+    },
+    {
+      "cell": "E15_a2.5_F0.8",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 310.2
+    },
+    {
+      "cell": "E15_a2.5_F1",
+      "status": "ok",
+      "stored_label": "intact",
+      "relabel": "intact",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 310.1
+    },
+    {
+      "cell": "E15_a2.5_F1.2",
+      "status": "ok",
+      "stored_label": "intact",
+      "relabel": "intact",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 310.9
+    },
+    {
+      "cell": "E15_a2.5_F1.5",
+      "status": "ok",
+      "stored_label": "intact",
+      "relabel": "intact",
+      "label_reproduced": true,
+      "stored_dvf": 0.002604166475847071,
+      "regen_dvf": 0.002604166475847071,
+      "wall_s": 310.0
+    },
+    {
+      "cell": "E15_a2.5_F2",
+      "status": "ok",
+      "stored_label": "intact",
+      "relabel": "intact",
+      "label_reproduced": true,
+      "stored_dvf": 0.0013020831130234369,
+      "regen_dvf": 0.0013020831130234369,
+      "wall_s": 311.4
+    },
+    {
+      "cell": "E25_a2.5_F0.4",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 264.7
+    },
+    {
+      "cell": "E25_a2.5_F0.6",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 312.4
+    },
+    {
+      "cell": "E25_a2.5_F0.8",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 297.7
+    },
+    {
+      "cell": "E25_a2.5_F1",
+      "status": "ok",
+      "stored_label": "intact",
+      "relabel": "intact",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 419.7
+    },
+    {
+      "cell": "E25_a2.5_F1.2",
+      "status": "ok",
+      "stored_label": "intact",
+      "relabel": "intact",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 395.8
+    },
+    {
+      "cell": "E25_a2.5_F1.5",
+      "status": "ok",
+      "stored_label": "intact",
+      "relabel": "intact",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 441.1
+    },
+    {
+      "cell": "E25_a2.5_F2",
+      "status": "ok",
+      "stored_label": "intact",
+      "relabel": "intact",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 305.6
+    },
+    {
+      "cell": "E7_a5_F0.4",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0026041667811584237,
+      "regen_dvf": 0.0026041667811584237,
+      "wall_s": 250.2
+    },
+    {
+      "cell": "E7_a5_F0.6",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.008463540914663989,
+      "regen_dvf": 0.008463540914663989,
+      "wall_s": 258.5
+    },
+    {
+      "cell": "E7_a5_F0.8",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.012369789226777932,
+      "regen_dvf": 0.012369789226777932,
+      "wall_s": 308.3
+    },
+    {
+      "cell": "E7_a5_F1",
+      "status": "ok",
+      "stored_label": "damage",
+      "relabel": "damage",
+      "label_reproduced": true,
+      "stored_dvf": 0.016927083328129162,
+      "regen_dvf": 0.017903645864124677,
+      "wall_s": 307.0
+    },
+    {
+      "cell": "E7_a5_F1.2",
+      "status": "ok",
+      "stored_label": "damage",
+      "relabel": "damage",
+      "label_reproduced": true,
+      "stored_dvf": 0.05143228653101747,
+      "regen_dvf": 0.04947916184760452,
+      "wall_s": 307.3
+    },
+    {
+      "cell": "E7_a5_F1.5",
+      "status": "ok",
+      "stored_label": "damage",
+      "relabel": "damage",
+      "label_reproduced": true,
+      "stored_dvf": 0.08626301394691435,
+      "regen_dvf": 0.084960929973468,
+      "wall_s": 308.6
+    },
+    {
+      "cell": "E7_a5_F2",
+      "status": "ok",
+      "stored_label": "damage",
+      "relabel": "damage",
+      "label_reproduced": true,
+      "stored_dvf": 0.21191404702409714,
+      "regen_dvf": 0.21223956790643642,
+      "wall_s": 307.9
+    },
+    {
+      "cell": "E15_a5_F0.4",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 251.2
+    },
+    {
+      "cell": "E15_a5_F0.6",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 261.1
+    },
+    {
+      "cell": "E15_a5_F0.8",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0019531248221908316,
+      "regen_dvf": 0.0019531248221908316,
+      "wall_s": 306.4
+    },
+    {
+      "cell": "E15_a5_F1",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0026041665868693814,
+      "regen_dvf": 0.0026041665868693814,
+      "wall_s": 307.4
+    },
+    {
+      "cell": "E15_a5_F1.2",
+      "status": "ok",
+      "stored_label": "damage",
+      "relabel": "damage",
+      "label_reproduced": true,
+      "stored_dvf": 0.005208332674138368,
+      "regen_dvf": 0.005208332674138368,
+      "wall_s": 309.0
+    },
+    {
+      "cell": "E15_a5_F1.5",
+      "status": "ok",
+      "stored_label": "damage",
+      "relabel": "damage",
+      "label_reproduced": true,
+      "stored_dvf": 0.00878906151944749,
+      "regen_dvf": 0.008789061436180755,
+      "wall_s": 307.9
+    },
+    {
+      "cell": "E15_a5_F2",
+      "status": "ok",
+      "stored_label": "damage",
+      "relabel": "damage",
+      "label_reproduced": true,
+      "stored_dvf": 0.009114582290764454,
+      "regen_dvf": 0.005859374161261142,
+      "wall_s": 262.3
+    },
+    {
+      "cell": "E25_a5_F0.4",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 250.8
+    },
+    {
+      "cell": "E25_a5_F0.6",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 254.9
+    },
+    {
+      "cell": "E25_a5_F0.8",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 276.8
+    },
+    {
+      "cell": "E25_a5_F1",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 289.5
+    },
+    {
+      "cell": "E25_a5_F1.2",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 286.8
+    },
+    {
+      "cell": "E25_a5_F1.5",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0006510414871227747,
+      "regen_dvf": 0.0006510414871227747,
+      "wall_s": 310.1
+    },
+    {
+      "cell": "E25_a5_F2",
+      "status": "ok",
+      "stored_label": "intact",
+      "relabel": "intact",
+      "label_reproduced": true,
+      "stored_dvf": 0.0013020831130234369,
+      "regen_dvf": 0.0013020831130234369,
+      "wall_s": 310.3
+    },
+    {
+      "cell": "E7_a10_F0.4",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0071614586065523,
+      "regen_dvf": 0.007486979350113687,
+      "wall_s": 251.9
+    },
+    {
+      "cell": "E7_a10_F0.6",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0019531248499464091,
+      "regen_dvf": 0.0019531248499464091,
+      "wall_s": 252.3
+    },
+    {
+      "cell": "E7_a10_F0.8",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.004231770110387276,
+      "regen_dvf": 0.004557290964970973,
+      "wall_s": 253.2
+    },
+    {
+      "cell": "E7_a10_F1",
+      "status": "ok",
+      "stored_label": "damage",
+      "relabel": "damage",
+      "label_reproduced": true,
+      "stored_dvf": 0.010091144660226503,
+      "regen_dvf": 0.010416665320521159,
+      "wall_s": 252.4
+    },
+    {
+      "cell": "E7_a10_F1.2",
+      "status": "ok",
+      "stored_label": "damage",
+      "relabel": "damage",
+      "label_reproduced": true,
+      "stored_dvf": 0.04134114153772404,
+      "regen_dvf": 0.03906249655483894,
+      "wall_s": 253.0
+    },
+    {
+      "cell": "E7_a10_F1.5",
+      "status": "ok",
+      "stored_label": "damage",
+      "relabel": "damage",
+      "label_reproduced": true,
+      "stored_dvf": 0.20768227641410947,
+      "regen_dvf": 0.20572915120334057,
+      "wall_s": 255.9
+    },
+    {
+      "cell": "E7_a10_F2",
+      "status": "ok",
+      "stored_label": "damage",
+      "relabel": "damage",
+      "label_reproduced": true,
+      "stored_dvf": 0.6051432226245903,
+      "regen_dvf": 0.5992838457710381,
+      "wall_s": 255.4
+    },
+    {
+      "cell": "E15_a10_F0.4",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 252.1
+    },
+    {
+      "cell": "E15_a10_F0.6",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 252.1
+    },
+    {
+      "cell": "E15_a10_F0.8",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.001953125099746607,
+      "regen_dvf": 0.001953125099746607,
+      "wall_s": 253.3
+    },
+    {
+      "cell": "E15_a10_F1",
+      "status": "ok",
+      "stored_label": "damage",
+      "relabel": "damage",
+      "label_reproduced": true,
+      "stored_dvf": 0.008463540831397257,
+      "regen_dvf": 0.008138020115591447,
+      "wall_s": 254.5
+    },
+    {
+      "cell": "E15_a10_F1.2",
+      "status": "ok",
+      "stored_label": "damage",
+      "relabel": "damage",
+      "label_reproduced": true,
+      "stored_dvf": 0.01985676746666852,
+      "regen_dvf": 0.019205725618723236,
+      "wall_s": 253.2
+    },
+    {
+      "cell": "E15_a10_F1.5",
+      "status": "ok",
+      "stored_label": "damage",
+      "relabel": "damage",
+      "label_reproduced": true,
+      "stored_dvf": 0.029947912570984263,
+      "regen_dvf": 0.029622391716400565,
+      "wall_s": 256.6
+    },
+    {
+      "cell": "E15_a10_F2",
+      "status": "ok",
+      "stored_label": "damage",
+      "relabel": "damage",
+      "label_reproduced": true,
+      "stored_dvf": 0.10091144896148913,
+      "regen_dvf": 0.09928384454979275,
+      "wall_s": 288.9
+    },
+    {
+      "cell": "E25_a10_F0.4",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 251.6
+    },
+    {
+      "cell": "E25_a10_F0.6",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 250.9
+    },
+    {
+      "cell": "E25_a10_F0.8",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 251.9
+    },
+    {
+      "cell": "E25_a10_F1",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 252.7
+    },
+    {
+      "cell": "E25_a10_F1.2",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0009765625359955145,
+      "regen_dvf": 0.0009765624804843596,
+      "wall_s": 253.2
+    },
+    {
+      "cell": "E25_a10_F1.5",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0035807292616427833,
+      "regen_dvf": 0.0032552084903258185,
+      "wall_s": 255.2
+    },
+    {
+      "cell": "E25_a10_F2",
+      "status": "ok",
+      "stored_label": "damage",
+      "relabel": "damage",
+      "label_reproduced": true,
+      "stored_dvf": 0.009114582263008876,
+      "regen_dvf": 0.009765623888909539,
+      "wall_s": 259.8
+    },
+    {
+      "cell": "E7_a20_F0.4",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0006510417369229722,
+      "regen_dvf": 0.0006510417369229722,
+      "wall_s": 250.4
+    },
+    {
+      "cell": "E7_a20_F0.6",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0019531248777019867,
+      "regen_dvf": 0.0019531248777019867,
+      "wall_s": 250.7
+    },
+    {
+      "cell": "E7_a20_F0.8",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0039062498664262832,
+      "regen_dvf": 0.004231770721009981,
+      "wall_s": 253.4
+    },
+    {
+      "cell": "E7_a20_F1",
+      "status": "ok",
+      "stored_label": "damage",
+      "relabel": "damage",
+      "label_reproduced": true,
+      "stored_dvf": 0.006510415925939692,
+      "regen_dvf": 0.007161457524084777,
+      "wall_s": 251.2
+    },
+    {
+      "cell": "E7_a20_F1.2",
+      "status": "ok",
+      "stored_label": "damage",
+      "relabel": "damage",
+      "label_reproduced": true,
+      "stored_dvf": 0.023437497255667274,
+      "regen_dvf": 0.02180989364888265,
+      "wall_s": 251.9
+    },
+    {
+      "cell": "E7_a20_F1.5",
+      "status": "ok",
+      "stored_label": "damage",
+      "relabel": "damage",
+      "label_reproduced": true,
+      "stored_dvf": 0.12923176558622815,
+      "regen_dvf": 0.12923176519765006,
+      "wall_s": 251.1
+    },
+    {
+      "cell": "E7_a20_F2",
+      "status": "ok",
+      "stored_label": "damage",
+      "relabel": "damage",
+      "label_reproduced": true,
+      "stored_dvf": 0.45410154693042204,
+      "regen_dvf": 0.43912758617628195,
+      "wall_s": 253.9
+    },
+    {
+      "cell": "E15_a20_F0.4",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 250.7
+    },
+    {
+      "cell": "E15_a20_F0.6",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 250.1
+    },
+    {
+      "cell": "E15_a20_F0.8",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 250.3
+    },
+    {
+      "cell": "E15_a20_F1",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.002604166475847071,
+      "regen_dvf": 0.002604166475847071,
+      "wall_s": 250.5
+    },
+    {
+      "cell": "E15_a20_F1.2",
+      "status": "ok",
+      "stored_label": "damage",
+      "relabel": "damage",
+      "label_reproduced": true,
+      "stored_dvf": 0.00976562386115396,
+      "regen_dvf": 0.00976562386115396,
+      "wall_s": 250.8
+    },
+    {
+      "cell": "E15_a20_F1.5",
+      "status": "ok",
+      "stored_label": "damage",
+      "relabel": "damage",
+      "label_reproduced": true,
+      "stored_dvf": 0.022460934664160607,
+      "regen_dvf": 0.02213541380957691,
+      "wall_s": 252.1
+    },
+    {
+      "cell": "E15_a20_F2",
+      "status": "ok",
+      "stored_label": "damage",
+      "relabel": "damage",
+      "label_reproduced": true,
+      "stored_dvf": 0.06575520280043243,
+      "regen_dvf": 0.06998697329939779,
+      "wall_s": 252.8
+    },
+    {
+      "cell": "E25_a20_F0.4",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 251.0
+    },
+    {
+      "cell": "E25_a20_F0.6",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 252.3
+    },
+    {
+      "cell": "E25_a20_F0.8",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 250.8
+    },
+    {
+      "cell": "E25_a20_F1",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 252.1
+    },
+    {
+      "cell": "E25_a20_F1.2",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 250.9
+    },
+    {
+      "cell": "E25_a20_F1.5",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0029296880520757835,
+      "regen_dvf": 0.002929687968809051,
+      "wall_s": 252.4
+    },
+    {
+      "cell": "E25_a20_F2",
+      "status": "ok",
+      "stored_label": "damage",
+      "relabel": "damage",
+      "label_reproduced": true,
+      "stored_dvf": 0.007486978767246559,
+      "regen_dvf": 0.007486978822757714,
+      "wall_s": 250.3
+    },
+    {
+      "cell": "E7_a30_F0.4",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.001302083224045747,
+      "regen_dvf": 0.001302083224045747,
+      "wall_s": 250.8
+    },
+    {
+      "cell": "E7_a30_F0.6",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0006510416259006622,
+      "regen_dvf": 0.0006510416259006622,
+      "wall_s": 250.0
+    },
+    {
+      "cell": "E7_a30_F0.8",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.01367187322797985,
+      "regen_dvf": 0.013020831879634962,
+      "wall_s": 250.2
+    },
+    {
+      "cell": "E7_a30_F1",
+      "status": "ok",
+      "stored_label": "damage",
+      "relabel": "damage",
+      "label_reproduced": true,
+      "stored_dvf": 0.00520833286842741,
+      "regen_dvf": 0.005859374605350382,
+      "wall_s": 250.2
+    },
+    {
+      "cell": "E7_a30_F1.2",
+      "status": "ok",
+      "stored_label": "damage",
+      "relabel": "damage",
+      "label_reproduced": true,
+      "stored_dvf": 0.01106770716846644,
+      "regen_dvf": 0.011393227828761095,
+      "wall_s": 251.0
+    },
+    {
+      "cell": "E7_a30_F1.5",
+      "status": "ok",
+      "stored_label": "damage",
+      "relabel": "damage",
+      "label_reproduced": true,
+      "stored_dvf": 0.14322915944674708,
+      "regen_dvf": 0.16145832566585505,
+      "wall_s": 250.3
+    },
+    {
+      "cell": "E7_a30_F2",
+      "status": "ok",
+      "stored_label": "damage",
+      "relabel": "damage",
+      "label_reproduced": true,
+      "stored_dvf": 0.49381509907221716,
+      "regen_dvf": 0.4677734328704564,
+      "wall_s": 250.0
+    },
+    {
+      "cell": "E15_a30_F0.4",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 249.0
+    },
+    {
+      "cell": "E15_a30_F0.6",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 250.8
+    },
+    {
+      "cell": "E15_a30_F0.8",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 249.7
+    },
+    {
+      "cell": "E15_a30_F1",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0006510416259006622,
+      "regen_dvf": 0.0006510416259006622,
+      "wall_s": 250.2
+    },
+    {
+      "cell": "E15_a30_F1.2",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0013020833905792119,
+      "regen_dvf": 0.0013020833905792119,
+      "wall_s": 251.4
+    },
+    {
+      "cell": "E15_a30_F1.5",
+      "status": "ok",
+      "stored_label": "damage",
+      "relabel": "damage",
+      "label_reproduced": true,
+      "stored_dvf": 0.013997393971541237,
+      "regen_dvf": 0.013020831713101496,
+      "wall_s": 250.7
+    },
+    {
+      "cell": "E15_a30_F2",
+      "status": "ok",
+      "stored_label": "damage",
+      "relabel": "damage",
+      "label_reproduced": true,
+      "stored_dvf": 0.058919265964397886,
+      "regen_dvf": 0.05859374483225842,
+      "wall_s": 252.4
+    },
+    {
+      "cell": "E25_a30_F0.4",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 250.2
+    },
+    {
+      "cell": "E25_a30_F0.6",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 249.0
+    },
+    {
+      "cell": "E25_a30_F0.8",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 251.3
+    },
+    {
+      "cell": "E25_a30_F1",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 249.6
+    },
+    {
+      "cell": "E25_a30_F1.2",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 252.9
+    },
+    {
+      "cell": "E25_a30_F1.5",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0009765623139508946,
+      "regen_dvf": 0.0009765623972176271,
+      "wall_s": 252.0
+    },
+    {
+      "cell": "E25_a30_F2",
+      "status": "ok",
+      "stored_label": "slip",
+      "relabel": "slip",
+      "label_reproduced": true,
+      "stored_dvf": 0.0,
+      "regen_dvf": 0.0,
+      "wall_s": 250.4
+    }
+  ]
+}
