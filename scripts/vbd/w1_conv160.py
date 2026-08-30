@@ -23,6 +23,7 @@ Run (GPU):
 """
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 import time
@@ -96,11 +97,17 @@ def compare(base, conv):
     }
 
 
-def main() -> int:
+def run_sweep(substeps: int, convergence: bool, out_path, raw_name: str) -> int:
+    """Run the sentinel sweep at a substep count and compare to the stored 80 baseline.
+
+    substeps=160 -> the convergence test. substeps=80 -> the same-seed run-to-run
+    NONDETERMINISM FLOOR (re-run seed 0 at the frozen 80; deltas vs the stored
+    receipt bound the noise against which the 80->160 deltas are interpreted).
+    """
     results = []
-    if OUT.exists():
+    if out_path.exists():
         try:
-            results = json.loads(OUT.read_text()).get("cells", [])
+            results = json.loads(out_path.read_text()).get("cells", [])
         except (OSError, json.JSONDecodeError):
             results = []
     done = {(r["E_kPa"], r["a"], r["F"]) for r in results}
@@ -110,10 +117,11 @@ def main() -> int:
             continue
         t0 = time.monotonic()
         try:
-            conv = run_transport_cell(e * 1000.0, f, a, 0, substeps=160, convergence=True)
-            raw_dir = LOG / "g_conv160_raw"
+            conv = run_transport_cell(e * 1000.0, f, a, 0, substeps=substeps,
+                                      convergence=convergence)
+            raw_dir = LOG / raw_name
             raw_dir.mkdir(parents=True, exist_ok=True)
-            (raw_dir / f"E{e}_a{a:g}_F{f:g}_s160.json").write_text(
+            (raw_dir / f"E{e}_a{a:g}_F{f:g}_s{substeps}.json").write_text(
                 json.dumps(_json_safe(conv), indent=2, allow_nan=False) + "\n")
             base = load_baseline(e, a, f)
             entry = {"E_kPa": e, "a": a, "F": f, "status": "ok", **compare(base, conv),
@@ -125,22 +133,39 @@ def main() -> int:
         ok_cells = [r for r in results if r["status"] == "ok"]
         payload = {
             "schema": "g_conv160.v1",
-            "purpose": "temporal convergence: substeps 80 -> 160 on slip+damage "
-                       "boundary sentinels; frozen config otherwise (seed 0).",
+            "purpose": (f"substeps {substeps} vs stored 80 baseline on slip+damage "
+                        "boundary sentinels; frozen config otherwise (seed 0). "
+                        + ("substeps=80 is the same-seed run-to-run nondeterminism floor."
+                           if substeps == 80 else "substeps=160 is the convergence test.")),
+            "substeps": substeps,
             "acceptance": {"label_invariant": True, "realized_accel_rtol": ACCEL_RTOL,
                            "slip_residual_tol_mm": SLIP_TOL_MM, "dvf_atol": DVF_ATOL},
             "n_cells": len(SENTINELS), "n_done": len(ok_cells),
             "n_pass": sum(r.get("pass", False) for r in ok_cells),
+            "n_label_invariant": sum(r.get("label_invariant", False) for r in ok_cells),
             "all_pass": len(ok_cells) == len(SENTINELS) and all(r.get("pass") for r in ok_cells),
+            "all_label_invariant": len(ok_cells) == len(SENTINELS)
+            and all(r.get("label_invariant") for r in ok_cells),
             "cells": results,
         }
-        OUT.write_text(json.dumps(payload, indent=2) + "\n")
+        out_path.write_text(json.dumps(payload, indent=2) + "\n")
         st = "PASS" if entry.get("pass") else ("ERR" if entry["status"] == "error" else "FAIL")
-        print(f"E{e} a{a:g} F{f:g}: {st} label {entry.get('label_80')}->{entry.get('label_160')} "
-              f"a_rel={entry.get('accel_rel')} dDVF={entry.get('abs_dDVF')} "
-              f"{entry['wall_s']}s (elapsed {(time.monotonic()-started)/60:.1f}m)", flush=True)
+        print(f"s{substeps} E{e} a{a:g} F{f:g}: {st} label {entry.get('label_80')}->"
+              f"{entry.get('label_160')} a_rel={entry.get('accel_rel')} "
+              f"dDVF={entry.get('abs_dDVF')} {entry['wall_s']}s "
+              f"(elapsed {(time.monotonic()-started)/60:.1f}m)", flush=True)
     print("DONE", flush=True)
     return 0
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--floor", action="store_true",
+                    help="same-seed 80->80 nondeterminism floor (default: 80->160 convergence)")
+    args = ap.parse_args()
+    if args.floor:
+        return run_sweep(80, False, LOG / "g_conv160_floor.json", "g_conv160_floor_raw")
+    return run_sweep(160, True, OUT, "g_conv160_raw")
 
 
 if __name__ == "__main__":
