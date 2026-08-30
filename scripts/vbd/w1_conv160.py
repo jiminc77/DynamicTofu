@@ -32,7 +32,7 @@ ROOT = Path("/home/simx2204/Workspace/DynamicTofu")
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "scripts/vbd"))
 
-from w1_transport import run_transport_cell  # noqa: E402
+from w1_transport import _json_safe, run_transport_cell  # noqa: E402
 
 LOG = ROOT / "reports/logs/vbd"
 SCREEN = LOG / "w1_screen"
@@ -57,9 +57,17 @@ def load_baseline(e, a, f):
     return json.loads((SCREEN / screen_name(e, a, f)).read_text())
 
 
+def _realized(rec):
+    """Realized accel: top-level (screen wrapper) or nested tracking (raw runner)."""
+    if rec.get("realized_accel_m_s2") is not None:
+        return rec["realized_accel_m_s2"]
+    tracking = rec.get("tracking") or {}
+    return tracking.get("realized_accel_m_s2")
+
+
 def compare(base, conv):
     label_ok = base["label"] == conv["label"]
-    a0, a1 = base.get("realized_accel_m_s2"), conv.get("realized_accel_m_s2")
+    a0, a1 = _realized(base), _realized(conv)
     accel_rel = (abs(a1 - a0) / abs(a0)) if (a0 and a1 and a0 != 0) else None
     accel_ok = accel_rel is not None and accel_rel < ACCEL_RTOL
     slip = {}
@@ -103,6 +111,10 @@ def main() -> int:
         t0 = time.monotonic()
         try:
             conv = run_transport_cell(e * 1000.0, f, a, 0, substeps=160, convergence=True)
+            raw_dir = LOG / "g_conv160_raw"
+            raw_dir.mkdir(parents=True, exist_ok=True)
+            (raw_dir / f"E{e}_a{a:g}_F{f:g}_s160.json").write_text(
+                json.dumps(_json_safe(conv), indent=2, allow_nan=False) + "\n")
             base = load_baseline(e, a, f)
             entry = {"E_kPa": e, "a": a, "F": f, "status": "ok", **compare(base, conv),
                      "wall_s": round(time.monotonic() - t0, 1)}
