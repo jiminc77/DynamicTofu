@@ -282,11 +282,12 @@ class PandaRig:
         finger_visual_xform = wp.transform(
             wp.vec3(0.0, 0.0, 0.0), wp.quat_rpy(np.pi, 0.0, 0.0)
         )
-        # The hand link was collapsed into the z-stage palm. Reapply the
-        # authored 58.4 mm hand-to-finger datum after reversing the wrist mount,
-        # placing the white hand above the downward-extending finger meshes.
+        # The Collada hand mesh's long/approach axis is +Y (despite the URDF
+        # link approach being +Z). Rotate mesh +Y onto world +Z and translate
+        # its lower rail to the finger roots. This keeps the wrist flange above
+        # the carriage-facing side instead of laying the mesh on its side.
         hand_visual_xform = wp.transform(
-            wp.vec3(0.0, 0.0, 0.0584), wp.quat_rpy(np.pi, 0.0, 0.0)
+            wp.vec3(0.0, 0.0, 0.1620), wp.quat_rpy(0.5 * np.pi, 0.0, 0.0)
         )
         visual_root = asset / "meshes" / "robot_ee" / "franka_hand_white" / "visual"
         visual_specs = (

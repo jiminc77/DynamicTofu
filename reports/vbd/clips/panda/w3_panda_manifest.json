@@ -1,0 +1,70 @@
+{
+  "schema": "w3_panda_manifest.v1",
+  "rig": "panda",
+  "frame_contents": [
+    "particle_q",
+    "body_q",
+    "t"
+  ],
+  "body_index_to_label": {
+    "0": "carriage",
+    "1": "palm",
+    "2": "fr3/fr3_leftfinger",
+    "3": "fr3/fr3_rightfinger"
+  },
+  "body_rows": {
+    "fr3_hand": 1,
+    "fr3_leftfinger": 2,
+    "fr3_rightfinger": 3,
+    "carriage": 0
+  },
+  "pad_shape_half_extents_m": {
+    "hx": 0.022,
+    "hy": 0.006,
+    "hz": 0.022
+  },
+  "scenes": [
+    {
+      "scene": "intact",
+      "E_kpa": 15.0,
+      "F": 1.2,
+      "a": 1.0,
+      "seed": 0,
+      "expected_label": "intact",
+      "rerun_label": "intact",
+      "label_reproduced": true,
+      "n_frames": 696,
+      "drop_t": null,
+      "capture_dir": "reports/vbd/clips/panda/w3_intact_dense",
+      "continued_after_ejection": false
+    },
+    {
+      "scene": "slip",
+      "E_kpa": 15.0,
+      "F": 1.2,
+      "a": 30.0,
+      "seed": 0,
+      "expected_label": "slip",
+      "rerun_label": "slip",
+      "label_reproduced": true,
+      "n_frames": 696,
+      "drop_t": 9.416666666666714,
+      "capture_dir": "reports/vbd/clips/panda/w3_slip_dense",
+      "continued_after_ejection": true
+    },
+    {
+      "scene": "damage",
+      "E_kpa": 7.0,
+      "F": 2.0,
+      "a": 5.0,
+      "seed": 0,
+      "expected_label": "damage",
+      "rerun_label": "damage",
+      "label_reproduced": true,
+      "n_frames": 696,
+      "drop_t": null,
+      "capture_dir": "reports/vbd/clips/panda/w3_damage_dense",
+      "continued_after_ejection": false
+    }
+  ]
+}

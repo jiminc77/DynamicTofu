@@ -132,10 +132,11 @@ def camera_for(files, scene, version=2):
         zlo=max(0.,float(landing[:,1].min())-.025)
         zhi=max(.14,float(landing[:,1].max())+.04)
         mid=(lo+hi)/2
-        target=np.array((mid,0,(zlo+zhi)/2))
+        target=np.array((mid,0,(zlo+zhi)/2+.035))
         # Horizontal FOV is wider than vertical at 16:9. This distance keeps
         # both endpoints visible without making the grip event needlessly tiny.
-        eye=target+np.array((.14,-max(.65,(hi-lo)*.90),.24))
+        horizontal=max(.72,(hi-lo)*.98)/np.sqrt(2)
+        eye=target+np.array((-horizontal,-horizontal,.27))
         return look_at(eye,target),(lo,hi),eye,target
     xs=[]
     for p in files:
@@ -151,9 +152,11 @@ def camera_for(files, scene, version=2):
     eye=target+np.array((.12,-distance,.20))
     if version >= 5:
         # The genuine hand is substantially larger than the former cosmetic
-        # shell. Keep one fixed, wider world camera for the entire P-rig scene.
-        target=np.array((mid,0,.065))
-        eye=target+np.array((.14,-max(.48,span*1.5),.24))
+        # shell. Keep one fixed, front three-quarter world camera for the
+        # entire P-rig scene so the tofu/pad gap and finger length both read.
+        target=np.array((mid,0,.10))
+        horizontal=max(.60,span*1.7)/np.sqrt(2)
+        eye=target+np.array((-horizontal,-horizontal,.27))
     return look_at(eye,target), (lo,hi), eye, target
 
 
@@ -400,9 +403,9 @@ def pyrender_frame(q,bodies,t,scene,meta,boundary,tets,inv_dm,camera,xlim,versio
         for i,body_index in enumerate(geometry["shape_body"]):
             world_pose=transform(bodies[body_index]) @ transform(geometry["shape_transform"][i])
             color=geometry["shape_color"][i]
-            material=pyrender.MetallicRoughnessMaterial(
-                baseColorFactor=(*color,1),metallicFactor=.05,roughnessFactor=.34)
             if geometry["shape_kind"][i] == 8:
+                material=pyrender.MetallicRoughnessMaterial(
+                    baseColorFactor=(*color,1),metallicFactor=.05,roughnessFactor=.34)
                 va,vb=geometry["vertex_range"][i]
                 fa,fb=geometry["face_range"][i]
                 tm=trimesh.Trimesh(
@@ -411,6 +414,11 @@ def pyrender_frame(q,bodies,t,scene,meta,boundary,tets,inv_dm,camera,xlim,versio
                 sc.add(pyrender.Mesh.from_trimesh(tm,material=material,smooth=True),
                        pose=world_pose)
             elif geometry["shape_kind"][i] == 7:
+                # Sensor plates are deliberately matte; geometry and model
+                # attachment remain exactly the exported simulated boxes.
+                material=pyrender.MetallicRoughnessMaterial(
+                    baseColorFactor=(.02,.02,.02,1),emissiveFactor=color*.72,
+                    metallicFactor=0,roughnessFactor=1)
                 tm=trimesh.creation.box(extents=2*geometry["shape_scale"][i])
                 sc.add(pyrender.Mesh.from_trimesh(tm,material=material),pose=world_pose)
             else:
@@ -686,11 +694,12 @@ def main():
     ap.add_argument("--v4",action="store_true",help="v4 drift tracking, shell, and substep slow motion")
     ap.add_argument("--v5",action="store_true",help="real Panda-hand P-rig meshes and captures")
     ap.add_argument("--v6",action="store_true",help="draw exact visible shapes exported from PandaRig")
+    ap.add_argument("--v7",action="store_true",help="v7: vertical hand pose, three-quarter camera, matte pads (ships to user)")
     a=ap.parse_args()
     chosen=SCENES if a.render or a.smoke else ((a.smoke_scene,) if a.smoke_scene else (a.scene,))
     smoke=a.smoke or bool(a.smoke_scene)
     failures=[]
-    version=6 if a.v6 else (5 if a.v5 else (4 if a.v4 else (3 if a.v3 else 2)))
+    version=7 if a.v7 else (6 if a.v6 else (5 if a.v5 else (4 if a.v4 else (3 if a.v3 else 2))))
     for scene in chosen:
         try:
             result=render_scene(scene,smoke,version); print(f"{scene}: {result}")
