@@ -140,5 +140,58 @@ states from `w3_slip_slowmo_v4/` over [9.20, 9.60] s. The substep sequence is
 duration) and is
 shown one real state per output frame, with no renderer interpolation or frame
 repetition. Global 30 fps playback resumes afterward and the final captured
-state is frozen for 0.5 s. Both capture metadata receipts are validated
+receipts are validated
 fail-closed for the reproduced slip label and ejection.
+
+## Video v5 Panda-hand rig demo
+
+V5 writes `reports/vbd/clips/w3_<scene>_v5.mp4` and
+`w3_<scene>_v5_keys/` from the frozen P-rig captures under
+`reports/vbd/clips/panda/`. It retains the v4 per-frame-normalized 8x8
+geometry-only taxel insets, damage strain color, title/outcome cards, HUD,
+slip x4 frame-repetition slow motion, recorded aftermath, and final freeze.
+No physics state is interpolated. The camera is world-fixed for each scene:
+the P-rig has no common-mode y drift by construction, so drift tracking is
+neither needed nor applied.
+
+The renderer reads the `fr3_hand`, `fr3_leftfinger`, and `fr3_rightfinger`
+visual mesh filenames and visual origins from the downloaded
+`fr3_franka_hand.urdf`, loads the genuine Franka geometry with trimesh, and
+places each link at its recorded body pose using the manifest's body
+index-to-label map. The two opaque blue boxes are the actual sensor-pad
+colliders, mounted at the recorded finger poses with
+`PAD_MOUNT_Z_OFFSET` from `src/vbd_rig_panda.py`.
+
+The slip camera is one world-fixed, landing-inclusive view. Its horizontal
+bounds are derived from the union of the recorded hand x range and the
+post-ejection tofu x/z range, with presentation margin, so both the parked
+hand and landed block remain visible. Slip playback stops normal-speed
+aftermath at the first grounded frame whose tofu COM remains within 1 cm for
+0.5 s, then shows the 0.5 s freeze and outcome card; excess settled-track
+frames are omitted.
+
+Disclosure: Panda-hand rig (real Franka fr3 hand + 2 fingers on the x/z
+transport carriage); fingertips replaced with our sensor-format tactile pads;
+pad mount matched to the frozen engagement height (fidelity).
+
+Smoke: `.venv-render/bin/python scripts/vbd/w3_pro_render.py --smoke --v5`.
+
+## Video v6 model-shape Panda demo
+
+V6 writes `reports/vbd/clips/w3_<scene>_v6.mp4` and corresponding key
+directories. `scripts/vbd/export_panda_rig_geometry.py` builds the frozen
+`PandaRig` in `newton/.venv` and exports every body-attached visible model
+shape, including its body index, local shape transform, flags, color, and
+exact stored mesh vertices/faces or box half-extents, to
+`reports/vbd/clips/panda/panda_rig_geometry.npz`. The renderer composes each
+recorded body pose with that exported local shape transform. It does not load
+or orient a separate cosmetic hand overlay.
+
+Disclosure: real Franka fr3 hand/finger meshes ARE the simulated bodies (drawn
+from the model); contact is pads-only; pad mount matched to frozen engagement
+height (fidelity).
+
+All approved v5 presentation behavior is retained, including damage strain,
+cards, taxels, dense slip slow motion, the fixed landing-inclusive slip
+camera, settled-aftermath trim, and final freeze. Smoke:
+`.venv-render/bin/python scripts/vbd/w3_pro_render.py --smoke --v6`.

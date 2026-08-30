@@ -24,6 +24,7 @@ SCENES = ("intact", "slip", "damage")
 KEY_TIMES = {"grip": 1.80, "lift": 4.30, "hold": 9.30, "accel_out_peak": 9.40,
              "dwell": 9.80, "return": 10.10, "settle": 10.60}
 PAD_HALF = np.array((.022, .006, .022))
+PAD_MOUNT_Z_OFFSET = -0.0568  # src/vbd_rig_panda.py
 SOFT_CONTACT_MARGIN = 1e-3  # frozen src/frozen_config.py value
 # The stored surface sits about 1.85 mm proud of the collider face even under
 # firm grip. 3 mm is the smallest millimetre band yielding a stable footprint.
@@ -31,6 +32,8 @@ CONTACT_PROXIMITY_BAND = 3e-3
 TAXEL_COLOR_CEILING = 0.6e-3
 BOX_FACES = np.array(((0,1,3,2),(4,6,7,5),(0,4,5,1),(2,3,7,6),(0,2,6,4),(1,5,7,3)))
 WIDTH, HEIGHT, FPS = 1280, 720, 30
+BODY_REORDER = None
+PANDA_RIG_GEOMETRY = None
 
 
 def boundary_triangles(tets, vertices):
@@ -59,6 +62,27 @@ def transform(pose):
     m=np.eye(4); m[:3,:3]=rotation(pose[3:]); m[:3,3]=pose[:3]; return m
 
 
+def offset_pose(pose, xyz):
+    matrix = transform(pose)
+    matrix[:3, 3] += matrix[:3, :3] @ np.asarray(xyz, float)
+    out = np.empty(7)
+    out[:3] = matrix[:3, 3]
+    out[3:] = pose[3:]
+    return out
+
+
+def panda_rig_geometry():
+    """Load the exact visible shapes exported from the finalized PandaRig model."""
+    global PANDA_RIG_GEOMETRY
+    if PANDA_RIG_GEOMETRY is None:
+        path=CLIPS/"panda"/"panda_rig_geometry.npz"
+        if not path.exists():
+            raise FileNotFoundError(f"missing PandaRig geometry export: {path}")
+        with np.load(path,allow_pickle=False) as data:
+            PANDA_RIG_GEOMETRY={key:np.array(data[key]) for key in data.files}
+    return PANDA_RIG_GEOMETRY
+
+
 def look_at(eye, target):
     # OpenGL camera looks down local -Z.
     z=(eye-target); z/=np.linalg.norm(z); x=np.cross(np.array((0.,0.,1.)),z); x/=np.linalg.norm(x)
@@ -66,6 +90,10 @@ def look_at(eye, target):
 
 
 def snapshots(scene, version=2):
+    if version >= 5:
+        files=sorted((CLIPS/"panda"/f"w3_{scene}_dense").glob("f_*.npz"))
+        if not files: raise FileNotFoundError(f"missing frozen Panda dense trajectory for {scene}")
+        return files
     if scene == "slip" and version >= 4:
         suffix = "slip_dense_v4"
     elif scene == "slip" and version >= 3:
@@ -78,13 +106,41 @@ def snapshots(scene, version=2):
 
 
 def load_frame(path):
-    with np.load(path) as d: return np.array(d["particle_q"]),np.array(d["body_q"]),float(d["t"])
+    with np.load(path) as d:
+        bodies=np.array(d["body_q"])
+        if BODY_REORDER is not None:
+            bodies=bodies[BODY_REORDER]
+        return np.array(d["particle_q"]),bodies,float(d["t"])
 
 
-def camera_for(files, scene):
+def camera_for(files, scene, version=2):
+    if version >= 5 and scene == "slip":
+        manifest=json.loads((CLIPS/"panda"/"w3_panda_manifest.json").read_text())
+        meta=next(item for item in manifest["scenes"] if item["scene"]=="slip")
+        drop_t=float(meta["drop_t"])
+        hand_x=[]
+        landing=[]
+        for path in files:
+            q,b,t=load_frame(path)
+            hand_x.append(float(b[1,0]))
+            if t >= drop_t:
+                landing.append(q[:,(0,2)])
+        landing=np.concatenate(landing)
+        margin=.07
+        lo=min(min(hand_x),float(landing[:,0].min()))-margin
+        hi=max(max(hand_x),float(landing[:,0].max()))+margin
+        zlo=max(0.,float(landing[:,1].min())-.025)
+        zhi=max(.14,float(landing[:,1].max())+.04)
+        mid=(lo+hi)/2
+        target=np.array((mid,0,(zlo+zhi)/2))
+        # Horizontal FOV is wider than vertical at 16:9. This distance keeps
+        # both endpoints visible without making the grip event needlessly tiny.
+        eye=target+np.array((.14,-max(.65,(hi-lo)*.90),.24))
+        return look_at(eye,target),(lo,hi),eye,target
     xs=[]
     for p in files:
-        with np.load(p) as d: xs.append(float(d["body_q"][1,0]))
+        with np.load(p) as d:
+            xs.append(float(d["body_q"][1,0]))
     # Damage has a longer actual track than the other scenes, so the old fixed
     # 10 cm padding made it tiny. Preserve its whole recorded excursion but use
     # only presentation clearance around that used segment.
@@ -93,7 +149,27 @@ def camera_for(files, scene):
     target=np.array((mid,0,.050))
     distance = max(.34, span * (.90 if scene == "damage" else 1.35))
     eye=target+np.array((.12,-distance,.20))
+    if version >= 5:
+        # The genuine hand is substantially larger than the former cosmetic
+        # shell. Keep one fixed, wider world camera for the entire P-rig scene.
+        target=np.array((mid,0,.065))
+        eye=target+np.array((.14,-max(.48,span*1.5),.24))
     return look_at(eye,target), (lo,hi), eye, target
+
+
+def slip_settle_index(files, drop_t):
+    """First grounded frame whose COM stays within 1 cm for 0.5 seconds."""
+    frames=[load_frame(path) for path in files]
+    times=np.array([frame[2] for frame in frames])
+    com=np.array([frame[0].mean(axis=0) for frame in frames])
+    zmin=np.array([frame[0][:,2].min() for frame in frames])
+    dt=float(np.median(np.diff(times)))
+    window=max(2,int(round(.5/dt)))
+    for i in range(len(frames)-window+1):
+        displacement=np.linalg.norm(com[i:i+window]-com[i],axis=1)
+        if times[i] >= drop_t and zmin[i] <= .003 and displacement.max() <= .01:
+            return i
+    raise RuntimeError("Panda slip block did not settle in the dense capture")
 
 
 def slip_v3_cameras(files):
@@ -145,7 +221,7 @@ def egl_available():
         return False, f"matplotlib fallback (EGL failed: {type(exc).__name__}: {exc})"
 
 
-def add_hud(rgb, scene, t, meta, slow, v4=False):
+def add_hud(rgb, scene, t, meta, slow, version=2):
     im=Image.fromarray(rgb); d=ImageDraw.Draw(im,"RGBA")
     try: font=ImageFont.truetype("DejaVuSans.ttf",24); bold=ImageFont.truetype("DejaVuSans-Bold.ttf",28)
     except OSError: font=bold=ImageFont.load_default()
@@ -153,7 +229,22 @@ def add_hud(rgb, scene, t, meta, slow, v4=False):
     d.text((45,34),f"W3 - {scene.upper()}     t={t:.2f} s",font=bold,fill=(24,31,40,255))
     d.text((45,78),f"commanded a={meta['a']:g} m/s2 / realized a={meta['realized_accel']:g} m/s2",font=font,fill=(30,38,48,255))
     d.text((45,113),f"F_g={meta['F']:g} N",font=font,fill=(30,38,48,255))
-    if v4:
+    if version >= 6:
+        try: small=ImageFont.truetype("DejaVuSans.ttf",12)
+        except OSError: small=font
+        disclosure=("real Franka fr3 hand/finger meshes ARE the simulated bodies (drawn from the model); "
+                    "contact is pads-only; pad mount matched to frozen engagement height (fidelity).")
+        for line_no, line in enumerate(textwrap.wrap(disclosure, width=112)):
+            d.text((28,160+16*line_no),line,font=small,fill=(50,60,70,255))
+    elif version >= 5:
+        try: small=ImageFont.truetype("DejaVuSans.ttf",12)
+        except OSError: small=font
+        disclosure=("Panda-hand rig (real Franka fr3 hand + 2 fingers on the x/z transport carriage); "
+                    "fingertips replaced with our sensor-format tactile pads; pad mount matched to the "
+                    "frozen engagement height (fidelity).")
+        for line_no, line in enumerate(textwrap.wrap(disclosure, width=112)):
+            d.text((28,160+16*line_no),line,font=small,fill=(50,60,70,255))
+    elif version >= 4:
         try: small=ImageFont.truetype("DejaVuSans.ttf",13)
         except OSError: small=font
         d.text((28,160),"camera tracks lateral assembly drift (rig artifact; labels unaffected)",
@@ -200,7 +291,7 @@ def pad_taxel_depth(vertices, pad_pose, inner_face_sign,
     return grid, int(selected.sum())
 
 
-def add_tactile_insets(rgb, q, bodies, boundary, taxels=False, per_frame=False):
+def add_tactile_insets(rgb, q, bodies, boundary, taxels=False, per_frame=False, version=2):
     """Post-composite two geometry-proxy tactile panels onto RGB."""
     im = Image.fromarray(rgb); draw = ImageDraw.Draw(im, "RGBA")
     try:
@@ -214,7 +305,8 @@ def add_tactile_insets(rgb, q, bodies, boundary, taxels=False, per_frame=False):
     right_x = WIDTH - edge_margin - panel_size
     left_x = right_x - gap - panel_size
     for label, body_index, x0 in (("L", 2, left_x), ("R", 3, right_x)):
-        pose = bodies[body_index]
+        pose = (offset_pose(bodies[body_index], (0,0,PAD_MOUNT_Z_OFFSET))
+                if version >= 5 else bodies[body_index])
         tofu_local = (tofu_center - pose[:3]) @ rotation(pose[3:])
         inner_face_sign = 1.0 if tofu_local[1] >= 0 else -1.0
         points, centroid = pad_contact_footprint(surface_vertices, pose, inner_face_sign)
@@ -274,9 +366,9 @@ def add_tactile_insets(rgb, q, bodies, boundary, taxels=False, per_frame=False):
 def compose_overlays(rgb, q, bodies, boundary, scene, t, meta, version=2):
     slow_window = (9.20,9.60) if version >= 4 else ((9.25,9.55) if version >= 3 else (9.20,9.40))
     slow = scene == "slip" and slow_window[0] <= t <= slow_window[1]
-    rgb = add_hud(rgb, scene, t, meta, slow, version >= 4)
+    rgb = add_hud(rgb, scene, t, meta, slow, version)
     return add_tactile_insets(rgb, q, bodies, boundary, taxels=version >= 3,
-                              per_frame=version >= 4)
+                              per_frame=version >= 4, version=version)
 
 
 def pyrender_frame(q,bodies,t,scene,meta,boundary,tets,inv_dm,camera,xlim,version=2):
@@ -303,9 +395,31 @@ def pyrender_frame(q,bodies,t,scene,meta,boundary,tets,inv_dm,camera,xlim,versio
             baseColorFactor=(*color,alpha), metallicFactor=.05, roughnessFactor=.35,
             alphaMode="BLEND" if alpha < 1 else "OPAQUE")
         sc.add(pyrender.Mesh.from_trimesh(tm,material=mat),pose=pose)
-    # Exact physical pad boxes remain opaque blue simulated colliders.
-    box(2*PAD_HALF,(.18,.31,.48),transform(bodies[2])); box(2*PAD_HALF,(.18,.31,.48),transform(bodies[3]))
-    if version >= 4:
+    if version >= 5:
+        geometry=panda_rig_geometry()
+        for i,body_index in enumerate(geometry["shape_body"]):
+            world_pose=transform(bodies[body_index]) @ transform(geometry["shape_transform"][i])
+            color=geometry["shape_color"][i]
+            material=pyrender.MetallicRoughnessMaterial(
+                baseColorFactor=(*color,1),metallicFactor=.05,roughnessFactor=.34)
+            if geometry["shape_kind"][i] == 8:
+                va,vb=geometry["vertex_range"][i]
+                fa,fb=geometry["face_range"][i]
+                tm=trimesh.Trimesh(
+                    geometry["vertices"][va:vb],
+                    geometry["faces"][fa:fb]-va,process=False)
+                sc.add(pyrender.Mesh.from_trimesh(tm,material=material,smooth=True),
+                       pose=world_pose)
+            elif geometry["shape_kind"][i] == 7:
+                tm=trimesh.creation.box(extents=2*geometry["shape_scale"][i])
+                sc.add(pyrender.Mesh.from_trimesh(tm,material=material),pose=world_pose)
+            else:
+                raise RuntimeError(f"unsupported exported Panda shape kind {geometry['shape_kind'][i]}")
+    else:
+        # Exact physical pad boxes remain opaque blue simulated colliders.
+        box(2*PAD_HALF,(.18,.31,.48),transform(bodies[2]))
+        box(2*PAD_HALF,(.18,.31,.48),transform(bodies[3]))
+    if version == 4:
         # Render-only Panda-hand-style shell: white housing behind the pads and
         # two slender dark fingers ending at the exact blue collider poses.
         box((.040,.145,.025),(.92,.93,.94),transform(bodies[1]),alpha=.40)
@@ -314,7 +428,7 @@ def pyrender_frame(q,bodies,t,scene,meta,boundary,tets,inv_dm,camera,xlim,versio
             finger_pose=transform(bodies[i]) @ np.array(
                 ((1,0,0,-.018),(0,1,0,0),(0,0,1,.038),(0,0,0,1)))
             box((.016,.011,.076),(.10,.12,.15),finger_pose,alpha=.45)
-    else:
+    elif version < 4:
         # Legacy render-only dressing, rigidly driven by recorded poses.
         box((.034,.14,.018),(.20,.23,.28),transform(bodies[1]),alpha=.35)
         for i in (2,3): box((.030,.014,.070),(.25,.28,.33),transform(bodies[i]) @ np.array(((1,0,0,0),(0,1,0,0),(0,0,1,.035),(0,0,0,1))),alpha=.35)
@@ -340,9 +454,13 @@ def mpl_frame(q,bodies,t,scene,meta,boundary,tets,inv_dm,camera,xlim,version=2):
         s=vertex_strain(q,tets,inv_dm); c=damage_colors(s[boundary].mean(1))
     else: c=np.tile((.91,.66,.25,1),(len(tri),1))
     ax.add_collection3d(Poly3DCollection(tri[order],facecolors=c[order],edgecolors="none"))
-    boxes=[(bodies[2],PAD_HALF,"#2e507a",1.0),
-           (bodies[3],PAD_HALF,"#2e507a",1.0)]
-    if version >= 4:
+    display_pads=[offset_pose(bodies[i], (0,0,PAD_MOUNT_Z_OFFSET))
+                  if version >= 5 else bodies[i] for i in (2,3)]
+    boxes=[(display_pads[0],PAD_HALF,"#2e507a",1.0),
+           (display_pads[1],PAD_HALF,"#2e507a",1.0)]
+    if version >= 5:
+        raise RuntimeError("v5 requires EGL/pyrender to draw the authored Franka meshes")
+    elif version >= 4:
         boxes.append((bodies[1],np.array((.020,.0725,.0125)),"#f0f2f4",.40))
         boxes.extend((bodies[i],np.array((.008,.0055,.038)),"#1a1f26",.45)
                      for i in (2,3))
@@ -395,10 +513,46 @@ def message_card(text, subtitle=None):
 
 
 def render_scene(scene, smoke=False, version=2):
-    manifest=json.loads((CLIPS/"w3_manifest.json").read_text()); meta=next(x for x in manifest["scenes"] if x["scene"]==scene)
-    if not meta.get("label_reproduced") or meta["rerun_label"] != meta["source_final_band_label"]: raise RuntimeError("frozen label audit failed")
+    global BODY_REORDER
+    manifest_path=(CLIPS/"panda"/"w3_panda_manifest.json"
+                   if version >= 5 else CLIPS/"w3_manifest.json")
+    manifest=json.loads(manifest_path.read_text())
+    scenes=manifest["scenes"]
+    meta=scenes[scene] if isinstance(scenes,dict) else next(x for x in scenes if x["scene"]==scene)
+    expected=meta.get("expected_label",meta.get("expected",
+                      meta.get("source_final_band_label",meta.get("source_label"))))
+    if not meta.get("label_reproduced") or meta["rerun_label"] != expected:
+        raise RuntimeError("frozen label audit failed")
+    if version >= 5:
+        body_rows=meta.get("body_rows") or manifest.get("body_rows")
+        raw_map=(meta.get("body_index_to_label") or meta.get("body_index_label_map")
+                 or manifest.get("body_index_to_label") or manifest.get("body_index_label_map"))
+        if raw_map is None:
+            raw_map=["carriage","fr3_hand","fr3_leftfinger","fr3_rightfinger"]
+        index_labels=({i:str(label) for i,label in enumerate(raw_map)}
+                      if isinstance(raw_map,list)
+                      else {int(index):str(label) for index,label in raw_map.items()})
+        def body_index(label):
+            matches=[i for i,value in index_labels.items()
+                     if value==label or value.endswith("/"+label)]
+            if len(matches)!=1:
+                raise RuntimeError(f"Panda body map has {len(matches)} matches for {label}")
+            return matches[0]
+        BODY_REORDER=(np.array([int(body_rows[label]) for label in
+                               ("carriage","fr3_hand","fr3_leftfinger","fr3_rightfinger")])
+                      if body_rows else
+                      np.array([body_index(label) for label in
+                                ("carriage","fr3_hand","fr3_leftfinger","fr3_rightfinger")]))
+        meta.setdefault("realized_accel",{"intact":.7,"slip":19.8,"damage":3.2}[scene])
+    else:
+        BODY_REORDER=None
     files=snapshots(scene,version); first,_,_=load_frame(files[0])
-    if version >= 3 and scene == "slip":
+    settle_index=None
+    if version >= 5 and scene == "slip":
+        if load_frame(files[-1])[2] <= float(meta["drop_t"]):
+            raise RuntimeError("Panda slip capture does not extend past ejection")
+        settle_index=slip_settle_index(files,float(meta["drop_t"]))
+    elif version >= 3 and scene == "slip":
         capture_dir="w3_slip_dense_v4" if version >= 4 else "w3_slip_dense_ext"
         capture_meta_path=CLIPS/capture_dir/"capture_meta.json"
         if not capture_meta_path.exists():
@@ -429,9 +583,9 @@ def render_scene(scene, smoke=False, version=2):
     if len(boundary)!=768: raise ValueError(f"expected 768 boundary triangles, got {len(boundary)}")
     inv_dm=rest_poses(tets,first)
     egl,status=egl_available()
-    camera,xlim,eye,target=camera_for(files,scene)
+    camera,xlim,eye,target=camera_for(files,scene,version)
     aftermath=None
-    if version >= 3 and scene=="slip":
+    if 3 <= version < 5 and scene=="slip":
         (camera,xlim,eye,target),aftermath=slip_v3_cameras(files)
     grip_frame=min((load_frame(path) for path in files),key=lambda frame: abs(frame[2]-1.8))
     grip_y=float((grip_frame[1][2,1]+grip_frame[1][3,1])/2)
@@ -442,7 +596,7 @@ def render_scene(scene, smoke=False, version=2):
             u=np.clip((t-9.55)/.40,0,1); u=u*u*(3-2*u)
             moving_eye=eye+(wide_eye-eye)*u; moving_target=target+(wide_target-target)*u
             bounds=(xlim[0]+(wide_xlim[0]-xlim[0])*u,xlim[1]+(wide_xlim[1]-xlim[1])*u)
-        if version >= 4:
+        if version == 4:
             drift=float((bodies[2,1]+bodies[3,1])/2)-grip_y
             moving_eye[1]+=drift; moving_target[1]+=drift
         return look_at(moving_eye,moving_target),bounds
@@ -450,7 +604,7 @@ def render_scene(scene, smoke=False, version=2):
     if smoke:
         target_time = 9.8 if scene == "damage" else 9.3
         smoke_files=files
-        if version >= 4 and scene=="slip":
+        if version == 4 and scene=="slip":
             smoke_files=sorted((CLIPS/"w3_slip_slowmo_v4").glob("f_*.npz"))
         index=min(range(len(smoke_files)),key=lambda i: abs(load_frame(smoke_files[i])[2]-target_time))
         mode=f"v{version}" if version >= 3 else "pro"
@@ -462,7 +616,8 @@ def render_scene(scene, smoke=False, version=2):
             Image.fromarray(message_card(CARD_TEXT[scene][0],CARD_TEXT[scene][1])).save(CLIPS/f"w3_{scene}_{mode}_intro_smoke.png")
             Image.fromarray(message_card(CARD_TEXT[scene][2])).save(CLIPS/f"w3_{scene}_{mode}_end_smoke.png")
             if scene=="slip":
-                q2,b2,t2=load_frame(files[-1]); cam2,limits2=view_at(t2,b2)
+                aftermath_path=files[settle_index] if version >= 5 else files[-1]
+                q2,b2,t2=load_frame(aftermath_path); cam2,limits2=view_at(t2,b2)
                 aftermath_frame=renderer(q2,b2,t2,scene,meta,boundary,tets,inv_dm,cam2,limits2,version)
                 Image.fromarray(aftermath_frame).save(CLIPS/f"w3_slip_{mode}_aftermath_smoke.png")
         # Exercise the same key-image write path: key PNG is the fully composed
@@ -471,7 +626,12 @@ def render_scene(scene, smoke=False, version=2):
         Image.fromarray(composed).save(key_dir/("dwell.png" if scene == "damage" else "hold.png"))
         return out,status,xlim,eye,target
     render_paths=[]
-    if version >= 4 and scene=="slip":
+    if version >= 5 and scene=="slip":
+        for i,p in enumerate(files[:settle_index+1]):
+            _,_,t=load_frame(p)
+            if i%2==0:
+                render_paths.extend([p]*(4 if 9.20<=t<=9.60 else 1))
+    elif version >= 4 and scene=="slip":
         slow_files=sorted((CLIPS/"w3_slip_slowmo_v4").glob("f_*.npz"))
         if not slow_files: raise RuntimeError("missing v4 slow-motion substep states")
         stride=max(1,int(round(len(slow_files)/48)))
@@ -484,7 +644,9 @@ def render_scene(scene, smoke=False, version=2):
             if i%2==0:
                 slow=scene=="slip" and version >= 3 and 9.25<=t<=9.55
                 render_paths.extend([p]*(4 if slow else 1))
-    if version >= 3 and scene=="slip": render_paths.extend([files[-1]]*30)
+    if version >= 3 and scene=="slip":
+        freeze_path=files[settle_index] if version >= 5 else files[-1]
+        render_paths.extend([freeze_path]*30)
     import imageio.v2 as imageio
     mode=f"v{version}" if version >= 3 else "pro"
     stem=f"w3_{scene}_{mode}"
@@ -522,11 +684,13 @@ def main():
     g.add_argument("--smoke-scene",choices=SCENES,help="one composed frame for one scene")
     ap.add_argument("--v3",action="store_true",help="v3 cards, taxels, and extended slip")
     ap.add_argument("--v4",action="store_true",help="v4 drift tracking, shell, and substep slow motion")
+    ap.add_argument("--v5",action="store_true",help="real Panda-hand P-rig meshes and captures")
+    ap.add_argument("--v6",action="store_true",help="draw exact visible shapes exported from PandaRig")
     a=ap.parse_args()
     chosen=SCENES if a.render or a.smoke else ((a.smoke_scene,) if a.smoke_scene else (a.scene,))
     smoke=a.smoke or bool(a.smoke_scene)
     failures=[]
-    version=4 if a.v4 else (3 if a.v3 else 2)
+    version=6 if a.v6 else (5 if a.v5 else (4 if a.v4 else (3 if a.v3 else 2)))
     for scene in chosen:
         try:
             result=render_scene(scene,smoke,version); print(f"{scene}: {result}")
