@@ -177,3 +177,201 @@ Rank	항목	Risk	판단 / 가장 싼 falsification
 
 Q1은 더 명확함. 이 commit에서 trustworthy soft-rigid pad force는 “어딘가의 hidden lambda를 읽는 것”이 아니라, solver가 사용하는 동일 _eval_soft_ef_contact()를 post-step state에서 재평가하여 pad별로 합산하는 것임. Newton 자체가 coupling feedback에 이미 정확히 그 방법을 사용하고 있음. 이 collector로 block-absent / static equilibrium / whole-soft-body momentum-balance 세 검사를 통과하면 W2 force channel을 GEOMETRY_ONLY에서 다시 승격시킬 근거가 충분히 강함.
 
+
+
+---
+
+# Follow-up (same thread): momentum-test failure diagnosis
+
+Judge-relayed acceptance results (absent PASS / static PASS / momentum FAIL 1.05 N vs 0.628 N). Response verbatim:
+
+(a) 원인 ranking
+
+현재 pattern에서는 deduplication보다 staggered/final-state friction reevaluation이 훨씬 유력함.
+
+Rank	원인	판단
+1	Final-state reevaluation ≠ 마지막 VBD sweep에서 실제 사용된 contact force state	가장 유력
+2	friction_epsilon=2e-4의 매우 가파른 low-speed friction branch + finite 10 iterations	#1을 크게 증폭
+3	pre/post history가 solver가 실제 사용한 history와 미세하게 다름	확인 필요하지만 settled hold에서는 낮은 확률
+4	vertex/edge/face overlap	실제 존재하지만 collector double-count bug는 아님
+5	normal damping	vertical excess의 주원인일 가능성 낮음
+6	force sign / atomic reduction	현재 tests로 거의 배제
+
+핵심 이유는 solve ordering임. SolverVBD.step()은 매 iteration마다 rigid sweep → particle sweep 순서로 실행하고, 마지막 particle sweep 뒤 바로 finalize함. 따라서 여러분이 post-step (q_post, q_pre)로 다시 계산한 contact force는 solver가 실제로 어느 sweep에서도 그대로 평가한 state가 아님. 마지막 rigid contact evaluation은 마지막 particle update 전이고, particle contact evaluation 자체도 각 local vertex update 전 state를 사용함.
+
+반면 현재 collector는 post-step particle_q/body_q와 captured pre-step poses를 _eval_soft_ef_contact()에 넣어 새로 constitutive force를 계산함. 구현 자체는 Newton harvester와 일치하지만, 이것은 post-hoc force estimate이지 discrete impulse/reaction accumulator가 아님.
+
+이 차이가 normal에서는 거의 안 보이고 friction에서 크게 보이는 이유도 정확히 현재 관측과 일치함. Normal은 대략 ke δ라 final penetration이 조금 변해도 Fn≈1.2 N 유지. 반면 soft-rigid friction은
+
+∣F
+t
+	​
+
+∣=μF
+n
+	​
+
+(2x−x
+2
+),x=∣v
+t
+	​
+
+∣/ϵ
+v
+	​
+
+,x≤1
+
+형태의 low-speed regularization임. epsilon_v=2e-4 m/s이고 두 pad normal 합이 약 2.383 N이면 zero-speed 부근 aggregate slope scale은 대략
+
+2μΣF
+n
+	​
+
+/ϵ
+v
+	​
+
+≈2.38×10
+4
+Ns/m.
+
+따라서 relative tangential velocity가 불과 ~20 μm/s 달라져도 ~0.4 N force 차이가 가능함. 여러분의 excess 1.052-0.628≈0.424 N와 정확히 같은 scale임.
+
+현재 constitutive readback 1.052 N은, 단순 horizontal-normal approximation에서 v_rel≈5.05e-5 m/s 정도에 해당함. Weight 0.628 N만 지지하는 steady creep equilibrium은 약 2.84e-5 m/s. 차이는 2.2e-5 m/s뿐임. 즉 VBD 마지막 local sweep 전후의 아주 작은 velocity/state 차이만으로 이번 discrepancy를 설명 가능함.
+
+가장 싼 diagnostic sequence
+
+Atomic sum vs stable float64 per-contact sum부터 비교. 이미 collector가 둘 다 계산함. force_world와 force_world_stable의 z 차이가 <<1e-3 N인지 확인. 크면 reduction/instrumentation bug. 작으면 다음 단계.
+
+같은 snapshot에서 force component ablation. Simulation rerun 없이 collector evaluator만 바꿔 full, mu=0, kd=0, mu=kd=0 네 값을 계산. 예상은 mu=0에서 world-z가 거의 사라지는 것. Newton soft-rigid law는 elastic normal을 먼저 만들고, normal damping을 별도 추가한 뒤, friction은 **damping을 제외한 f_n=ke*penetration**으로 계산함. 따라서 kd가 friction magnitude를 직접 부풀리는 구조가 아님.
+
+record-kind별로 분해하되 제거하지 말 것. particle: corners[1]<0, edge: corners[1]>=0 && corners[2]<0, face: corners[2]>=0. 각 kind별로 ΣFn, ΣFz, n_records 기록. 동시에 가능하면 per-contact |u_t|/(epsilon*dt)와 |Ft|/(mu Fn) 기록. 대부분이 regularized branch 안에 있으면 #1/#2가 거의 확정됨.
+
+exact history check. Particle 쪽은 forward_step()이 실제로 particle_q_prev = state_in.particle_q를 저장함. 따라서 post-step에서 solver.particle_q_prev와 여러분의 captured pre_state.particle_q max error를 검사. Body 쪽은 body_q_prev가 finalize 때 post pose로 advance되므로, solver.body_q_prev를 step 직전 별도 clone해서 captured pre_state.body_q와 비교. collect_rigid_contact_forces() 문서도 정확히 이 snapshot semantics를 요구함.
+
+가장 중요한 falsifier: VBD iterations ladder 10 → 20 → 40. 동일 dt=1/4800, 동일 hold cell에서 마지막 1 s만 재실행. Fn, trajectory, exact momentum residual, post-hoc support를 비교. 1.05 → 0.8 → ~0.63 N처럼 내려오면 원인은 거의 확정적으로 finite-iteration/staggered readback임. 이 경우 dedup은 잘못된 수정.
+
+그래도 남으면 diagnostic용으로 friction_epsilon={2e-4,5e-4,1e-3} 비교. Larger epsilon에서 momentum/readback mismatch가 크게 줄면 low-speed tangential conditioning 문제 확인. Production parameter를 바꾸라는 의미는 아니고 discriminator 용도.
+
+가능하면 #5와 함께 한 번만 temporary instrumentation해서 iteration 10의 rigid sweep 직후 / particle sweep 직후 각각 동일 evaluator를 호출하면 가장 결정적임. 두 값이 sawtooth처럼 갈리고 post-particle 값만 ~1.05 N이면 더 볼 것도 없음.
+
+(b) equilibrium에서 ΣFriction_z = mg가 정확한가?
+
+물리적으로 수렴된 equilibrium에서는 yes. Regularized friction이라고 해서 정지한 물체에 mg보다 큰 upward support가 영구적으로 존재할 수 있는 것은 아님.
+
+Regularization이 하는 일은 static-friction multiplier를 보관하는 대신, 필요한 friction magnitude를 만들기 위해 작은 creep velocity를 요구하는 것임. 따라서 steady constant-creep 상태에서
+
+F
+contact,z
+	​
+
+−mg=ma
+z
+	​
+
+≈0
+
+이어야 함.
+
+물론 순간적으로 F_contact,z > mg는 가능함. 예를 들어 downward motion을 감속시키는 중이면 정상임. 하지만 현재 receipt에서 median COM acceleration은 약 0.002 m/s² 수준이고, 64 g에 해당하는 inertial term은 약 0.00013 N밖에 안 됨. 0.424 N excess를 설명하지 못함. 현재 run이 실제 dynamics에서 1.05 N upward를 받고 있었다면 약 6.6 m/s² upward acceleration이 보여야 함. 그렇지 않음.
+
+다만 현재 acceptance test를 API identity로 보면 조금 과함. 여러분이 읽는 것은 discrete contact impulse가 아니라 final configuration에서 다시 평가한 penalty/friction law임. Finite VBD iterations에서는 그것이 momentum balance를 정확히 만족한다는 보장이 없음.
+
+따라서 acceptance를 다음처럼 바꾸는 것이 더 강함.
+
+R
+z
+	​
+
+=F
+contact,z
+collector
+	​
+
++F
+gravity,z
+	​
+
+−
+Δt
+P
+z
+n+1
+	​
+
+−P
+z
+n
+	​
+
+	​
+
+
+여기서
+
+P
+z
+	​
+
+=
+i
+∑
+	​
+
+m
+i
+	​
+
+v
+i,z
+	​
+
+
+를 각 solver substep에서 mass-weighted particle momentum으로 직접 계산할 것. 지금처럼 60 Hz에서 unweighted mean particle-z를 finite difference하는 것보다 훨씬 정확함.
+
+판정은:
+
+iterations↑에 따라 R_z→0: collector = constitutive force estimator로 타당, finite-solve residual을 보고 있던 것.
+
+R_z≈0.42 N가 20/40/80 iterations에서도 유지: collector/state pairing 또는 Newton soft-contact force reporting semantics를 다시 의심.
+
+Motion은 convergence하는데 readback만 안 convergence: W2 force channel을 다시 GEOMETRY_ONLY 유지하는 편이 안전.
+
+즉 test 자체는 잘못되지 않았음. 다만 “must equal mg at 10 iterations”가 아니라 “momentum residual must converge to zero”로 정의하는 것이 맞음.
+
+(c) dedup이 필요하다면 key는?
+
+현재 단계에서는 dedup하지 말 것이 답임.
+
+Newton full-surface pipeline은 legacy particle records를 먼저 쓰고, edge/face records를 append함. Edge pass는 source에서 명시적으로 unique soft edge별 한 record로 structural dedup되어 있음. Face도 (triangle, rigid shape) pair당 한 evaluation임. 이후 VBD는 이 unified stream 전체를 소비함.
+
+따라서 cross-feature로
+
+vertex contact ≈ edge contact ≈ face contact
+
+처럼 공간적으로 가깝다는 이유로 하나를 버리면 solver가 사용한 contact model과 다른 force를 보고하게 됨.
+
+Accidental exact duplicates를 audit하려는 목적이라면 key는 feature type별로만 정의 가능함:
+
+particle: (shape_id, particle_id)
+edge:     (shape_id, min(v0,v1), max(v0,v1))
+face:     (shape_id, sorted(v0,v1,v2))
+
+하지만 이 key는 audit용이지 force dedup용이 아님. 정상 pipeline에서는 각각 이미 사실상 unique여야 함.
+
+soft_contact_tids도 dedup key로 쓰면 안 됨. 이것은 particle/edge/face pass의 source thread/replay slot을 서로 겹치지 않게 하기 위한 index임. Contact identity 또는 persistent matching ID가 아님. Edge/face emitter 자체가 pass별 tid_base를 써서 별도 replay domain을 만든다고 명시함.
+
+Geometric overlap을 조사하려면 (shape, contact point cluster, normal similarity)로 cluster statistics만 만들면 됨. 예를 들어 0.25 mm 이내 + dot(n_i,n_j)>0.995. Force sum에서는 제거하지 말 것.
+
+현재 제일 가능성 높은 결론
+
+현재 증거만 보면:
+
+collector contamination은 해결됨 → normal channel도 정상 → tangential constitutive readback이 finite/staggered VBD state에 매우 민감해서 momentum-consistent reaction이 아님
+
+이라는 해석이 가장 강함.
+
+특히 현재 Fn_total≈2.383 N, epsilon=2e-4에서는 겨우 22 μm/s 정도의 relative tangential-velocity discrepancy가 observed 0.424 N excess를 만들 수 있음. 그래서 다음 실행은 dedup experiment보다 mu/kd component ablation → exact substep momentum → iterations 10/20/40 순서가 가장 정보량 높음.
+
