@@ -110,3 +110,35 @@ fast transport (realized 19.8 m/s2) - ejected 0.1 s after motion starts`; and
 Smoke: `.venv-render/bin/python scripts/vbd/w3_pro_render.py --smoke
 --v3`; full encode: `.venv-render/bin/python scripts/vbd/w3_pro_render.py
 --render --v3`.
+
+## Video v4 professor demo
+
+V4 writes `reports/vbd/clips/w3_<scene>_v4.mp4` and
+`w3_<scene>_v4_keys/`, retaining all v3 cards, damage colors, and frozen
+physics. The 8x8 geometry-proxy depth grid uses per-pad, per-frame display
+normalization to `max(frame_grid_max, 0.1 mm)` so occupied-patch shape remains
+legible. If the true frame maximum is below 0.05 mm the entire grid stays dark
+to avoid amplifying noise. The numeric `max=X.X mm` remains the true unscaled
+depth. Selection, binning, and the 3 mm proximity band are unchanged; no force,
+pressure, or shear signal is displayed.
+
+V4 presentation cameras track only the recorded pad-pair common-mode y drift,
+relative to y at grip: the eye and target receive the same per-frame y offset.
+Transport x and world z remain referenced exactly as before. The HUD discloses
+this as lateral assembly-drift tracking of a rig artifact; labels and physics
+are unaffected. Slip retains the two-phase event/aftermath x framing.
+
+The gripper dressing is a render-only Panda-hand-style shell: translucent
+rounded white hand housing and slender translucent dark fingers surround the
+opaque blue fingertip pads at their exact simulated body poses. It is a visual
+shell only; simulated rigid bodies remain the pads and palm of the floating rig,
+not a full Panda simulation.
+
+Slip v4 uses global 60 Hz states from `w3_slip_dense_v4/`, and real substep
+states from `w3_slip_slowmo_v4/` over [9.20, 9.60] s. The substep sequence is
+96 captured states; stride 2 selects 48 output frames (x4 presentation
+duration) and is
+shown one real state per output frame, with no renderer interpolation or frame
+repetition. Global 30 fps playback resumes afterward and the final captured
+state is frozen for 0.5 s. Both capture metadata receipts are validated
+fail-closed for the reproduced slip label and ejection.

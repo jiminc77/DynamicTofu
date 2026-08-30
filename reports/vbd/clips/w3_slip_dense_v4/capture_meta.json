@@ -1,0 +1,18 @@
+{
+  "scene": "slip",
+  "global_frames": 696,
+  "slowmo_frames": 96,
+  "global_t_last": 11.600000000000156,
+  "slowmo_window_s": [
+    9.2,
+    9.6
+  ],
+  "substep_stride": 20,
+  "slowmo_t_first": 9.20020833333337,
+  "slowmo_t_last": 9.596041666666723,
+  "ejected": true,
+  "drop_t": 9.400000000000047,
+  "label": "slip",
+  "source_label": "slip",
+  "note": "one run: global 60 fps frames + substep-cadence slow-mo window (every 20-th substep in [9.2,9.6] s); per-step physics identical to the frozen runner; no renderer-side interpolation; ejection recorded at drop_t."
+}

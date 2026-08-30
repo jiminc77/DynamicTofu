@@ -65,8 +65,13 @@ def look_at(eye, target):
     y=np.cross(z,x); m=np.eye(4); m[:3,:3]=np.column_stack((x,y,z)); m[:3,3]=eye; return m
 
 
-def snapshots(scene, v3=False):
-    suffix = "slip_dense_ext" if v3 and scene == "slip" else f"{scene}_dense"
+def snapshots(scene, version=2):
+    if scene == "slip" and version >= 4:
+        suffix = "slip_dense_v4"
+    elif scene == "slip" and version >= 3:
+        suffix = "slip_dense_ext"
+    else:
+        suffix = f"{scene}_dense"
     files=sorted((CLIPS/f"w3_{suffix}").glob("f_*.npz"))
     if not files: raise FileNotFoundError(f"missing frozen dense trajectory for {scene}")
     return files
@@ -93,7 +98,7 @@ def camera_for(files, scene):
 
 def slip_v3_cameras(files):
     """Tight event camera plus a wide aftermath camera for the ejected tofu."""
-    primary=camera_for(snapshots("slip",False),"slip")
+    primary=camera_for(snapshots("slip",2),"slip")
     xyz=[]
     for path in files:
         q,_,t=load_frame(path)
@@ -140,7 +145,7 @@ def egl_available():
         return False, f"matplotlib fallback (EGL failed: {type(exc).__name__}: {exc})"
 
 
-def add_hud(rgb, scene, t, meta, slow):
+def add_hud(rgb, scene, t, meta, slow, v4=False):
     im=Image.fromarray(rgb); d=ImageDraw.Draw(im,"RGBA")
     try: font=ImageFont.truetype("DejaVuSans.ttf",24); bold=ImageFont.truetype("DejaVuSans-Bold.ttf",28)
     except OSError: font=bold=ImageFont.load_default()
@@ -148,6 +153,13 @@ def add_hud(rgb, scene, t, meta, slow):
     d.text((45,34),f"W3 - {scene.upper()}     t={t:.2f} s",font=bold,fill=(24,31,40,255))
     d.text((45,78),f"commanded a={meta['a']:g} m/s2 / realized a={meta['realized_accel']:g} m/s2",font=font,fill=(30,38,48,255))
     d.text((45,113),f"F_g={meta['F']:g} N",font=font,fill=(30,38,48,255))
+    if v4:
+        try: small=ImageFont.truetype("DejaVuSans.ttf",13)
+        except OSError: small=font
+        d.text((28,160),"camera tracks lateral assembly drift (rig artifact; labels unaffected)",
+               font=small,fill=(50,60,70,255))
+        d.text((28,178),"visual shell only; simulated bodies are pads + palm (floating rig, not a full Panda simulation)",
+               font=small,fill=(50,60,70,255))
     if slow:
         d.rounded_rectangle((1000,28,1248,78),10,fill=(185,38,45,235))
         d.text((1018,39),"SLOW MOTION x4",font=font,fill="white")
@@ -188,7 +200,7 @@ def pad_taxel_depth(vertices, pad_pose, inner_face_sign,
     return grid, int(selected.sum())
 
 
-def add_tactile_insets(rgb, q, bodies, boundary, taxels=False):
+def add_tactile_insets(rgb, q, bodies, boundary, taxels=False, per_frame=False):
     """Post-composite two geometry-proxy tactile panels onto RGB."""
     im = Image.fromarray(rgb); draw = ImageDraw.Draw(im, "RGBA")
     try:
@@ -230,8 +242,12 @@ def add_tactile_insets(rgb, q, bodies, boundary, taxels=False):
             grid, count = pad_taxel_depth(surface_vertices, pose, inner_face_sign)
             # Compact viridis-like perceptually increasing blue-to-yellow ramp.
             stops = np.array(((.267,.005,.329),(.190,.407,.556),(.208,.719,.473),(.993,.906,.144)))
+            grid_max=grid.max()
+            color_ceiling = max(grid_max, .1e-3) if per_frame else TAXEL_COLOR_CEILING
             def color(value):
-                u=np.clip(value/TAXEL_COLOR_CEILING,0,1)*(len(stops)-1)
+                # Do not amplify sub-0.05 mm numerical/proximity noise.
+                visible_value = 0.0 if per_frame and grid_max < .05e-3 else value
+                u=np.clip(visible_value/color_ceiling,0,1)*(len(stops)-1)
                 j=min(int(u),len(stops)-2); c=stops[j]+(u-j)*(stops[j+1]-stops[j])
                 return tuple((c*255).astype(int))+(235,)
             cell=side/8
@@ -255,13 +271,15 @@ def add_tactile_insets(rgb, q, bodies, boundary, taxels=False):
     return np.asarray(im)
 
 
-def compose_overlays(rgb, q, bodies, boundary, scene, t, meta, v3=False):
-    slow = scene == "slip" and ((9.25 <= t <= 9.55) if v3 else (9.20 <= t <= 9.40))
-    rgb = add_hud(rgb, scene, t, meta, slow)
-    return add_tactile_insets(rgb, q, bodies, boundary, taxels=v3)
+def compose_overlays(rgb, q, bodies, boundary, scene, t, meta, version=2):
+    slow_window = (9.20,9.60) if version >= 4 else ((9.25,9.55) if version >= 3 else (9.20,9.40))
+    slow = scene == "slip" and slow_window[0] <= t <= slow_window[1]
+    rgb = add_hud(rgb, scene, t, meta, slow, version >= 4)
+    return add_tactile_insets(rgb, q, bodies, boundary, taxels=version >= 3,
+                              per_frame=version >= 4)
 
 
-def pyrender_frame(q,bodies,t,scene,meta,boundary,tets,inv_dm,camera,xlim,v3=False):
+def pyrender_frame(q,bodies,t,scene,meta,boundary,tets,inv_dm,camera,xlim,version=2):
     import pyrender, trimesh
     sc=pyrender.Scene(bg_color=(.95,.96,.97,1),ambient_light=(.42,.42,.42))
     if scene=="damage":
@@ -279,11 +297,27 @@ def pyrender_frame(q,bodies,t,scene,meta,boundary,tets,inv_dm,camera,xlim,v3=Fal
             baseColorFactor=(*color,alpha), metallicFactor=.22, roughnessFactor=.3,
             alphaMode="BLEND" if alpha < 1 else "OPAQUE")
         sc.add(pyrender.Mesh.from_trimesh(tm,material=mat),pose=pose)
-    # Exact physical pad boxes.
+    def capsule(radius,height,color,pose,alpha=1.0):
+        tm=trimesh.creation.capsule(radius=radius,height=height,count=(12,12))
+        mat=pyrender.MetallicRoughnessMaterial(
+            baseColorFactor=(*color,alpha), metallicFactor=.05, roughnessFactor=.35,
+            alphaMode="BLEND" if alpha < 1 else "OPAQUE")
+        sc.add(pyrender.Mesh.from_trimesh(tm,material=mat),pose=pose)
+    # Exact physical pad boxes remain opaque blue simulated colliders.
     box(2*PAD_HALF,(.18,.31,.48),transform(bodies[2])); box(2*PAD_HALF,(.18,.31,.48),transform(bodies[3]))
-    # Render-only dressing: palm housing and brackets, rigidly driven by recorded poses.
-    box((.034,.14,.018),(.20,.23,.28),transform(bodies[1]),alpha=.35)
-    for i in (2,3): box((.030,.014,.070),(.25,.28,.33),transform(bodies[i]) @ np.array(((1,0,0,0),(0,1,0,0),(0,0,1,.035),(0,0,0,1))),alpha=.35)
+    if version >= 4:
+        # Render-only Panda-hand-style shell: white housing behind the pads and
+        # two slender dark fingers ending at the exact blue collider poses.
+        box((.040,.145,.025),(.92,.93,.94),transform(bodies[1]),alpha=.40)
+        capsule(.025,.040,(.95,.96,.97),transform(bodies[1]),alpha=.35)
+        for i in (2,3):
+            finger_pose=transform(bodies[i]) @ np.array(
+                ((1,0,0,-.018),(0,1,0,0),(0,0,1,.038),(0,0,0,1)))
+            box((.016,.011,.076),(.10,.12,.15),finger_pose,alpha=.45)
+    else:
+        # Legacy render-only dressing, rigidly driven by recorded poses.
+        box((.034,.14,.018),(.20,.23,.28),transform(bodies[1]),alpha=.35)
+        for i in (2,3): box((.030,.014,.070),(.25,.28,.33),transform(bodies[i]) @ np.array(((1,0,0,0),(0,1,0,0),(0,0,1,.035),(0,0,0,1))),alpha=.35)
     # Ground, shadow/contact hint, and 5 cm grid.
     mid=sum(xlim)/2; ground=trimesh.creation.box((xlim[1]-xlim[0],.42,.002)); ground.apply_translation((mid,0,-.002))
     sc.add(pyrender.Mesh.from_trimesh(ground,material=pyrender.MetallicRoughnessMaterial(baseColorFactor=(.86,.88,.90,1),roughnessFactor=1)))
@@ -293,10 +327,10 @@ def pyrender_frame(q,bodies,t,scene,meta,boundary,tets,inv_dm,camera,xlim,v3=Fal
     sc.add(pyrender.PerspectiveCamera(yfov=np.deg2rad(34)),pose=camera)
     light=pyrender.DirectionalLight(color=np.ones(3),intensity=3.0); sc.add(light,pose=look_at(camera[:3,3],np.array((mid,0,.04))))
     r=pyrender.OffscreenRenderer(WIDTH,HEIGHT); rgb,_=r.render(sc,flags=pyrender.RenderFlags.RGBA); r.delete()
-    return compose_overlays(rgb[:,:,:3], q, bodies, boundary, scene, t, meta, v3)
+    return compose_overlays(rgb[:,:,:3], q, bodies, boundary, scene, t, meta, version)
 
 
-def mpl_frame(q,bodies,t,scene,meta,boundary,tets,inv_dm,camera,xlim,v3=False):
+def mpl_frame(q,bodies,t,scene,meta,boundary,tets,inv_dm,camera,xlim,version=2):
     import matplotlib; matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     from mpl_toolkits.mplot3d.art3d import Poly3DCollection
@@ -306,16 +340,22 @@ def mpl_frame(q,bodies,t,scene,meta,boundary,tets,inv_dm,camera,xlim,v3=False):
         s=vertex_strain(q,tets,inv_dm); c=damage_colors(s[boundary].mean(1))
     else: c=np.tile((.91,.66,.25,1),(len(tri),1))
     ax.add_collection3d(Poly3DCollection(tri[order],facecolors=c[order],edgecolors="none"))
-    for pose,half,col,alpha in ((bodies[2],PAD_HALF,"#2e507a",1.0),
-                                (bodies[3],PAD_HALF,"#2e507a",1.0),
-                                (bodies[1],np.array((.017,.07,.009)),"#353b45",.35)):
+    boxes=[(bodies[2],PAD_HALF,"#2e507a",1.0),
+           (bodies[3],PAD_HALF,"#2e507a",1.0)]
+    if version >= 4:
+        boxes.append((bodies[1],np.array((.020,.0725,.0125)),"#f0f2f4",.40))
+        boxes.extend((bodies[i],np.array((.008,.0055,.038)),"#1a1f26",.45)
+                     for i in (2,3))
+    else:
+        boxes.append((bodies[1],np.array((.017,.07,.009)),"#353b45",.35))
+    for pose,half,col,alpha in boxes:
         signs=np.array([(a,b,c) for a in (-1,1) for b in (-1,1) for c in (-1,1)]); corners=signs*half@rotation(pose[3:]).T+pose[:3]
         ax.add_collection3d(Poly3DCollection(corners[BOX_FACES],facecolors=col,
                                              edgecolors="#222",alpha=alpha))
     for x in np.arange(np.floor(xlim[0]/.05)*.05,xlim[1]+.05,.05): ax.plot([x,x],[-.2,.2],[0,0],color="#aeb4ba",lw=.6)
     ax.set(xlim=xlim,ylim=(-.20,.20),zlim=(0,.18)); ax.view_init(22,-70); ax.set_box_aspect((xlim[1]-xlim[0],.4,.18)); ax.set_axis_off()
     fig.canvas.draw(); rgb=np.asarray(fig.canvas.buffer_rgba())[:,:,:3].copy(); plt.close(fig)
-    return compose_overlays(rgb, q, bodies, boundary, scene, t, meta, v3)
+    return compose_overlays(rgb, q, bodies, boundary, scene, t, meta, version)
 
 
 CARD_TEXT = {
@@ -354,21 +394,35 @@ def message_card(text, subtitle=None):
     return np.asarray(im)
 
 
-def render_scene(scene, smoke=False, v3=False):
+def render_scene(scene, smoke=False, version=2):
     manifest=json.loads((CLIPS/"w3_manifest.json").read_text()); meta=next(x for x in manifest["scenes"] if x["scene"]==scene)
     if not meta.get("label_reproduced") or meta["rerun_label"] != meta["source_final_band_label"]: raise RuntimeError("frozen label audit failed")
-    files=snapshots(scene,v3); first,_,_=load_frame(files[0])
-    if v3 and scene == "slip":
-        capture_meta_path=CLIPS/"w3_slip_dense_ext"/"capture_meta.json"
+    files=snapshots(scene,version); first,_,_=load_frame(files[0])
+    if version >= 3 and scene == "slip":
+        capture_dir="w3_slip_dense_v4" if version >= 4 else "w3_slip_dense_ext"
+        capture_meta_path=CLIPS/capture_dir/"capture_meta.json"
         if not capture_meta_path.exists():
             raise RuntimeError("extended slip capture is incomplete: capture_meta.json missing")
         capture_meta=json.loads(capture_meta_path.read_text())
         actual_last=load_frame(files[-1])[2]
-        drop_t=float(capture_meta["drop_t"]); stated_last=float(capture_meta["t_last"])
+        drop_t=float(capture_meta["drop_t"])
+        stated_last=float(capture_meta.get("t_last",capture_meta.get("global_t_last")))
         if (not capture_meta.get("ejected") or capture_meta.get("label") != "slip"
                 or capture_meta.get("source_label") != "slip"
                 or actual_last <= drop_t + 1.0 or abs(actual_last-stated_last) > 1e-6):
             raise RuntimeError("extended slip capture lacks validated post-ejection frames")
+        if version >= 4:
+            slow_meta_path=CLIPS/"w3_slip_slowmo_v4"/"capture_meta.json"
+            if not slow_meta_path.exists():
+                raise RuntimeError("v4 slow-motion capture is incomplete: capture_meta.json missing")
+            slow_meta=json.loads(slow_meta_path.read_text())
+            slow_files=sorted((slow_meta_path.parent).glob("f_*.npz"))
+            if (not slow_files or not slow_meta.get("ejected")
+                    or slow_meta.get("label") != "slip"
+                    or slow_meta.get("source_label") != "slip"
+                    or float(slow_meta["slowmo_t_first"]) > 9.21
+                    or float(slow_meta["slowmo_t_last"]) < 9.59):
+                raise RuntimeError("v4 slow-motion capture failed provenance/window validation")
     with np.load(CLIPS/"tofu_topology.npz") as d: tets=np.array(d["tet_idx"]); n=int(d["n_particles"])
     if len(first)!=n: raise ValueError("topology/trajectory particle mismatch")
     boundary=boundary_triangles(tets,first)
@@ -377,59 +431,77 @@ def render_scene(scene, smoke=False, v3=False):
     egl,status=egl_available()
     camera,xlim,eye,target=camera_for(files,scene)
     aftermath=None
-    if v3 and scene=="slip":
+    if version >= 3 and scene=="slip":
         (camera,xlim,eye,target),aftermath=slip_v3_cameras(files)
-    def view_at(t):
-        if aftermath is None or t <= 9.55: return camera,xlim
-        _,wide_xlim,wide_eye,wide_target=aftermath
-        u=np.clip((t-9.55)/.40,0,1); u=u*u*(3-2*u)
-        moving_eye=eye+(wide_eye-eye)*u; moving_target=target+(wide_target-target)*u
-        bounds=(xlim[0]+(wide_xlim[0]-xlim[0])*u,xlim[1]+(wide_xlim[1]-xlim[1])*u)
+    grip_frame=min((load_frame(path) for path in files),key=lambda frame: abs(frame[2]-1.8))
+    grip_y=float((grip_frame[1][2,1]+grip_frame[1][3,1])/2)
+    def view_at(t,bodies):
+        moving_eye,moving_target,bounds=eye.copy(),target.copy(),xlim
+        if aftermath is not None and t > 9.55:
+            _,wide_xlim,wide_eye,wide_target=aftermath
+            u=np.clip((t-9.55)/.40,0,1); u=u*u*(3-2*u)
+            moving_eye=eye+(wide_eye-eye)*u; moving_target=target+(wide_target-target)*u
+            bounds=(xlim[0]+(wide_xlim[0]-xlim[0])*u,xlim[1]+(wide_xlim[1]-xlim[1])*u)
+        if version >= 4:
+            drift=float((bodies[2,1]+bodies[3,1])/2)-grip_y
+            moving_eye[1]+=drift; moving_target[1]+=drift
         return look_at(moving_eye,moving_target),bounds
     renderer=pyrender_frame if egl else mpl_frame
     if smoke:
-        target = 9.8 if scene == "damage" else 9.3
-        index=min(range(len(files)),key=lambda i: abs(load_frame(files[i])[2]-target))
-        out=CLIPS/f"w3_{scene}_{'v3' if v3 else 'pro'}_smoke.png"
-        q,b,t=load_frame(files[index]); frame_camera,frame_xlim=view_at(t)
-        composed=renderer(q,b,t,scene,meta,boundary,tets,inv_dm,frame_camera,frame_xlim,v3)
+        target_time = 9.8 if scene == "damage" else 9.3
+        smoke_files=files
+        if version >= 4 and scene=="slip":
+            smoke_files=sorted((CLIPS/"w3_slip_slowmo_v4").glob("f_*.npz"))
+        index=min(range(len(smoke_files)),key=lambda i: abs(load_frame(smoke_files[i])[2]-target_time))
+        mode=f"v{version}" if version >= 3 else "pro"
+        out=CLIPS/f"w3_{scene}_{mode}_smoke.png"
+        q,b,t=load_frame(smoke_files[index]); frame_camera,frame_xlim=view_at(t,b)
+        composed=renderer(q,b,t,scene,meta,boundary,tets,inv_dm,frame_camera,frame_xlim,version)
         Image.fromarray(composed).save(out)
-        if v3:
-            Image.fromarray(message_card(CARD_TEXT[scene][0],CARD_TEXT[scene][1])).save(CLIPS/f"w3_{scene}_v3_intro_smoke.png")
-            Image.fromarray(message_card(CARD_TEXT[scene][2])).save(CLIPS/f"w3_{scene}_v3_end_smoke.png")
+        if version >= 3:
+            Image.fromarray(message_card(CARD_TEXT[scene][0],CARD_TEXT[scene][1])).save(CLIPS/f"w3_{scene}_{mode}_intro_smoke.png")
+            Image.fromarray(message_card(CARD_TEXT[scene][2])).save(CLIPS/f"w3_{scene}_{mode}_end_smoke.png")
             if scene=="slip":
-                q2,b2,t2=load_frame(files[-1]); cam2,limits2=view_at(t2)
-                aftermath_frame=renderer(q2,b2,t2,scene,meta,boundary,tets,inv_dm,cam2,limits2,v3)
-                Image.fromarray(aftermath_frame).save(CLIPS/"w3_slip_v3_aftermath_smoke.png")
+                q2,b2,t2=load_frame(files[-1]); cam2,limits2=view_at(t2,b2)
+                aftermath_frame=renderer(q2,b2,t2,scene,meta,boundary,tets,inv_dm,cam2,limits2,version)
+                Image.fromarray(aftermath_frame).save(CLIPS/f"w3_slip_{mode}_aftermath_smoke.png")
         # Exercise the same key-image write path: key PNG is the fully composed
         # video frame, including HUD and tactile insets.
-        key_dir=CLIPS/f"w3_{scene}_{'v3' if v3 else 'pro'}_keys"; key_dir.mkdir(exist_ok=True)
+        key_dir=CLIPS/f"w3_{scene}_{mode}_keys"; key_dir.mkdir(exist_ok=True)
         Image.fromarray(composed).save(key_dir/("dwell.png" if scene == "damage" else "hold.png"))
         return out,status,xlim,eye,target
-    # Dense 60 Hz -> 30 fps. Slip window repeats every selected real frame 4 times.
-    indices=[]
-    for i,p in enumerate(files):
-        _,_,t=load_frame(p)
-        if i%2==0:
-            slow = scene=="slip" and ((9.25<=t<=9.55) if v3 else (9.20<=t<=9.40))
-            indices.extend([i] * (4 if slow else 1))
-    if v3 and scene=="slip": indices.extend([len(files)-1]*30)
+    render_paths=[]
+    if version >= 4 and scene=="slip":
+        slow_files=sorted((CLIPS/"w3_slip_slowmo_v4").glob("f_*.npz"))
+        if not slow_files: raise RuntimeError("missing v4 slow-motion substep states")
+        stride=max(1,int(round(len(slow_files)/48)))
+        render_paths += [p for i,p in enumerate(files) if i%2==0 and load_frame(p)[2]<9.20]
+        render_paths += slow_files[::stride]
+        render_paths += [p for i,p in enumerate(files) if i%2==0 and load_frame(p)[2]>9.60]
+    else:
+        for i,p in enumerate(files):
+            _,_,t=load_frame(p)
+            if i%2==0:
+                slow=scene=="slip" and version >= 3 and 9.25<=t<=9.55
+                render_paths.extend([p]*(4 if slow else 1))
+    if version >= 3 and scene=="slip": render_paths.extend([files[-1]]*30)
     import imageio.v2 as imageio
-    stem=f"w3_{scene}_{'v3' if v3 else 'pro'}"
+    mode=f"v{version}" if version >= 3 else "pro"
+    stem=f"w3_{scene}_{mode}"
     out=CLIPS/f"{stem}.mp4"; keys=CLIPS/f"{stem}_keys"; keys.mkdir(exist_ok=True)
     writer=imageio.get_writer(out,fps=FPS,codec="libx264",quality=8,macro_block_size=None)
     times=[]
     try:
-        if v3:
+        if version >= 3:
             intro=message_card(CARD_TEXT[scene][0],CARD_TEXT[scene][1])
             for _ in range(45): writer.append_data(intro)
-        for i in indices:
-            q,b,t=load_frame(files[i]); frame_camera,frame_xlim=view_at(t)
-            frame=renderer(q,b,t,scene,meta,boundary,tets,inv_dm,frame_camera,frame_xlim,v3); writer.append_data(frame); times.append(t)
+        for path in render_paths:
+            q,b,t=load_frame(path); frame_camera,frame_xlim=view_at(t,b)
+            frame=renderer(q,b,t,scene,meta,boundary,tets,inv_dm,frame_camera,frame_xlim,version); writer.append_data(frame); times.append(t)
             for name,kt in KEY_TIMES.items():
                 kp=keys/f"{name}.png"
                 if abs(t-kt)<=1/60+.0001: Image.fromarray(frame).save(kp)
-        if v3:
+        if version >= 3:
             ending=message_card(CARD_TEXT[scene][2])
             for _ in range(30): writer.append_data(ending)
     finally: writer.close()
@@ -438,8 +510,8 @@ def render_scene(scene, smoke=False, v3=False):
     for name,kt in KEY_TIMES.items():
         kp=keys/f"{name}.png"
         q,b,t=load_frame(files[int(np.argmin([abs(load_frame(p)[2]-kt) for p in files]))])
-        frame_camera,frame_xlim=view_at(t)
-        Image.fromarray(renderer(q,b,t,scene,meta,boundary,tets,inv_dm,frame_camera,frame_xlim,v3)).save(kp)
+        frame_camera,frame_xlim=view_at(t,b)
+        Image.fromarray(renderer(q,b,t,scene,meta,boundary,tets,inv_dm,frame_camera,frame_xlim,version)).save(kp)
     return out,status,xlim,eye,target
 
 
@@ -449,13 +521,15 @@ def main():
     g.add_argument("--smoke",action="store_true",help="one composed frame per scene")
     g.add_argument("--smoke-scene",choices=SCENES,help="one composed frame for one scene")
     ap.add_argument("--v3",action="store_true",help="v3 cards, taxels, and extended slip")
+    ap.add_argument("--v4",action="store_true",help="v4 drift tracking, shell, and substep slow motion")
     a=ap.parse_args()
     chosen=SCENES if a.render or a.smoke else ((a.smoke_scene,) if a.smoke_scene else (a.scene,))
     smoke=a.smoke or bool(a.smoke_scene)
     failures=[]
+    version=4 if a.v4 else (3 if a.v3 else 2)
     for scene in chosen:
         try:
-            result=render_scene(scene,smoke,a.v3); print(f"{scene}: {result}")
+            result=render_scene(scene,smoke,version); print(f"{scene}: {result}")
         except Exception as exc:
             failures.append(scene); print(f"ERROR {scene}: {exc}",file=sys.stderr)
     return bool(failures)
