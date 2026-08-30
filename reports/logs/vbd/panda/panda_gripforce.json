@@ -1,0 +1,43 @@
+{
+  "schema": "panda_gripforce.v1",
+  "rig": "panda",
+  "coupling": "maximal-coordinate per-substep symmetric projection",
+  "collector": "src.pad_wrench.collect_pad_wrench",
+  "cases": [
+    {
+      "E_pa": 7000.0,
+      "commanded_F": 2.0,
+      "Fn_left": 2.0046342988912347,
+      "Fn_right": 1.9957757512093846,
+      "Ft_left": 0.4280932488605917,
+      "Ft_right": 0.423327691362818,
+      "n_contacts": {
+        "left": 491,
+        "right": 491
+      },
+      "joint_f_applied": {
+        "left": -2.0,
+        "right": -2.0
+      },
+      "hold_samples": 60
+    },
+    {
+      "E_pa": 15000.0,
+      "commanded_F": 1.2,
+      "Fn_left": 1.1903792203194055,
+      "Fn_right": 1.189927017656116,
+      "Ft_left": 0.47578233115046054,
+      "Ft_right": 0.4763212906666985,
+      "n_contacts": {
+        "left": 491,
+        "right": 491
+      },
+      "joint_f_applied": {
+        "left": -1.2000000476837158,
+        "right": -1.2000000476837158
+      },
+      "hold_samples": 60
+    }
+  ],
+  "frozen_reference": "Validated R3 static suspended hold: per-pad Fn approximately F_cmd"
+}
