@@ -42,3 +42,29 @@ Tactile proxy = pad-frame contact-centroid excursion (mm). Endpoints E15/F1.2, a
 - a=10 (realized ~6.4 m/s^2): centroid excursion [9.15, 9.19, 9.07] mm -> range 9.07-9.19
 STRICT NON-OVERLAP: True (9.07 > 0.30). Signed median difference: +8.86 mm (a=10 - a=1).
 Conclusion: the geometry-only tactile proxy is a reproducible, strongly accel-sensitive signal. Peak tangential/normal ratio: UNAVAILABLE (ATTR=GEOMETRY_ONLY; never fabricated).
+
+## Force channel status (external consult #3, R3) and a future health check
+
+A project-local per-pad soft-rigid contact-force collector was built by wrapping
+Newton's own harvester kernel
+(`_harvest_vbd_body_particle_contact_forces_on_proxy_bodies_kernel`; see
+`src/pad_wrench.py`, `scripts/vbd/r3_pad_wrench_tests.py`,
+`reports/logs/vbd/r3_pad_wrench.json`). It PASSED the block-absent falsifier
+(machine-zero, unlike the rejected `SolverVBD.body_forces` path) and the static
+per-finger normal test (Fn_left=1.19, Fn_right=1.19 ~= commanded 1.2 N), but the
+whole-soft-body vertical momentum balance did NOT close (measured 1.05 N vs the
+64 g weight 0.628 N; block mass confirmed exactly 64 g, block verified airborne
+and static). The tangential channel therefore over-reports ~1.67x and the
+collector is NOT yet trustworthy as a force sensor. **W2 stays GEOMETRY_ONLY;
+no force/pressure claim is promoted.** Resolving the tangential re-evaluation
+(solver friction impulse vs post-step penalty re-evaluation, full-surface record
+handling) is future work before any re-promotion.
+
+**Future health check (per Ruling 8b):** the demoted vg2 zero-record diagnostic
+is unsatisfiable and carries no information under VBD soft-contact recording. In
+its place, a prospective **contact-gated coverage** metric -- the fraction of
+EXPECTED-contact substeps (approach-complete through pre-release) that actually
+carry active soft-contact records -- should be stored and reported once
+per-substep contact flags are persisted. This gives a real contact-tracking
+health signal for W2-type pad-channel claims without the category error of the
+original zero-record bar.
