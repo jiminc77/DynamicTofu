@@ -105,8 +105,8 @@ def vertex_strain(q,tets,inv_dm):
 
 
 def damage_colors(strain):
-    """Opaque tofu amber -> failure red over [0.10, 0.30] Green strain."""
-    mix = np.clip((np.asarray(strain) - .10) / .20, 0, 1) ** 1.5
+    """Opaque tofu amber -> failure red over [0.10, 0.22] Green strain."""
+    mix = np.clip((np.asarray(strain) - .10) / .12, 0, 1) ** 1.5
     amber = np.array((.91, .61, .16))
     red = np.array((.78, .06, .045))
     rgb = amber + mix[:, None] * (red - amber)
@@ -213,14 +213,17 @@ def pyrender_frame(q,bodies,t,scene,meta,boundary,tets,inv_dm,camera,xlim):
         mat=pyrender.MetallicRoughnessMaterial(baseColorFactor=(.91,.66,.25,1),metallicFactor=.05,roughnessFactor=.38)
         mesh=pyrender.Mesh.from_trimesh(tm,material=mat,smooth=True)
     sc.add(mesh)
-    def box(ext,color,pose):
-        tm=trimesh.creation.box(extents=ext); mat=pyrender.MetallicRoughnessMaterial(baseColorFactor=(*color,1),metallicFactor=.22,roughnessFactor=.3)
+    def box(ext,color,pose,alpha=1.0):
+        tm=trimesh.creation.box(extents=ext)
+        mat=pyrender.MetallicRoughnessMaterial(
+            baseColorFactor=(*color,alpha), metallicFactor=.22, roughnessFactor=.3,
+            alphaMode="BLEND" if alpha < 1 else "OPAQUE")
         sc.add(pyrender.Mesh.from_trimesh(tm,material=mat),pose=pose)
     # Exact physical pad boxes.
     box(2*PAD_HALF,(.18,.31,.48),transform(bodies[2])); box(2*PAD_HALF,(.18,.31,.48),transform(bodies[3]))
     # Render-only dressing: palm housing and brackets, rigidly driven by recorded poses.
-    box((.034,.14,.018),(.20,.23,.28),transform(bodies[1]))
-    for i in (2,3): box((.030,.014,.070),(.25,.28,.33),transform(bodies[i]) @ np.array(((1,0,0,0),(0,1,0,0),(0,0,1,.035),(0,0,0,1))))
+    box((.034,.14,.018),(.20,.23,.28),transform(bodies[1]),alpha=.35)
+    for i in (2,3): box((.030,.014,.070),(.25,.28,.33),transform(bodies[i]) @ np.array(((1,0,0,0),(0,1,0,0),(0,0,1,.035),(0,0,0,1))),alpha=.35)
     # Ground, shadow/contact hint, and 5 cm grid.
     mid=sum(xlim)/2; ground=trimesh.creation.box((xlim[1]-xlim[0],.42,.002)); ground.apply_translation((mid,0,-.002))
     sc.add(pyrender.Mesh.from_trimesh(ground,material=pyrender.MetallicRoughnessMaterial(baseColorFactor=(.86,.88,.90,1),roughnessFactor=1)))
@@ -243,9 +246,12 @@ def mpl_frame(q,bodies,t,scene,meta,boundary,tets,inv_dm,camera,xlim):
         s=vertex_strain(q,tets,inv_dm); c=damage_colors(s[boundary].mean(1))
     else: c=np.tile((.91,.66,.25,1),(len(tri),1))
     ax.add_collection3d(Poly3DCollection(tri[order],facecolors=c[order],edgecolors="none"))
-    for pose,half,col in ((bodies[2],PAD_HALF,"#2e507a"),(bodies[3],PAD_HALF,"#2e507a"),(bodies[1],np.array((.017,.07,.009)),"#353b45")):
+    for pose,half,col,alpha in ((bodies[2],PAD_HALF,"#2e507a",1.0),
+                                (bodies[3],PAD_HALF,"#2e507a",1.0),
+                                (bodies[1],np.array((.017,.07,.009)),"#353b45",.35)):
         signs=np.array([(a,b,c) for a in (-1,1) for b in (-1,1) for c in (-1,1)]); corners=signs*half@rotation(pose[3:]).T+pose[:3]
-        ax.add_collection3d(Poly3DCollection(corners[BOX_FACES],facecolors=col,edgecolors="#222"))
+        ax.add_collection3d(Poly3DCollection(corners[BOX_FACES],facecolors=col,
+                                             edgecolors="#222",alpha=alpha))
     for x in np.arange(np.floor(xlim[0]/.05)*.05,xlim[1]+.05,.05): ax.plot([x,x],[-.2,.2],[0,0],color="#aeb4ba",lw=.6)
     ax.set(xlim=xlim,ylim=(-.20,.20),zlim=(0,.18)); ax.view_init(22,-70); ax.set_box_aspect((xlim[1]-xlim[0],.4,.18)); ax.set_axis_off()
     fig.canvas.draw(); rgb=np.asarray(fig.canvas.buffer_rgba())[:,:,:3].copy(); plt.close(fig)
@@ -263,8 +269,15 @@ def render_scene(scene, smoke=False):
     inv_dm=rest_poses(tets,first); camera,xlim,eye,target=camera_for(files,scene); egl,status=egl_available()
     renderer=pyrender_frame if egl else mpl_frame
     if smoke:
-        indices=[min(len(files)-1,len(files)//2)]; out=CLIPS/f"w3_{scene}_pro_smoke.png"
-        q,b,t=load_frame(files[indices[0]]); Image.fromarray(renderer(q,b,t,scene,meta,boundary,tets,inv_dm,camera,xlim)).save(out)
+        target = 9.8 if scene == "damage" else 9.3
+        index=min(range(len(files)),key=lambda i: abs(load_frame(files[i])[2]-target))
+        out=CLIPS/f"w3_{scene}_pro_smoke.png"
+        q,b,t=load_frame(files[index]); composed=renderer(q,b,t,scene,meta,boundary,tets,inv_dm,camera,xlim)
+        Image.fromarray(composed).save(out)
+        # Exercise the same key-image write path: key PNG is the fully composed
+        # video frame, including HUD and tactile insets.
+        key_dir=CLIPS/f"w3_{scene}_pro_keys"; key_dir.mkdir(exist_ok=True)
+        Image.fromarray(composed).save(key_dir/("dwell.png" if scene == "damage" else "hold.png"))
         return out,status,xlim,eye,target
     # Dense 60 Hz -> 30 fps. Slip window repeats every selected real frame 4 times.
     indices=[]
@@ -280,13 +293,14 @@ def render_scene(scene, smoke=False):
             q,b,t=load_frame(files[i]); frame=renderer(q,b,t,scene,meta,boundary,tets,inv_dm,camera,xlim); writer.append_data(frame); times.append(t)
             for name,kt in KEY_TIMES.items():
                 kp=keys/f"{name}.png"
-                if not kp.exists() and abs(t-kt)<=1/60+.0001: Image.fromarray(frame).save(kp)
+                if abs(t-kt)<=1/60+.0001: Image.fromarray(frame).save(kp)
     finally: writer.close()
-    # Ejected slip ends before later phases: use its final real frame for unavailable keys.
+    # Always rewrite every key from a fully composed nearest real frame. This
+    # prevents stale pre-inset keys surviving a later video re-encode.
     for name,kt in KEY_TIMES.items():
         kp=keys/f"{name}.png"
-        if not kp.exists():
-            q,b,t=load_frame(files[int(np.argmin([abs(load_frame(p)[2]-kt) for p in files]))]); Image.fromarray(renderer(q,b,t,scene,meta,boundary,tets,inv_dm,camera,xlim)).save(kp)
+        q,b,t=load_frame(files[int(np.argmin([abs(load_frame(p)[2]-kt) for p in files]))])
+        Image.fromarray(renderer(q,b,t,scene,meta,boundary,tets,inv_dm,camera,xlim)).save(kp)
     return out,status,xlim,eye,target
 
 

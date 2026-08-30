@@ -36,7 +36,7 @@ finger brackets are explicitly **render-only presentation dressing**, rigidly
 attached to recorded palm/pad poses; no robot arm is shown. Damage is colored
 by per-vertex averaged maximum-principal Green strain (tet deformation
 gradient from the first dense frame as the rest reference), opaque tofu
-amber-to-red over [0.10, 0.30], with a nonlinear ramp that retains amber at
+amber-to-red over [0.10, 0.22], with a nonlinear ramp that retains amber at
 mid strain and reserves red for failure; intact and slip are neutral. Slip playback repeats
 the real dense frames from 9.20–9.40 s four times and shows a `SLOW MOTION x4`
 tag. This changes playback timing only.
@@ -64,3 +64,9 @@ non-empty intact-hold footprint; it does not alter contact physics.
 Selected vertices are projected into pad-local transport-x/gravity-z, with a
 centroid cross and selected-vertex count. The overlay is post-composited in 2D,
 so its behavior is identical for EGL and matplotlib rendering.
+
+The non-physical palm housing and finger brackets use alpha 0.35, while the
+simulated tofu and two physical pads remain opaque. Thus presentation dressing
+cannot visually masquerade as, or fully occlude, simulated geometry. Video and
+key-frame PNGs use the same final HUD/tactile post-composite path; all seven
+keys are overwritten on each encode to prevent stale pre-overlay images.
