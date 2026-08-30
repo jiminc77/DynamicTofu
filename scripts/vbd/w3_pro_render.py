@@ -34,6 +34,7 @@ BOX_FACES = np.array(((0,1,3,2),(4,6,7,5),(0,4,5,1),(2,3,7,6),(0,2,6,4),(1,5,7,3
 WIDTH, HEIGHT, FPS = 1280, 720, 30
 BODY_REORDER = None
 PANDA_RIG_GEOMETRY = None
+FRAME_FORCE = None
 
 
 def boundary_triangles(tets, vertices):
@@ -90,6 +91,10 @@ def look_at(eye, target):
 
 
 def snapshots(scene, version=2):
+    if version >= 8:
+        files=sorted((CLIPS/"panda"/f"w3_{scene}_force40").glob("f_*.npz"))
+        if not files: raise FileNotFoundError(f"missing force40 Panda trajectory for {scene}")
+        return files
     if version >= 5:
         files=sorted((CLIPS/"panda"/f"w3_{scene}_dense").glob("f_*.npz"))
         if not files: raise FileNotFoundError(f"missing frozen Panda dense trajectory for {scene}")
@@ -106,10 +111,19 @@ def snapshots(scene, version=2):
 
 
 def load_frame(path):
+    global FRAME_FORCE
     with np.load(path) as d:
         bodies=np.array(d["body_q"])
         if BODY_REORDER is not None:
             bodies=bodies[BODY_REORDER]
+        FRAME_FORCE=({
+            "fn_left":np.array(d["taxel_fn_left"]),
+            "fn_right":np.array(d["taxel_fn_right"]),
+            "ft_left":np.array(d["taxel_ft_left"]),
+            "ft_right":np.array(d["taxel_ft_right"]),
+            "net_left":np.array(d["net_shear_left"]),
+            "net_right":np.array(d["net_shear_right"]),
+        } if "taxel_fn_left" in d else None)
         return np.array(d["particle_q"]),bodies,float(d["t"])
 
 
@@ -300,8 +314,9 @@ def add_tactile_insets(rgb, q, bodies, boundary, taxels=False, per_frame=False, 
     try:
         font = ImageFont.truetype("DejaVuSans.ttf", 13)
         small = ImageFont.truetype("DejaVuSans.ttf", 11)
+        tiny = ImageFont.truetype("DejaVuSans.ttf", 8)
     except OSError:
-        font = small = ImageFont.load_default()
+        font = small = tiny = ImageFont.load_default()
     surface_vertices = q[np.unique(boundary)]
     tofu_center = surface_vertices.mean(axis=0)
     panel_size, edge_margin, gap = 180, 18, 12
@@ -316,11 +331,14 @@ def add_tactile_insets(rgb, q, bodies, boundary, taxels=False, per_frame=False, 
         y0, size = HEIGHT - edge_margin - panel_size, panel_size
         draw.rounded_rectangle((x0, y0, x0 + size, y0 + size), 9,
                                fill=(255, 255, 255, 232), outline=(45, 55, 65, 180), width=2)
-        title = f"{label} penetration depth" if taxels else f"{label} pad contact footprint"
+        force_mode=version >= 8
+        title = (f"{label} normal force" if force_mode else
+                 (f"{label} penetration depth" if taxels else f"{label} pad contact footprint"))
         draw.text((x0 + 8, y0 + 7), title, font=font, fill=(20, 28, 36, 255))
-        caption = "(geometry proxy)" if taxels else "(geometry proxy)"
-        draw.text((x0 + 8, y0 + 24), caption, font=small, fill=(75, 82, 90, 255))
-        if taxels:
+        caption = ("force: validated collector @ 40 iter" if force_mode else "(geometry proxy)")
+        draw.text((x0 + 8, y0 + 24), caption,font=tiny if force_mode else small,
+                  fill=(75, 82, 90, 255))
+        if taxels and not force_mode:
             draw.text((x0 + 8, y0 + 38), "ATTR=GEOMETRY_ONLY", font=small,
                       fill=(75, 82, 90, 255))
         left, top, side = x0 + 35, y0 + (58 if taxels else 48), (108 if taxels else 116)
@@ -333,7 +351,38 @@ def add_tactile_insets(rgb, q, bodies, boundary, taxels=False, per_frame=False, 
         def pixel(p):
             return (left + (p[0] / (.044) + .5) * side,
                     top + (1 - (p[1] / (.044) + .5)) * side)
-        if taxels:
+        if force_mode:
+            if FRAME_FORCE is None:
+                raise RuntimeError("v8 frame lacks force collector arrays")
+            side_name="left" if label=="L" else "right"
+            grid=FRAME_FORCE["fn_"+side_name]
+            shear=FRAME_FORCE["ft_"+side_name]
+            net=FRAME_FORCE["net_"+side_name]
+            stops=np.array(((.267,.005,.329),(.190,.407,.556),(.208,.719,.473),(.993,.906,.144)))
+            ceiling=max(float(grid.max()),1e-9)
+            def force_color(value):
+                u=np.clip(value/ceiling,0,1)*(len(stops)-1)
+                j=min(int(u),len(stops)-2); c=stops[j]+(u-j)*(stops[j+1]-stops[j])
+                return tuple((c*255).astype(int))+(235,)
+            cell=side/8
+            shear_scale=max(float(np.linalg.norm(shear,axis=2).max()),1e-9)
+            for z in range(8):
+                for x in range(8):
+                    xa=left+x*cell; ya=top+(7-z)*cell
+                    draw.rectangle((xa,ya,xa+cell,ya+cell),fill=force_color(grid[z,x]),
+                                   outline=(245,245,245,150),width=1)
+                    vector=shear[z,x]/shear_scale*(cell*.38)
+                    center=np.array((xa+cell/2,ya+cell/2))
+                    end=center+np.array((vector[0],-vector[1]))
+                    draw.line((*center,*end),fill=(255,255,255,225),width=1)
+            net_scale=max(float(np.linalg.norm(net)),shear_scale)
+            start=np.array((left+side/2,top+side/2))
+            end=start+np.array((net[0],-net[1]))/net_scale*(side*.35)
+            draw.line((*start,*end),fill=(230,35,55,255),width=4)
+            draw.ellipse((end[0]-3,end[1]-3,end[0]+3,end[1]+3),fill=(230,35,55,255))
+            draw.text((x0+8,y0+166),f"max {ceiling:.3f} N | red: net shear",
+                      font=tiny,fill=(20,28,36,255))
+        elif taxels:
             grid, count = pad_taxel_depth(surface_vertices, pose, inner_face_sign)
             # Compact viridis-like perceptually increasing blue-to-yellow ramp.
             stops = np.array(((.267,.005,.329),(.190,.407,.556),(.208,.719,.473),(.993,.906,.144)))
@@ -522,11 +571,17 @@ def message_card(text, subtitle=None):
 
 def render_scene(scene, smoke=False, version=2):
     global BODY_REORDER
-    manifest_path=(CLIPS/"panda"/"w3_panda_manifest.json"
-                   if version >= 5 else CLIPS/"w3_manifest.json")
+    manifest_path=(CLIPS/"panda"/"w3_force40_manifest.json" if version >= 8 else
+                   (CLIPS/"panda"/"w3_panda_manifest.json"
+                    if version >= 5 else CLIPS/"w3_manifest.json"))
     manifest=json.loads(manifest_path.read_text())
     scenes=manifest["scenes"]
     meta=scenes[scene] if isinstance(scenes,dict) else next(x for x in scenes if x["scene"]==scene)
+    if version >= 8:
+        base_manifest=json.loads((CLIPS/"panda"/"w3_panda_manifest.json").read_text())
+        base_meta=next(x for x in base_manifest["scenes"] if x["scene"]==scene)
+        meta={**base_meta,**meta}
+        manifest={**base_manifest,**manifest}
     expected=meta.get("expected_label",meta.get("expected",
                       meta.get("source_final_band_label",meta.get("source_label"))))
     if not meta.get("label_reproduced") or meta["rerun_label"] != expected:
@@ -695,11 +750,12 @@ def main():
     ap.add_argument("--v5",action="store_true",help="real Panda-hand P-rig meshes and captures")
     ap.add_argument("--v6",action="store_true",help="draw exact visible shapes exported from PandaRig")
     ap.add_argument("--v7",action="store_true",help="v7: vertical hand pose, three-quarter camera, matte pads (ships to user)")
+    ap.add_argument("--v8",action="store_true",help="v8: validated iter-40 normal/shear force insets")
     a=ap.parse_args()
     chosen=SCENES if a.render or a.smoke else ((a.smoke_scene,) if a.smoke_scene else (a.scene,))
     smoke=a.smoke or bool(a.smoke_scene)
     failures=[]
-    version=7 if a.v7 else (6 if a.v6 else (5 if a.v5 else (4 if a.v4 else (3 if a.v3 else 2))))
+    version=8 if a.v8 else (7 if a.v7 else (6 if a.v6 else (5 if a.v5 else (4 if a.v4 else (3 if a.v3 else 2)))))
     for scene in chosen:
         try:
             result=render_scene(scene,smoke,version); print(f"{scene}: {result}")

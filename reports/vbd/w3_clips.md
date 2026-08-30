@@ -195,3 +195,15 @@ All approved v5 presentation behavior is retained, including damage strain,
 cards, taxels, dense slip slow motion, the fixed landing-inclusive slip
 camera, settled-aftermath trim, and final freeze. Smoke:
 `.venv-render/bin/python scripts/vbd/w3_pro_render.py --smoke --v6`.
+
+## Video v8 validated force insets
+
+V8 reads the validated 40-iteration collector trajectories from
+`reports/vbd/clips/panda/w3_<scene>_force40/`; both physics poses and tactile
+signals come from those frames. Each 8x8 inset uses collected normal force in
+N as its per-taxel fill color, overlays small white in-plane shear arrows from
+the two-component taxel shear vectors, and shows the collected pad net shear
+as a larger red arrow. A per-frame normal-force maximum in N provides the
+color scale. Each panel is labeled `force: validated collector @ 40 iter`.
+All v7 model-shape, camera, matte-pad, card, slow-motion, landing, and
+aftermath behavior is unchanged.
