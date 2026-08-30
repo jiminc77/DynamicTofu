@@ -21,7 +21,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from src.frozen_config import assert_frozen, frozen_provenance
+from src.frozen_config import FROZEN_PRODUCTION, assert_frozen, frozen_provenance
 from src.judgment_vbd import (LIFT_END, PHASE_NAMES, grasp_frame_y_res_mm,
                               hold_slip_z_mm, label_v23, latched_dvf,
                               per_phase_strain_maxima, phase_for_time,
@@ -324,7 +324,7 @@ def _json_safe(value):
 
 
 def run_transport_cell(E, F, a_peak, seed, substeps=80, cell_m=0.005,
-                       snap_dir=None, save_field=None):
+                       snap_dir=None, save_field=None, convergence=False):
     from src.contact_validity import ValidityAccumulator
     from src.vbd_rig2 import GRAB_Z, Vbd2Config, Vbd2Rig
 
@@ -333,7 +333,15 @@ def run_transport_cell(E, F, a_peak, seed, substeps=80, cell_m=0.005,
                      mu_pair=1.0, friction_epsilon=2e-4, soft_contact_margin=1e-3,
                      substeps=substeps, lift_s=2.5, hold_s=5.0,
                      lift_height_m=0.05, seed=int(seed))
-    assert_frozen(cfg)
+    if convergence and int(substeps) != FROZEN_PRODUCTION["substeps"]:
+        # R2 convergence sentinel (external consult #3): deliberately vary the
+        # substep count ONLY. Assert every other frozen value is untouched by
+        # checking a substeps-normalised view of the cfg.
+        frozen_view = {key: getattr(cfg, key, None) for key in FROZEN_PRODUCTION}
+        frozen_view["substeps"] = FROZEN_PRODUCTION["substeps"]
+        assert_frozen(frozen_view)
+    else:
+        assert_frozen(cfg)
     rig = Vbd2Rig(cfg)
     left_shape, right_shape = _pad_shapes(rig)
     validity = ValidityAccumulator(left_shape, right_shape, (rig.soft_start, rig.soft_end),
@@ -555,6 +563,11 @@ def run_transport_cell(E, F, a_peak, seed, substeps=80, cell_m=0.005,
         "prereg_sha256": _sha256(ROOT / "ralph/results/prereg_w1.json"),
         **frozen_provenance(),
     }
+    if convergence and int(substeps) != FROZEN_PRODUCTION["substeps"]:
+        # Honest provenance: this is NOT a production-frozen cell.
+        receipt["frozen_config"] = {**receipt["frozen_config"], "substeps": int(substeps)}
+        receipt["frozen_check"] = False
+        receipt["convergence_substeps"] = int(substeps)
     return receipt
 
 
