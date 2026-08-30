@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-08-29T18:12:45.766732+00:00",
-  "git_commit": "77194ac087b4324ca72f40c34d0ec277147ed7b8",
+  "generated_at": "2026-08-30T03:46:16.615693+00:00",
+  "git_commit": "94555cc731b8d1140f2b10d4cb33b24534b2c791",
   "newton_commit": "b74df534",
-  "file_count": 4746,
+  "file_count": 4773,
   "files": [
     {
       "path": "reports/logs/vbd/e1v2_band_15.json",
@@ -5428,6 +5428,51 @@
       "path": "reports/vbd/clips/w3_damage_keys/settle.png",
       "sha256": "eb091fcd0b1649a41732efaf11a581a0e8b3771b3ba71a9340d0910905718726",
       "bytes": 9405
+    },
+    {
+      "path": "reports/vbd/clips/w3_damage_pro.mp4",
+      "sha256": "a7b836bac2e327674a6b5c157b8a5300fc798fa6b81c1ba38145b40cca5de655",
+      "bytes": 1017294
+    },
+    {
+      "path": "reports/vbd/clips/w3_damage_pro_keys/accel_out_peak.png",
+      "sha256": "f9ea734c25a7c6732a863370ee85d12481a511d40d289a6e3e71a64ba3877d3a",
+      "bytes": 131923
+    },
+    {
+      "path": "reports/vbd/clips/w3_damage_pro_keys/dwell.png",
+      "sha256": "c30f613737302583b06b5f575cd42c39b645f4e5677f3d5fa1d0d63d4a0d9f59",
+      "bytes": 125510
+    },
+    {
+      "path": "reports/vbd/clips/w3_damage_pro_keys/grip.png",
+      "sha256": "fe32429e3a99e9aab78b6b70041e564f8c30af7da6b5c0d70015d444007fd611",
+      "bytes": 125566
+    },
+    {
+      "path": "reports/vbd/clips/w3_damage_pro_keys/hold.png",
+      "sha256": "65a200f013e2b464d5b9907bc561aaeeee2fbeaa09a5cd371f66fcc8ace76897",
+      "bytes": 131473
+    },
+    {
+      "path": "reports/vbd/clips/w3_damage_pro_keys/lift.png",
+      "sha256": "7767ee5dfd7d58660ce8914f91b226e86585e21137bc7656bb622e9e8d8fca29",
+      "bytes": 130851
+    },
+    {
+      "path": "reports/vbd/clips/w3_damage_pro_keys/return.png",
+      "sha256": "92965926758c49a8008d37d81e26942112b40367a3d65d98c9b32a858a3c3dc3",
+      "bytes": 124836
+    },
+    {
+      "path": "reports/vbd/clips/w3_damage_pro_keys/settle.png",
+      "sha256": "ac8c1ba4e022278ba9947efb022900110fab89e9a0e29aedf18a2ec22fc94745",
+      "bytes": 132562
+    },
+    {
+      "path": "reports/vbd/clips/w3_damage_pro_smoke.png",
+      "sha256": "c30f613737302583b06b5f575cd42c39b645f4e5677f3d5fa1d0d63d4a0d9f59",
+      "bytes": 125510
     },
     {
       "path": "reports/vbd/clips/w3_damage_snapshots/f_0000.npz",
@@ -13310,6 +13355,51 @@
       "bytes": 7977
     },
     {
+      "path": "reports/vbd/clips/w3_intact_pro.mp4",
+      "sha256": "149f0f706df878c3301faaf33bc7f24098d2cf560bf5c64170b65cd864d50a75",
+      "bytes": 771959
+    },
+    {
+      "path": "reports/vbd/clips/w3_intact_pro_keys/accel_out_peak.png",
+      "sha256": "aa9091ad1853737d2f2956466202d8bbc8e8a5e871d9256f9f47ab2733cb32cd",
+      "bytes": 121699
+    },
+    {
+      "path": "reports/vbd/clips/w3_intact_pro_keys/dwell.png",
+      "sha256": "38dc0f23be3f34be8e11ac7cec8e3630515b6d32bddfb6520794eea7b531f17d",
+      "bytes": 125735
+    },
+    {
+      "path": "reports/vbd/clips/w3_intact_pro_keys/grip.png",
+      "sha256": "4a0d7dc12aa992b0780adcd2a4cb713d5e941c60b23cc7fae77ecc9fe55cd1b1",
+      "bytes": 119997
+    },
+    {
+      "path": "reports/vbd/clips/w3_intact_pro_keys/hold.png",
+      "sha256": "1e01736f3efd073800e73877f5d34ef154eb3a71baa2566c3e8965b7ea3837f9",
+      "bytes": 121181
+    },
+    {
+      "path": "reports/vbd/clips/w3_intact_pro_keys/lift.png",
+      "sha256": "47c7302022bcd9927919a621be2f1465cc46a28f26d8cbd70f98700352245c63",
+      "bytes": 121079
+    },
+    {
+      "path": "reports/vbd/clips/w3_intact_pro_keys/return.png",
+      "sha256": "1f50852137b0d4e50a124b707356e077152b40cf2f15940b0edeb46463e9d64b",
+      "bytes": 124575
+    },
+    {
+      "path": "reports/vbd/clips/w3_intact_pro_keys/settle.png",
+      "sha256": "194e5519687e6fde82268b52fc06613cedd38fb8dc91299a285a6d7b3f0a8769",
+      "bytes": 121528
+    },
+    {
+      "path": "reports/vbd/clips/w3_intact_pro_smoke.png",
+      "sha256": "ab72e45827d3abbe88eae057fda97ddcf74fd8562de43213968f5527f0efce40",
+      "bytes": 121181
+    },
+    {
       "path": "reports/vbd/clips/w3_intact_snapshots/f_0000.npz",
       "sha256": "7b8e9354280c1dcd1f109382339db1a3c40a4d196403fe62ef3501ee45954a36",
       "bytes": 8430
@@ -20480,6 +20570,51 @@
       "bytes": 8705
     },
     {
+      "path": "reports/vbd/clips/w3_slip_pro.mp4",
+      "sha256": "732196843408dc29a72bdd66ed4e324f5c898c624f6d920b880a124712a6b6cd",
+      "bytes": 629591
+    },
+    {
+      "path": "reports/vbd/clips/w3_slip_pro_keys/accel_out_peak.png",
+      "sha256": "ef2410c52ac5597de52b192cf982d95b91c708e278aa8590b1563c3f46849ff7",
+      "bytes": 128712
+    },
+    {
+      "path": "reports/vbd/clips/w3_slip_pro_keys/dwell.png",
+      "sha256": "ef2410c52ac5597de52b192cf982d95b91c708e278aa8590b1563c3f46849ff7",
+      "bytes": 128712
+    },
+    {
+      "path": "reports/vbd/clips/w3_slip_pro_keys/grip.png",
+      "sha256": "7616d28d677590a63c360594476529c5af55182190b401ed94612ae60005952c",
+      "bytes": 120729
+    },
+    {
+      "path": "reports/vbd/clips/w3_slip_pro_keys/hold.png",
+      "sha256": "1835a811b582a6a3ea0818397c891d23df9784333b54e45d82dcae645c146b63",
+      "bytes": 125593
+    },
+    {
+      "path": "reports/vbd/clips/w3_slip_pro_keys/lift.png",
+      "sha256": "f066e4777ffbae96d95da7f25937842f32a5cad55d8bbd45df398abe25082ec5",
+      "bytes": 121917
+    },
+    {
+      "path": "reports/vbd/clips/w3_slip_pro_keys/return.png",
+      "sha256": "ef2410c52ac5597de52b192cf982d95b91c708e278aa8590b1563c3f46849ff7",
+      "bytes": 128712
+    },
+    {
+      "path": "reports/vbd/clips/w3_slip_pro_keys/settle.png",
+      "sha256": "ef2410c52ac5597de52b192cf982d95b91c708e278aa8590b1563c3f46849ff7",
+      "bytes": 128712
+    },
+    {
+      "path": "reports/vbd/clips/w3_slip_pro_smoke.png",
+      "sha256": "1835a811b582a6a3ea0818397c891d23df9784333b54e45d82dcae645c146b63",
+      "bytes": 125593
+    },
+    {
       "path": "reports/vbd/clips/w3_slip_snapshots/f_0000.npz",
       "sha256": "f2a182085ccdbd0abb2039ec0e5b184e6c8a298394b4fa79fe2266c2b6858f73",
       "bytes": 8417
@@ -23731,8 +23866,8 @@
     },
     {
       "path": "reports/vbd/w3_clips.md",
-      "sha256": "12c4ba02e58cecadcfdde1e734f8ae8ab49e9d3d76bc58cd0f1bfd2d5af7f086",
-      "bytes": 2084
+      "sha256": "4a8833d9c3d09df32a60ee4e4330eb14b331e10c59fee7eb315a794deb01b8e8",
+      "bytes": 5281
     }
   ]
 }
