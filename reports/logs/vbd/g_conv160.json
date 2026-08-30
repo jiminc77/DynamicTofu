@@ -1,0 +1,367 @@
+{
+  "schema": "g_conv160.v1",
+  "purpose": "temporal convergence: substeps 80 -> 160 on slip+damage boundary sentinels; frozen config otherwise (seed 0).",
+  "acceptance": {
+    "label_invariant": true,
+    "realized_accel_rtol": 0.02,
+    "slip_residual_tol_mm": 0.25,
+    "dvf_atol": 0.001
+  },
+  "n_cells": 9,
+  "n_done": 9,
+  "n_pass": 0,
+  "all_pass": false,
+  "cells": [
+    {
+      "E_kPa": 7,
+      "a": 1.0,
+      "F": 1.0,
+      "status": "ok",
+      "label_80": "intact",
+      "label_160": "intact",
+      "label_invariant": true,
+      "realized_a_80": 0.6497842924935153,
+      "realized_a_160": 0.6718598306178714,
+      "accel_rel": 0.033973640759523804,
+      "accel_within_2pct": false,
+      "slip_metrics_mm": {
+        "hold_slip_z_mm": {
+          "base": 1.7712302505970001,
+          "conv": 1.437382772564888,
+          "delta_mm": 0.3338474780321121
+        },
+        "transport_slip_xz_mm": {
+          "base": 0.30495754917623413,
+          "conv": 0.17093376405986166,
+          "delta_mm": 0.13402378511637247
+        },
+        "slip3d_max_mm": {
+          "base": 4.273836001786944,
+          "conv": 0.27541279295174526,
+          "delta_mm": 3.9984232088351987
+        }
+      },
+      "slip_delta_ok": false,
+      "dvf_80": 0.0,
+      "dvf_160": 0.0,
+      "abs_dDVF": 0.0,
+      "dvf_delta_ok": true,
+      "ejected_80": false,
+      "ejected_160": false,
+      "pass": false,
+      "wall_s": 711.5
+    },
+    {
+      "E_kPa": 7,
+      "a": 2.5,
+      "F": 1.0,
+      "status": "ok",
+      "label_80": "intact",
+      "label_160": "intact",
+      "label_invariant": true,
+      "realized_a_80": 1.647184310214778,
+      "realized_a_160": 1.5814917428152113,
+      "accel_rel": 0.03988173454068478,
+      "accel_within_2pct": false,
+      "slip_metrics_mm": {
+        "hold_slip_z_mm": {
+          "base": 1.7526671290397644,
+          "conv": 1.434503123164177,
+          "delta_mm": 0.31816400587558746
+        },
+        "transport_slip_xz_mm": {
+          "base": 1.335790918385135,
+          "conv": 1.2477116680698532,
+          "delta_mm": 0.08807925031528185
+        },
+        "slip3d_max_mm": {
+          "base": 3.99359525123974,
+          "conv": 1.8751355520230986,
+          "delta_mm": 2.1184596992166416
+        }
+      },
+      "slip_delta_ok": false,
+      "dvf_80": 0.0006510416259006622,
+      "dvf_160": 0.0006510416259006622,
+      "abs_dDVF": 0.0,
+      "dvf_delta_ok": true,
+      "ejected_80": false,
+      "ejected_160": false,
+      "pass": false,
+      "wall_s": 614.4
+    },
+    {
+      "E_kPa": 7,
+      "a": 5.0,
+      "F": 1.2,
+      "status": "ok",
+      "label_80": "damage",
+      "label_160": "damage",
+      "label_invariant": true,
+      "realized_a_80": 3.2551446663480226,
+      "realized_a_160": 3.2154436622345552,
+      "accel_rel": 0.012196387006666668,
+      "accel_within_2pct": true,
+      "slip_metrics_mm": {
+        "hold_slip_z_mm": {
+          "base": 1.5998519957065582,
+          "conv": 1.3839267194271088,
+          "delta_mm": 0.21592527627944946
+        },
+        "transport_slip_xz_mm": {
+          "base": 4.998261395768619,
+          "conv": 5.223314514714886,
+          "delta_mm": 0.225053118946267
+        },
+        "slip3d_max_mm": {
+          "base": 7.769870750570676,
+          "conv": 8.520780181436676,
+          "delta_mm": 0.7509094308659998
+        }
+      },
+      "slip_delta_ok": true,
+      "dvf_80": 0.05143228653101747,
+      "dvf_160": 0.043619787436543184,
+      "abs_dDVF": 0.007812499094474283,
+      "dvf_delta_ok": false,
+      "ejected_80": false,
+      "ejected_160": false,
+      "pass": false,
+      "wall_s": 613.9
+    },
+    {
+      "E_kPa": 15,
+      "a": 1.0,
+      "F": 0.8,
+      "status": "ok",
+      "label_80": "intact",
+      "label_160": "intact",
+      "label_invariant": true,
+      "realized_a_80": 0.6799174738781455,
+      "realized_a_160": 0.6609882627214375,
+      "accel_rel": 0.027840454002069765,
+      "accel_within_2pct": false,
+      "slip_metrics_mm": {
+        "hold_slip_z_mm": {
+          "base": 1.6753338277339935,
+          "conv": 1.0787677019834518,
+          "delta_mm": 0.5965661257505417
+        },
+        "transport_slip_xz_mm": {
+          "base": 0.4995235012307849,
+          "conv": 0.3471633686122285,
+          "delta_mm": 0.1523601326185564
+        },
+        "slip3d_max_mm": {
+          "base": 0.6448565903429788,
+          "conv": 0.7125088482194252,
+          "delta_mm": 0.06765225787644635
+        }
+      },
+      "slip_delta_ok": false,
+      "dvf_80": 0.0,
+      "dvf_160": 0.0,
+      "abs_dDVF": 0.0,
+      "dvf_delta_ok": true,
+      "ejected_80": false,
+      "ejected_160": false,
+      "pass": false,
+      "wall_s": 615.6
+    },
+    {
+      "E_kPa": 15,
+      "a": 2.5,
+      "F": 1.2,
+      "status": "ok",
+      "label_80": "intact",
+      "label_160": "intact",
+      "label_invariant": true,
+      "realized_a_80": 1.645190375191743,
+      "realized_a_160": 1.6360593693596164,
+      "accel_rel": 0.005550121110489942,
+      "accel_within_2pct": true,
+      "slip_metrics_mm": {
+        "hold_slip_z_mm": {
+          "base": 1.1992491781711578,
+          "conv": 0.8485857397317886,
+          "delta_mm": 0.3506634384393692
+        },
+        "transport_slip_xz_mm": {
+          "base": 0.7413638123303199,
+          "conv": 0.6325943367959395,
+          "delta_mm": 0.10876947553438043
+        },
+        "slip3d_max_mm": {
+          "base": 5.392524525730874,
+          "conv": 2.5750710563780403,
+          "delta_mm": 2.8174534693528335
+        }
+      },
+      "slip_delta_ok": false,
+      "dvf_80": 0.0,
+      "dvf_160": 0.0013020833905792119,
+      "abs_dDVF": 0.0013020833905792119,
+      "dvf_delta_ok": false,
+      "ejected_80": false,
+      "ejected_160": false,
+      "pass": false,
+      "wall_s": 621.6
+    },
+    {
+      "E_kPa": 15,
+      "a": 5.0,
+      "F": 1.2,
+      "status": "ok",
+      "label_80": "damage",
+      "label_160": "damage",
+      "label_invariant": true,
+      "realized_a_80": 3.182953010712193,
+      "realized_a_160": 3.200503758021604,
+      "accel_rel": 0.0055139825345659685,
+      "accel_within_2pct": true,
+      "slip_metrics_mm": {
+        "hold_slip_z_mm": {
+          "base": 1.192418858408928,
+          "conv": 0.8410662412643433,
+          "delta_mm": 0.35135261714458466
+        },
+        "transport_slip_xz_mm": {
+          "base": 4.446667094249639,
+          "conv": null,
+          "delta_mm": null
+        },
+        "slip3d_max_mm": {
+          "base": 5.473466092991292,
+          "conv": 15.065720811494757,
+          "delta_mm": 9.592254718503465
+        }
+      },
+      "slip_delta_ok": false,
+      "dvf_80": 0.005208332674138368,
+      "dvf_160": 0.007161457413062467,
+      "abs_dDVF": 0.0019531247389240987,
+      "dvf_delta_ok": false,
+      "ejected_80": false,
+      "ejected_160": true,
+      "pass": false,
+      "wall_s": 618.6
+    },
+    {
+      "E_kPa": 25,
+      "a": 1.0,
+      "F": 0.8,
+      "status": "ok",
+      "label_80": "intact",
+      "label_160": "intact",
+      "label_invariant": true,
+      "realized_a_80": 0.6848331008638313,
+      "realized_a_160": 0.6688969475882061,
+      "accel_rel": 0.02327012706530071,
+      "accel_within_2pct": false,
+      "slip_metrics_mm": {
+        "hold_slip_z_mm": {
+          "base": 1.5596896409988403,
+          "conv": 0.9316354990005493,
+          "delta_mm": 0.628054141998291
+        },
+        "transport_slip_xz_mm": {
+          "base": 0.49059242831369243,
+          "conv": 0.3477977713786086,
+          "delta_mm": 0.1427946569350838
+        },
+        "slip3d_max_mm": {
+          "base": 0.7859410516157751,
+          "conv": 0.5271772342335619,
+          "delta_mm": 0.2587638173822132
+        }
+      },
+      "slip_delta_ok": false,
+      "dvf_80": 0.0,
+      "dvf_160": 0.0,
+      "abs_dDVF": 0.0,
+      "dvf_delta_ok": true,
+      "ejected_80": false,
+      "ejected_160": false,
+      "pass": false,
+      "wall_s": 617.9
+    },
+    {
+      "E_kPa": 25,
+      "a": 5.0,
+      "F": 2.0,
+      "status": "ok",
+      "label_80": "intact",
+      "label_160": "intact",
+      "label_invariant": true,
+      "realized_a_80": 2.8681435755319526,
+      "realized_a_160": 3.132873773574673,
+      "accel_rel": 0.092300190374403,
+      "accel_within_2pct": false,
+      "slip_metrics_mm": {
+        "hold_slip_z_mm": {
+          "base": 0.847548246383667,
+          "conv": 0.6144475191831589,
+          "delta_mm": 0.23310072720050812
+        },
+        "transport_slip_xz_mm": {
+          "base": 1.0382409622327846,
+          "conv": 0.8469432954572577,
+          "delta_mm": 0.19129766677552695
+        },
+        "slip3d_max_mm": {
+          "base": 8.472159750351526,
+          "conv": 2.093487446841654,
+          "delta_mm": 6.378672303509872
+        }
+      },
+      "slip_delta_ok": true,
+      "dvf_80": 0.0013020831130234369,
+      "dvf_160": 0.002604166475847071,
+      "abs_dDVF": 0.0013020833628236343,
+      "dvf_delta_ok": false,
+      "ejected_80": false,
+      "ejected_160": false,
+      "pass": false,
+      "wall_s": 616.9
+    },
+    {
+      "E_kPa": 25,
+      "a": 10.0,
+      "F": 2.0,
+      "status": "ok",
+      "label_80": "damage",
+      "label_160": "damage",
+      "label_invariant": true,
+      "realized_a_80": 6.193581755671874,
+      "realized_a_160": 6.332986695425536,
+      "accel_rel": 0.022507967966354694,
+      "accel_within_2pct": false,
+      "slip_metrics_mm": {
+        "hold_slip_z_mm": {
+          "base": 0.8493121713399887,
+          "conv": 0.6170328706502914,
+          "delta_mm": 0.23227930068969727
+        },
+        "transport_slip_xz_mm": {
+          "base": null,
+          "conv": null,
+          "delta_mm": null
+        },
+        "slip3d_max_mm": {
+          "base": 15.005381150718637,
+          "conv": 15.035669549366753,
+          "delta_mm": 0.030288398648115944
+        }
+      },
+      "slip_delta_ok": true,
+      "dvf_80": 0.009114582263008876,
+      "dvf_160": 0.019856768604647197,
+      "abs_dDVF": 0.01074218634163832,
+      "dvf_delta_ok": false,
+      "ejected_80": true,
+      "ejected_160": true,
+      "pass": false,
+      "wall_s": 514.7
+    }
+  ]
+}

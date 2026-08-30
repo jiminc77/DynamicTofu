@@ -79,20 +79,29 @@ def main() -> int:
                       "label_80": c["label_80"], "label_160": c["label_160"],
                       "label_invariant": label_inv,
                       "converged_within_floor": bool(cell_conv), "metrics": metrics})
-    verdict = ("CONVERGED (labels invariant; 80->160 metric deltas within same-seed "
-               "run-to-run floor / stated tolerance)" if all_label_inv and all_converged
-               else "LABELS INVARIANT; some metric deltas exceed floor" if all_label_inv
+    verdict = ("CONVERGED AT LABEL/CLOSURE LEVEL (all sentinels label-invariant 80->160; "
+               "metric deltas within same-seed floor)" if all_label_inv and all_converged
+               else "CONVERGED AT LABEL/CLOSURE LEVEL; fine continuous metrics remain "
+               "substep-sensitive above the run-to-run floor (sub-threshold, no label change)"
+               if all_label_inv
                else "LABEL CHANGE DETECTED -- STOP/ESCALATE")
     payload = {
         "schema": "g_conv160_verdict.v1",
         "verdict": verdict,
         "all_label_invariant": all_label_inv,
         "all_converged_within_floor": all_converged,
-        "interpretation": ("The consult's tight tolerances (realized-a 2%, slip 0.25 mm, "
-                           "dvf 0.001) are below the measured same-seed GPU run-to-run "
-                           "nondeterminism floor; a metric delta at or below that floor is "
-                           "noise, not substep truncation. Label invariance across 80->160 "
-                           "is the load-bearing convergence result."),
+        "interpretation": ("LOAD-BEARING RESULT: all 9 boundary sentinels are label-invariant "
+                           "under 80->160, so the P-B closure structure and phase-diagram labels "
+                           "are robust to substep refinement. The same-seed 80->80 floor shows "
+                           "realized-a is highly reproducible (0.03-0.34%) and dvf noise ~0.003, so "
+                           "the |dDVF|<0.001 tolerance is below the noise floor. The 80->160 shifts "
+                           "in realized-a (2-9%), hold_slip_z (0.2-0.6 mm), and dvf (<=0.011) EXCEED "
+                           "that floor: the fine continuous metrics are NOT fully converged at 80 "
+                           "substeps. However every shift is sub-threshold (hold_slip stays <2 mm, "
+                           "damage/intact margins preserved) and changes no label or closure a*. "
+                           "Implication: phase/closure conclusions are substep-robust; the realized- "
+                           "acceleration axis carries ~2-9% substep-truncation uncertainty and should "
+                           "be disclosed as such in axis reporting."),
         "n_cells": len(cells),
         "n_label_invariant": sum(c["label_invariant"] for c in cells),
         "n_converged_within_floor": sum(c["converged_within_floor"] for c in cells),

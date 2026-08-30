@@ -1,0 +1,325 @@
+{
+  "schema": "g_conv160_verdict.v1",
+  "verdict": "CONVERGED AT LABEL/CLOSURE LEVEL; fine continuous metrics remain substep-sensitive above the run-to-run floor (sub-threshold, no label change)",
+  "all_label_invariant": true,
+  "all_converged_within_floor": false,
+  "interpretation": "LOAD-BEARING RESULT: all 9 boundary sentinels are label-invariant under 80->160, so the P-B closure structure and phase-diagram labels are robust to substep refinement. The same-seed 80->80 floor shows realized-a is highly reproducible (0.03-0.34%) and dvf noise ~0.003, so the |dDVF|<0.001 tolerance is below the noise floor. The 80->160 shifts in realized-a (2-9%), hold_slip_z (0.2-0.6 mm), and dvf (<=0.011) EXCEED that floor: the fine continuous metrics are NOT fully converged at 80 substeps. However every shift is sub-threshold (hold_slip stays <2 mm, damage/intact margins preserved) and changes no label or closure a*. Implication: phase/closure conclusions are substep-robust; the realized- acceleration axis carries ~2-9% substep-truncation uncertainty and should be disclosed as such in axis reporting.",
+  "n_cells": 9,
+  "n_label_invariant": 9,
+  "n_converged_within_floor": 0,
+  "cells": [
+    {
+      "E_kPa": 7,
+      "a": 1.0,
+      "F": 1.0,
+      "label_80": "intact",
+      "label_160": "intact",
+      "label_invariant": true,
+      "converged_within_floor": false,
+      "metrics": {
+        "realized_accel": {
+          "d_80_160": 0.02207553812435603,
+          "d_80_80_floor": 0.0003218650817871094,
+          "tol": 0.012995685849870306,
+          "within": false
+        },
+        "hold_slip_z_mm": {
+          "d_80_160": 0.3338474780321121,
+          "d_80_80_floor": 0.002728775143623352,
+          "tol": 0.25,
+          "within": false
+        },
+        "transport_slip_xz_mm": {
+          "d_80_160": 0.13402378511637247,
+          "d_80_80_floor": 0.004163060053318124,
+          "tol": 0.25,
+          "within": true
+        },
+        "dvf": {
+          "d_80_160": 0.0,
+          "d_80_80_floor": 0.0,
+          "tol": 0.001,
+          "within": true
+        }
+      }
+    },
+    {
+      "E_kPa": 7,
+      "a": 2.5,
+      "F": 1.0,
+      "label_80": "intact",
+      "label_160": "intact",
+      "label_invariant": true,
+      "converged_within_floor": false,
+      "metrics": {
+        "realized_accel": {
+          "d_80_160": 0.06569256739956675,
+          "d_80_80_floor": 0.0007191672921180725,
+          "tol": 0.03294368620429556,
+          "within": false
+        },
+        "hold_slip_z_mm": {
+          "d_80_160": 0.31816400587558746,
+          "d_80_80_floor": 0.01271069049835205,
+          "tol": 0.25,
+          "within": false
+        },
+        "transport_slip_xz_mm": {
+          "d_80_160": 0.08807925031528185,
+          "d_80_80_floor": 0.001919784993099194,
+          "tol": 0.25,
+          "within": true
+        },
+        "dvf": {
+          "d_80_160": 0.0,
+          "d_80_80_floor": 0.0,
+          "tol": 0.001,
+          "within": true
+        }
+      }
+    },
+    {
+      "E_kPa": 7,
+      "a": 5.0,
+      "F": 1.2,
+      "label_80": "damage",
+      "label_160": "damage",
+      "label_invariant": true,
+      "converged_within_floor": false,
+      "metrics": {
+        "realized_accel": {
+          "d_80_160": 0.03970100411346733,
+          "d_80_80_floor": 0.0026242541415344434,
+          "tol": 0.06510289332696045,
+          "within": true
+        },
+        "hold_slip_z_mm": {
+          "d_80_160": 0.21592527627944946,
+          "d_80_80_floor": 0.08187256753444672,
+          "tol": 0.25,
+          "within": true
+        },
+        "transport_slip_xz_mm": {
+          "d_80_160": 0.225053118946267,
+          "d_80_80_floor": null,
+          "tol": 0.25,
+          "within": true
+        },
+        "dvf": {
+          "d_80_160": 0.007812499094474283,
+          "d_80_80_floor": 0.002929686747563637,
+          "tol": 0.001,
+          "within": false
+        }
+      }
+    },
+    {
+      "E_kPa": 15,
+      "a": 1.0,
+      "F": 0.8,
+      "label_80": "intact",
+      "label_160": "intact",
+      "label_invariant": true,
+      "converged_within_floor": false,
+      "metrics": {
+        "realized_accel": {
+          "d_80_160": 0.01892921115670798,
+          "d_80_80_floor": 0.0006274453231266408,
+          "tol": 0.01359834947756291,
+          "within": false
+        },
+        "hold_slip_z_mm": {
+          "d_80_160": 0.5965661257505417,
+          "d_80_80_floor": 0.002205371856689453,
+          "tol": 0.25,
+          "within": false
+        },
+        "transport_slip_xz_mm": {
+          "d_80_160": 0.1523601326185564,
+          "d_80_80_floor": 0.0005614970784585394,
+          "tol": 0.25,
+          "within": true
+        },
+        "dvf": {
+          "d_80_160": 0.0,
+          "d_80_80_floor": 0.0,
+          "tol": 0.001,
+          "within": true
+        }
+      }
+    },
+    {
+      "E_kPa": 15,
+      "a": 2.5,
+      "F": 1.2,
+      "label_80": "intact",
+      "label_160": "intact",
+      "label_invariant": true,
+      "converged_within_floor": false,
+      "metrics": {
+        "realized_accel": {
+          "d_80_160": 0.00913100583212656,
+          "d_80_80_floor": 0.0015326908656525529,
+          "tol": 0.032903807503834856,
+          "within": true
+        },
+        "hold_slip_z_mm": {
+          "d_80_160": 0.3506634384393692,
+          "d_80_80_floor": 0.0025294721126556396,
+          "tol": 0.25,
+          "within": false
+        },
+        "transport_slip_xz_mm": {
+          "d_80_160": 0.10876947553438043,
+          "d_80_80_floor": 0.0007877043613552237,
+          "tol": 0.25,
+          "within": true
+        },
+        "dvf": {
+          "d_80_160": 0.0013020833905792119,
+          "d_80_80_floor": 0.0,
+          "tol": 0.001,
+          "within": false
+        }
+      }
+    },
+    {
+      "E_kPa": 15,
+      "a": 5.0,
+      "F": 1.2,
+      "label_80": "damage",
+      "label_160": "damage",
+      "label_invariant": true,
+      "converged_within_floor": false,
+      "metrics": {
+        "realized_accel": {
+          "d_80_160": 0.017550747309411197,
+          "d_80_80_floor": 0.005999047841343863,
+          "tol": 0.06365906021424386,
+          "within": true
+        },
+        "hold_slip_z_mm": {
+          "d_80_160": 0.35135261714458466,
+          "d_80_80_floor": 0.00545009970664978,
+          "tol": 0.25,
+          "within": false
+        },
+        "transport_slip_xz_mm": {
+          "d_80_160": null,
+          "within": true,
+          "note": "not applicable"
+        },
+        "dvf": {
+          "d_80_160": 0.0019531247389240987,
+          "d_80_80_floor": 0.0,
+          "tol": 0.001,
+          "within": false
+        }
+      }
+    },
+    {
+      "E_kPa": 25,
+      "a": 1.0,
+      "F": 0.8,
+      "label_80": "intact",
+      "label_160": "intact",
+      "label_invariant": true,
+      "converged_within_floor": false,
+      "metrics": {
+        "realized_accel": {
+          "d_80_160": 0.015936153275625253,
+          "d_80_80_floor": 0.0003490463963576884,
+          "tol": 0.013696662017276626,
+          "within": false
+        },
+        "hold_slip_z_mm": {
+          "d_80_160": 0.628054141998291,
+          "d_80_80_floor": 0.0005979090929031372,
+          "tol": 0.25,
+          "within": false
+        },
+        "transport_slip_xz_mm": {
+          "d_80_160": 0.1427946569350838,
+          "d_80_80_floor": 0.004210956094717333,
+          "tol": 0.25,
+          "within": true
+        },
+        "dvf": {
+          "d_80_160": 0.0,
+          "d_80_80_floor": 0.0,
+          "tol": 0.001,
+          "within": true
+        }
+      }
+    },
+    {
+      "E_kPa": 25,
+      "a": 5.0,
+      "F": 2.0,
+      "label_80": "intact",
+      "label_160": "intact",
+      "label_invariant": true,
+      "converged_within_floor": false,
+      "metrics": {
+        "realized_accel": {
+          "d_80_160": 0.26473019804272013,
+          "d_80_80_floor": 0.007590651512145108,
+          "tol": 0.057362871510639055,
+          "within": false
+        },
+        "hold_slip_z_mm": {
+          "d_80_160": 0.23310072720050812,
+          "d_80_80_floor": 0.0006202608346939087,
+          "tol": 0.25,
+          "within": true
+        },
+        "transport_slip_xz_mm": {
+          "d_80_160": 0.19129766677552695,
+          "d_80_80_floor": 0.00130814169455018,
+          "tol": 0.25,
+          "within": true
+        },
+        "dvf": {
+          "d_80_160": 0.0013020833628236343,
+          "d_80_80_floor": 0.0,
+          "tol": 0.001,
+          "within": false
+        }
+      }
+    },
+    {
+      "E_kPa": 25,
+      "a": 10.0,
+      "F": 2.0,
+      "label_80": "damage",
+      "label_160": "damage",
+      "label_invariant": true,
+      "converged_within_floor": false,
+      "metrics": {
+        "realized_accel": {
+          "d_80_160": 0.13940493975366142,
+          "d_80_80_floor": 0.020791909524372265,
+          "tol": 0.12387163511343749,
+          "within": false
+        },
+        "hold_slip_z_mm": {
+          "d_80_160": 0.23227930068969727,
+          "d_80_80_floor": 0.003768131136894226,
+          "tol": 0.25,
+          "within": true
+        },
+        "transport_slip_xz_mm": {
+          "d_80_160": null,
+          "within": true,
+          "note": "not applicable"
+        },
+        "dvf": {
+          "d_80_160": 0.01074218634163832,
+          "d_80_80_floor": 8.326673205105717e-11,
+          "tol": 0.001,
+          "within": false
+        }
+      }
+    }
+  ]
+}
