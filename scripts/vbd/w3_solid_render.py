@@ -279,6 +279,91 @@ def dense_capture_extended(scene: str = "slip") -> None:
     print(json.dumps(meta, indent=2))
 
 
+def _slowmo_run_transport_cell(slowmo_hook):
+    """Clone the frozen runner: dense cadence + no ejection break + a per-SUBSTEP
+    capture hook (injected as a second substep hook). Per-step physics identical;
+    only output cadence/termination change. Fails closed on any changed block.
+    """
+    from scripts.vbd import w1_transport
+
+    source = inspect.getsource(w1_transport.run_transport_cell)
+    cad = "if snap_dir and frame_index % 8 == 0:"
+    brk = ('            if gross_slip_mm(m, transport_reference) > GROSS_SLIP_MM:\n'
+           '                series.append(m)\n'
+           '                ejected = True\n'
+           '                if drop_t is None:\n'
+           '                    drop_t = float(m["t"])\n'
+           '                break')
+    brk_new = ('            if gross_slip_mm(m, transport_reference) > GROSS_SLIP_MM:\n'
+               '                if not ejected:\n'
+               '                    ejected = True\n'
+               '                    if drop_t is None:\n'
+               '                        drop_t = float(m["t"])\n'
+               '                # extended render capture: do not terminate at ejection')
+    hook = "    rig.add_substep_hook(validity)"
+    hook_new = "    rig.add_substep_hook(validity)\n    rig.add_substep_hook(_SLOWMO_HOOK)"
+    for pat in (cad, brk, hook):
+        if source.count(pat) != 1:
+            raise RuntimeError("frozen runner block changed; refuse to guess")
+    modified = (source.replace(cad, "if snap_dir and frame_index % 1 == 0:")
+                      .replace(brk, brk_new).replace(hook, hook_new))
+    namespace = dict(w1_transport.__dict__)
+    namespace["_SLOWMO_HOOK"] = slowmo_hook
+    exec(compile(modified, str(Path(w1_transport.__file__)), "exec"), namespace)
+    return namespace["run_transport_cell"]
+
+
+def dense_capture_slowmo() -> None:
+    """v4 slip: ONE run producing continuous global 60 fps frames (w3_slip_dense_v4)
+    AND a substep-cadence slow-mo window (w3_slip_slowmo_v4) over [9.20,9.60] s, so the
+    x4 slow-mo plays at a true 30 fps from distinct real states (no frame repetition).
+    """
+    manifest = json.loads((OUT_DIR / "w3_manifest.json").read_text())
+    entry = {e["scene"]: e for e in manifest["scenes"]}["slip"]
+    if not entry.get("label_reproduced") or entry["rerun_label"] != entry["source_final_band_label"]:
+        raise RuntimeError("slip: source manifest does not reproduce its label")
+    dense_dir = OUT_DIR / "w3_slip_dense_v4"
+    slowmo_dir = OUT_DIR / "w3_slip_slowmo_v4"
+    for d in (dense_dir, slowmo_dir):
+        if d.exists():
+            shutil.rmtree(d)
+        d.mkdir(parents=True)
+    LO, HI, STRIDE = 9.20, 9.60, 20  # 80 substeps/frame -> ~4 states/frame -> ~96 over 0.40 s
+    state = {"i": 0}
+
+    def slowmo_hook(rig, k):
+        subt = rig.sim_time + (k + 1) * rig.sim_dt
+        if LO <= subt <= HI and (k % STRIDE == 0):
+            np.savez_compressed(
+                slowmo_dir / f"f_{state['i']:04d}.npz",
+                particle_q=rig.state_0.particle_q.numpy()[rig.soft_start:rig.soft_end].astype(np.float32),
+                body_q=rig.state_0.body_q.numpy().astype(np.float32), t=np.float64(subt))
+            state["i"] += 1
+
+    run = _slowmo_run_transport_cell(slowmo_hook)
+    receipt = run(float(entry["E"]) * 1000.0, float(entry["F"]), float(entry["a"]),
+                  int(entry["seed"]), snap_dir=dense_dir)
+    if not receipt.get("ejected"):
+        raise RuntimeError(f"slip: slowmo capture did not reproduce ejection (label={receipt['label']!r})")
+    gframes = sorted(dense_dir.glob("f_*.npz"))
+    sframes = sorted(slowmo_dir.glob("f_*.npz"))
+    stimes = [float(np.load(p)["t"]) for p in sframes]
+    gtimes = [float(np.load(p)["t"]) for p in gframes]
+    meta = {"scene": "slip", "global_frames": len(gframes), "slowmo_frames": len(sframes),
+            "global_t_last": gtimes[-1] if gtimes else None,
+            "slowmo_window_s": [LO, HI], "substep_stride": STRIDE,
+            "slowmo_t_first": stimes[0] if stimes else None,
+            "slowmo_t_last": stimes[-1] if stimes else None,
+            "ejected": bool(receipt["ejected"]), "drop_t": receipt["drop_t"],
+            "label": receipt["label"], "source_label": entry["source_final_band_label"],
+            "note": (f"one run: global 60 fps frames + substep-cadence slow-mo window "
+                     f"(every {STRIDE}-th substep in [{LO},{HI}] s); per-step physics identical to "
+                     "the frozen runner; no renderer-side interpolation; ejection recorded at drop_t.")}
+    (slowmo_dir / "capture_meta.json").write_text(json.dumps(meta, indent=2) + "\n")
+    (dense_dir / "capture_meta.json").write_text(json.dumps(meta, indent=2) + "\n")
+    print(json.dumps(meta, indent=2))
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group(required=True)
@@ -288,12 +373,17 @@ def main() -> int:
                        help="GPU rerun all frozen scenes, saving every simulation frame")
     group.add_argument("--dense-capture-ext", action="store_true",
                        help="GPU rerun the slip scene continued past ejection (v3 fall/aftermath)")
+    group.add_argument("--dense-capture-slowmo", action="store_true",
+                       help="GPU rerun slip: global 60fps + substep-cadence slow-mo window (v4)")
     args = parser.parse_args()
     if args.dense_capture:
         dense_capture()
         return 0
     if args.dense_capture_ext:
         dense_capture_extended("slip")
+        return 0
+    if args.dense_capture_slowmo:
+        dense_capture_slowmo()
         return 0
     with np.load(TOPOLOGY) as topology:
         tets = topology["tet_idx"]
