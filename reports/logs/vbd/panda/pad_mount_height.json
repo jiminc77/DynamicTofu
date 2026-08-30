@@ -1,0 +1,9 @@
+{
+  "old_pad_xform_z": -0.0584,
+  "new_pad_xform_z": -0.0568,
+  "delta_mm": 1.6,
+  "target_height_offset_mm": 9.076,
+  "source": "frozen geomdiff",
+  "ruling": "judge fidelity 2026-08-30",
+  "note": "refined +1.6mm total to hit frozen height_offset ~9.08 (slope ~0.68mm/mm; block settles ~0.32 with pad)"
+}

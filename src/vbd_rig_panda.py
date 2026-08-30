@@ -26,6 +26,9 @@ import newton
 from src.vbd_rig2 import BLOCK_EDGE_M, FINGER_HALF, FPS, GRAB_Z, Vbd2Config, lame_from_E_nu
 
 BLOCK_BOTTOM_Z = 0.002
+# Judge fidelity ruling 2026-08-30: raise the replacement pads 1.1 mm so
+# settled engagement matches the frozen pad/block height offset (9.076 mm).
+PAD_MOUNT_Z_OFFSET = -0.0568
 
 
 class PandaRig:
@@ -261,7 +264,9 @@ class PandaRig:
         self._panda_hand_label = "palm"  # fr3_hand collapsed into palm
         # Finger origins are 58.4 mm above the hand frame. Offset the replacement
         # pads back to the hand origin, matching the frozen pad centre at GRAB_Z.
-        pad_xform = wp.transform(wp.vec3(0.0, 0.0, -0.0584), wp.quat_identity())
+        pad_xform = wp.transform(
+            wp.vec3(0.0, 0.0, PAD_MOUNT_Z_OFFSET), wp.quat_identity()
+        )
         builder.add_shape_box(left, xform=pad_xform, hx=FINGER_HALF, hy=0.006,
                               hz=FINGER_HALF, cfg=pad, color=wp.vec3(0.85, 0.4, 0.3))
         builder.add_shape_box(right, xform=pad_xform, hx=FINGER_HALF, hy=0.006,
