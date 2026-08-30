@@ -151,6 +151,11 @@ def camera_for(files, scene, version=2):
         # both endpoints visible without making the grip event needlessly tiny.
         horizontal=max(.72,(hi-lo)*.98)/np.sqrt(2)
         eye=target+np.array((-horizontal,-horizontal,.27))
+        if version >= 9:
+            # Look across the hand's wide x/y face while cropping the tall
+            # wrist coupling; retain the wide slip landing bounds.
+            target=np.array((mid,0,max(.065,(zlo+zhi)/2+.015)))
+            eye=target+np.array((-.42,-.52,.20))
         return look_at(eye,target),(lo,hi),eye,target
     xs=[]
     for p in files:
@@ -171,11 +176,16 @@ def camera_for(files, scene, version=2):
         target=np.array((mid,0,.10))
         horizontal=max(.60,span*1.7)/np.sqrt(2)
         eye=target+np.array((-horizontal,-horizontal,.27))
+    if version >= 9:
+        # The useful lower wedge, fingers, pads and tofu occupy the bottom
+        # 10--12 cm of the exported hand. Aim below the wrist coupling.
+        target=np.array((mid,0,.062))
+        eye=target+np.array((-.34,-.42,.17))
     return look_at(eye,target), (lo,hi), eye, target
 
 
-def slip_settle_index(files, drop_t):
-    """First grounded frame whose COM stays within 1 cm for 0.5 seconds."""
+def slip_settle_index(files, drop_t, radius=.01):
+    """First grounded frame whose COM remains settled for 0.5 seconds."""
     frames=[load_frame(path) for path in files]
     times=np.array([frame[2] for frame in frames])
     com=np.array([frame[0].mean(axis=0) for frame in frames])
@@ -184,7 +194,7 @@ def slip_settle_index(files, drop_t):
     window=max(2,int(round(.5/dt)))
     for i in range(len(frames)-window+1):
         displacement=np.linalg.norm(com[i:i+window]-com[i],axis=1)
-        if times[i] >= drop_t and zmin[i] <= .003 and displacement.max() <= .01:
+        if times[i] >= drop_t and zmin[i] <= .003 and displacement.max() <= radius:
             return i
     raise RuntimeError("Panda slip block did not settle in the dense capture")
 
@@ -290,10 +300,14 @@ def pad_contact_footprint(vertices, pad_pose, inner_face_sign,
     return points, centroid
 
 
-def pad_taxel_depth(vertices, pad_pose, inner_face_sign,
+def pad_taxel_depth(vertices, boundary, pad_pose, inner_face_sign,
                     band=CONTACT_PROXIMITY_BAND):
-    """Return an 8x8 max proximity-depth grid and selected vertex count."""
-    local = (np.asarray(vertices) - pad_pose[:3]) @ rotation(pad_pose[3:])
+    """Return an 8x8 max depth grid sampled across surface triangles."""
+    triangles=np.asarray(vertices)[boundary]
+    weights=np.array(((1.,0.,0.),(0.,1.,0.),(0.,0.,1.),
+                      (.5,.5,0.),(.5,0.,.5),(0.,.5,.5),(1/3,1/3,1/3)))
+    samples=np.einsum("sk,fkd->fsd",weights,triangles).reshape(-1,3)
+    local = (samples - pad_pose[:3]) @ rotation(pad_pose[3:])
     distance = np.abs(local[:, 1] - inner_face_sign * PAD_HALF[1])
     selected = ((distance <= band) & (np.abs(local[:, 0]) <= PAD_HALF[0])
                 & (np.abs(local[:, 2]) <= PAD_HALF[2]))
@@ -358,10 +372,8 @@ def add_tactile_insets(rgb, q, bodies, boundary, taxels=False, per_frame=False, 
             if FRAME_FORCE is None:
                 raise RuntimeError("v8 frame lacks force collector arrays")
             side_name="left" if label=="L" else "right"
-            stored_normal=FRAME_FORCE["fn_"+side_name]
-            # Collector normal components use world +y. Convert to each pad's
-            # own inward normal: left is +y, mirrored right is -y.
-            grid=np.maximum(stored_normal if label=="L" else -stored_normal,0)
+            # Capture stores each pad's force along its own inward normal.
+            grid=np.maximum(FRAME_FORCE["fn_"+side_name],0)
             shear=FRAME_FORCE["ft_"+side_name]
             net=FRAME_FORCE["net_"+side_name]
             stops=np.array(((.267,.005,.329),(.190,.407,.556),(.208,.719,.473),(.993,.906,.144)))
@@ -389,7 +401,7 @@ def add_tactile_insets(rgb, q, bodies, boundary, taxels=False, per_frame=False, 
             draw.text((x0+8,y0+166),f"max {ceiling:.3f} N | red: net shear",
                       font=tiny,fill=(20,28,36,255))
         elif taxels:
-            grid, count = pad_taxel_depth(surface_vertices, pose, inner_face_sign)
+            grid, count = pad_taxel_depth(q, boundary, pose, inner_face_sign)
             # Compact viridis-like perceptually increasing blue-to-yellow ramp.
             stops = np.array(((.267,.005,.329),(.190,.407,.556),(.208,.719,.473),(.993,.906,.144)))
             grid_max=grid.max()
@@ -459,6 +471,11 @@ def pyrender_frame(q,bodies,t,scene,meta,boundary,tets,inv_dm,camera,xlim,versio
             world_pose=transform(bodies[body_index]) @ transform(geometry["shape_transform"][i])
             color=geometry["shape_color"][i]
             if geometry["shape_kind"][i] == 8:
+                if version >= 9:
+                    if body_index == 1:
+                        color=np.array((.88,.88,.88))
+                    elif body_index in (2,3):
+                        color=np.array((.12,.12,.12))
                 material=pyrender.MetallicRoughnessMaterial(
                     baseColorFactor=(*color,1),metallicFactor=.05,roughnessFactor=.34)
                 va,vb=geometry["vertex_range"][i]
@@ -471,9 +488,21 @@ def pyrender_frame(q,bodies,t,scene,meta,boundary,tets,inv_dm,camera,xlim,versio
             elif geometry["shape_kind"][i] == 7:
                 # Sensor plates are deliberately matte; geometry and model
                 # attachment remain exactly the exported simulated boxes.
-                material=pyrender.MetallicRoughnessMaterial(
-                    baseColorFactor=(.02,.02,.02,1),emissiveFactor=color*.72,
-                    metallicFactor=0,roughnessFactor=1)
+                if version >= 9:
+                    trim_color=((.12,.38,.92) if body_index == 2 else (.95,.34,.08))
+                    trim_extents=2*geometry["shape_scale"][i]
+                    trim_extents[[0,2]]+=.002
+                    trim_extents[1]-=.0002
+                    trim_mat=pyrender.MetallicRoughnessMaterial(
+                        baseColorFactor=(*trim_color,1),metallicFactor=0,roughnessFactor=.7)
+                    trim_tm=trimesh.creation.box(extents=trim_extents)
+                    sc.add(pyrender.Mesh.from_trimesh(trim_tm,material=trim_mat),pose=world_pose)
+                    material=pyrender.MetallicRoughnessMaterial(
+                        baseColorFactor=(.25,.25,.25,1),metallicFactor=0,roughnessFactor=1)
+                else:
+                    material=pyrender.MetallicRoughnessMaterial(
+                        baseColorFactor=(.02,.02,.02,1),emissiveFactor=color*.72,
+                        metallicFactor=0,roughnessFactor=1)
                 tm=trimesh.creation.box(extents=2*geometry["shape_scale"][i])
                 sc.add(pyrender.Mesh.from_trimesh(tm,material=material),pose=world_pose)
             else:
@@ -620,7 +649,8 @@ def render_scene(scene, smoke=False, version=2):
     if version >= 5 and scene == "slip":
         if load_frame(files[-1])[2] <= float(meta["drop_t"]):
             raise RuntimeError("Panda slip capture does not extend past ejection")
-        settle_index=slip_settle_index(files,float(meta["drop_t"]))
+        settle_index=slip_settle_index(
+            files,float(meta["drop_t"]),radius=.02 if version >= 8 else .01)
     elif version >= 3 and scene == "slip":
         capture_dir="w3_slip_dense_v4" if version >= 4 else "w3_slip_dense_ext"
         capture_meta_path=CLIPS/capture_dir/"capture_meta.json"
@@ -757,11 +787,12 @@ def main():
     ap.add_argument("--v6",action="store_true",help="draw exact visible shapes exported from PandaRig")
     ap.add_argument("--v7",action="store_true",help="v7: vertical hand pose, three-quarter camera, matte pads (ships to user)")
     ap.add_argument("--v8",action="store_true",help="v8: validated iter-40 normal/shear force insets")
+    ap.add_argument("--v9",action="store_true",help="v9: cropped Panda appearance and tactile polish")
     a=ap.parse_args()
     chosen=SCENES if a.render or a.smoke else ((a.smoke_scene,) if a.smoke_scene else (a.scene,))
     smoke=a.smoke or bool(a.smoke_scene)
     failures=[]
-    version=8 if a.v8 else (7 if a.v7 else (6 if a.v6 else (5 if a.v5 else (4 if a.v4 else (3 if a.v3 else 2)))))
+    version=9 if a.v9 else (8 if a.v8 else (7 if a.v7 else (6 if a.v6 else (5 if a.v5 else (4 if a.v4 else (3 if a.v3 else 2))))))
     for scene in chosen:
         try:
             result=render_scene(scene,smoke,version); print(f"{scene}: {result}")

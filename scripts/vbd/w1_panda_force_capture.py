@@ -34,6 +34,23 @@ def _rotate(quaternion, vectors):
     return v + 2.0 * np.cross(q[:3], np.cross(q[:3], v) + q[3] * v)
 
 
+def _quat_multiply(a, b):
+    """Hamilton product for Newton's (x, y, z, w) quaternion layout."""
+    av, bv = np.asarray(a[:3]), np.asarray(b[:3])
+    return np.concatenate((
+        a[3] * bv + b[3] * av + np.cross(av, bv),
+        [a[3] * b[3] - np.dot(av, bv)],
+    ))
+
+
+def _shape_pose(body_pose, shape_xform):
+    """Compose body-to-world and collider-to-body transforms."""
+    return np.concatenate((
+        body_pose[:3] + _rotate(body_pose[3:7], shape_xform[:3]),
+        _quat_multiply(body_pose[3:7], shape_xform[3:7]),
+    ))
+
+
 class ForceCapturePandaRig(PandaRig):
     """PandaRig with read-only R3 collection on the final substep."""
 
@@ -80,19 +97,20 @@ def _binned(rig):
         name = rec["pad_id"]
         body = rig.b_left if name == "left" else rig.b_right
         shape = rig.s_left if name == "left" else rig.s_right
-        pose = body_q[body]
-        # Renderer uses this same pad-shape origin (the body's visual origin is
-        # displaced along local z by PAD_MOUNT_Z_OFFSET).
-        pad_origin = pose[:3] + _rotate(pose[3:7], shape_xforms[shape, :3])
-        point = _rotate_inverse(pose[3:7],
-                                np.asarray(rec["contact_point_world"]) - pad_origin)
+        # Use the complete collider pose. In particular, the right finger body's
+        # pi-about-z rotation must be retained before interpreting pad-local axes.
+        pose = _shape_pose(body_q[body], shape_xforms[shape])
+        point = _rotate_inverse(
+            pose[3:7], np.asarray(rec["contact_point_world"]) - pose[:3]
+        )
         force = _rotate_inverse(pose[3:7], rec["force_on_body_world"])
         ix = int(np.clip((point[0] + PAD_HALF_XZ_M)
                          / (2 * PAD_HALF_XZ_M) * 8, 0, 7))
         iz = int(np.clip((point[2] + PAD_HALF_XZ_M)
                          / (2 * PAD_HALF_XZ_M) * 8, 0, 7))
-        inward = 1.0 if name == "left" else -1.0
-        grids[name][0][iz, ix] += max(0.0, inward * force[1])
+        # Both colliders are authored with their inward normal along local +Y.
+        # The right body's pi-z rotation maps that axis to world -Y.
+        grids[name][0][iz, ix] += max(0.0, force[1])
         grids[name][1][iz, ix] += force[[0, 2]]
     return grids
 
@@ -113,10 +131,25 @@ def capture(iterations):
 
     original_rig = frozen_rig.Vbd2Rig
     original_save = np.savez_compressed
+    hold_checked = set()
 
     def save_force_frame(path, **arrays):
         grids = _binned(active)
         left, right = grids["left"], grids["right"]
+        t = float(arrays["t"])
+        scene = Path(path).parent.name
+        if 9.25 <= t <= 9.30 and scene not in hold_checked:
+            left_fn, right_fn = left[0].sum(), right[0].sum()
+            target = active.cfg.grip_force_n
+            if not (left_fn > 0.0 and right_fn > 0.0
+                    and abs(left_fn - target) <= 0.25 * target
+                    and abs(right_fn - target) <= 0.25 * target):
+                raise RuntimeError(
+                    f"{scene}: settled-hold pad force check failed: "
+                    f"left={left_fn:.6g} N, right={right_fn:.6g} N, "
+                    f"commanded={target:.6g} N"
+                )
+            hold_checked.add(scene)
         original_save(
             path, **arrays, taxel_fn_left=left[0].astype(np.float32),
             taxel_fn_right=right[0].astype(np.float32),
