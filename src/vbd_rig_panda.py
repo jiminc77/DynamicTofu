@@ -121,6 +121,13 @@ class PandaRig:
         self.b_palm = body_by_label["palm"]  # fr3_hand collapses into palm (fixed joint)
         self.b_left = body_by_label["fr3/fr3_leftfinger"]
         self.b_right = body_by_label["fr3/fr3_rightfinger"]
+        shape_body = self.model.shape_body.numpy()
+        left_shapes = np.flatnonzero(shape_body == self.b_left)
+        right_shapes = np.flatnonzero(shape_body == self.b_right)
+        if len(left_shapes) != 1 or len(right_shapes) != 1:
+            raise RuntimeError("expected exactly one replacement pad shape per Panda finger")
+        self.s_left = int(left_shapes[0])
+        self.s_right = int(right_shapes[0])
         mass = self.model.body_mass.numpy()
         inv_mass = self.model.body_inv_mass.numpy()
         inertia = self.model.body_inertia.numpy()[self.b_carriage]
@@ -272,6 +279,16 @@ class PandaRig:
     def _palm_z(self):
         return float(self.state_0.body_q.numpy()[self.b_palm][2])
 
+    def _shape_center(self, body_q, shape_index):
+        """Return a body-attached shape's world center (xyzw quaternion)."""
+        body = int(self.model.shape_body.numpy()[shape_index])
+        local = self.model.shape_transform.numpy()[shape_index, :3]
+        quat = body_q[body, 3:7]
+        axis = quat[:3]
+        rotated = (local + 2.0 * quat[3] * np.cross(axis, local)
+                   + 2.0 * np.cross(axis, np.cross(axis, local)))
+        return body_q[body, :3] + rotated
+
     def set_control(self, close_force, lift_target, x_target=None, x_vel=0.0, x_accel=0.0):
         jf = self.control.joint_f.numpy(); jf[:] = 0.0
         # closing: left axis (0,-1,0) closes toward -y -> +force along axis; right (0,+1,0) toward +y.
@@ -324,7 +341,8 @@ class PandaRig:
         bq = self.state_0.body_q.numpy()
         bqd = self.state_0.body_qd.numpy()
         FH = 0.006  # pad half-thickness (hy)
-        left_y = float(bq[self.b_left][1]); right_y = float(bq[self.b_right][1])
+        left_y = float(self._shape_center(bq, self.s_left)[1])
+        right_y = float(self._shape_center(bq, self.s_right)[1])
         # pad-block penetration: block +y/-y faces vs each pad inner face. >0 = real contact.
         block_ymax = float(pq[:, 1].max()); block_ymin = float(pq[:, 1].min())
         pen_left = block_ymax - (left_y - FH)     # left pad at +y; inner face = left_y - FH
