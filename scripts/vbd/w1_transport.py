@@ -324,21 +324,32 @@ def _json_safe(value):
 
 
 def run_transport_cell(E, F, a_peak, seed, substeps=80, cell_m=0.005,
-                       snap_dir=None, save_field=None, convergence=False):
+                       snap_dir=None, save_field=None, convergence=False,
+                       friction_epsilon=None, mu_pair=None):
     from src.contact_validity import ValidityAccumulator
     from src.vbd_rig2 import GRAB_Z, Vbd2Config, Vbd2Rig
 
+    fe = 2e-4 if friction_epsilon is None else float(friction_epsilon)
+    mp = 1.0 if mu_pair is None else float(mu_pair)
     cfg = Vbd2Config(E_pa=float(E), nu=0.45, grip_force_n=float(F), cell_m=cell_m,
                      particle_radius=0.0025, contact_ke=1e3, contact_kd=1.0,
-                     mu_pair=1.0, friction_epsilon=2e-4, soft_contact_margin=1e-3,
+                     mu_pair=mp, friction_epsilon=fe, soft_contact_margin=1e-3,
                      substeps=substeps, lift_s=2.5, hold_s=5.0,
                      lift_height_m=0.05, seed=int(seed))
+    # R2/R4 sensitivity overrides (external consult #3): deliberately vary ONLY the
+    # named frozen key(s); assert every OTHER frozen value is untouched via a
+    # normalised view. Default call (no override) is byte-identical to production.
+    overrides = {}
     if convergence and int(substeps) != FROZEN_PRODUCTION["substeps"]:
-        # R2 convergence sentinel (external consult #3): deliberately vary the
-        # substep count ONLY. Assert every other frozen value is untouched by
-        # checking a substeps-normalised view of the cfg.
+        overrides["substeps"] = int(substeps)
+    if fe != FROZEN_PRODUCTION["friction_epsilon"]:
+        overrides["friction_epsilon"] = fe
+    if mp != FROZEN_PRODUCTION["mu_pair"]:
+        overrides["mu_pair"] = mp
+    if overrides:
         frozen_view = {key: getattr(cfg, key, None) for key in FROZEN_PRODUCTION}
-        frozen_view["substeps"] = FROZEN_PRODUCTION["substeps"]
+        for k in overrides:
+            frozen_view[k] = FROZEN_PRODUCTION[k]
         assert_frozen(frozen_view)
     else:
         assert_frozen(cfg)
@@ -563,11 +574,13 @@ def run_transport_cell(E, F, a_peak, seed, substeps=80, cell_m=0.005,
         "prereg_sha256": _sha256(ROOT / "ralph/results/prereg_w1.json"),
         **frozen_provenance(),
     }
-    if convergence and int(substeps) != FROZEN_PRODUCTION["substeps"]:
+    if overrides:
         # Honest provenance: this is NOT a production-frozen cell.
-        receipt["frozen_config"] = {**receipt["frozen_config"], "substeps": int(substeps)}
+        receipt["frozen_config"] = {**receipt["frozen_config"], **overrides}
         receipt["frozen_check"] = False
-        receipt["convergence_substeps"] = int(substeps)
+        receipt["sensitivity_overrides"] = overrides
+        if "substeps" in overrides:
+            receipt["convergence_substeps"] = overrides["substeps"]
     return receipt
 
 
