@@ -17,17 +17,89 @@
     },
     "static": {
       "pass": true,
-      "Fn_left_n": 1.1929936338916804,
-      "Fn_right_n": 1.19001328955764,
+      "Fn_left_n": 1.195128430793478,
+      "Fn_right_n": 1.1875429004827192,
       "F_cmd_n": 1.2,
-      "relative_tolerance": 0.15
+      "relative_tolerance": 0.15,
+      "suspension_checks": {
+        "initial_com_z_m": 0.02199999988079071,
+        "median_hold_com_z_m": 0.07082514837384224,
+        "com_rise_m": 0.04882514849305153,
+        "commanded_lift_m": 0.05,
+        "rise_tolerance_m": 0.01,
+        "median_abs_com_velocity_m_s": 7.37607479095459e-05,
+        "max_abs_com_velocity_m_s": 0.00015422701835632324,
+        "velocity_limit_m_s": 0.005,
+        "median_abs_com_acceleration_m_s2": 0.0019177794456481934,
+        "max_abs_com_acceleration_m_s2": 0.00737607479095459,
+        "acceleration_limit_m_s2": 0.5,
+        "airborne_pass": true,
+        "static_pass": true
+      }
     },
     "momentum": {
       "pass": false,
       "component": "negative sum of left/right pad force_world[z] (world z is up)",
-      "vertical_support_n": -1.024895042181015,
+      "vertical_support_n": 1.051614135503769,
       "weight_n": 0.6278400000000001,
-      "absolute_tolerance_n": 0.1
+      "absolute_tolerance_n": 0.1,
+      "support_time_series": [
+        {
+          "time_s": 8.31666666666666,
+          "vertical_support_n": 1.0764479637145996
+        },
+        {
+          "time_s": 8.416666666666664,
+          "vertical_support_n": 1.033656656742096
+        },
+        {
+          "time_s": 8.533333333333337,
+          "vertical_support_n": 1.057469367980957
+        },
+        {
+          "time_s": 8.633333333333342,
+          "vertical_support_n": 1.0364827811717987
+        },
+        {
+          "time_s": 8.750000000000014,
+          "vertical_support_n": 1.0544109344482422
+        },
+        {
+          "time_s": 8.85000000000002,
+          "vertical_support_n": 1.0749295353889465
+        },
+        {
+          "time_s": 8.966666666666692,
+          "vertical_support_n": 0.9969978630542755
+        },
+        {
+          "time_s": 9.066666666666697,
+          "vertical_support_n": 1.042512834072113
+        },
+        {
+          "time_s": 9.183333333333369,
+          "vertical_support_n": 1.0728294849395752
+        },
+        {
+          "time_s": 9.300000000000042,
+          "vertical_support_n": 1.0581493973731995
+        }
+      ],
+      "suspension_checks": {
+        "initial_com_z_m": 0.02199999988079071,
+        "median_hold_com_z_m": 0.07082514837384224,
+        "com_rise_m": 0.04882514849305153,
+        "commanded_lift_m": 0.05,
+        "rise_tolerance_m": 0.01,
+        "median_abs_com_velocity_m_s": 7.37607479095459e-05,
+        "max_abs_com_velocity_m_s": 0.00015422701835632324,
+        "velocity_limit_m_s": 0.005,
+        "median_abs_com_acceleration_m_s2": 0.0019177794456481934,
+        "max_abs_com_acceleration_m_s2": 0.00737607479095459,
+        "acceleration_limit_m_s2": 0.5,
+        "airborne_pass": true,
+        "static_pass": true
+      }
     }
   },
   "pass": false

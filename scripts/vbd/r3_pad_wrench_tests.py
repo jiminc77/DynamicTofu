@@ -34,9 +34,9 @@ def _rig(absent=False):
     return rig
 
 
-def _frame(rig, force):
+def _frame(rig, force, lift_target=GRAB_Z):
     """Equivalent to rig.step, retaining the pre-state of its final substep."""
-    rig.set_control(force, GRAB_Z)
+    rig.set_control(force, lift_target)
     pre = None
     for _ in range(rig.sim_substeps):
         rig.state_0.clear_forces()
@@ -63,6 +63,65 @@ def _settle(absent=False):
     return samples
 
 
+_SUSPENDED_CACHE = None
+
+
+def _suspended_settle():
+    """Run ramp, preload, lift, and hold; return the final second of suspended data."""
+    global _SUSPENDED_CACHE
+    if _SUSPENDED_CACHE is not None:
+        return _SUSPENDED_CACHE
+
+    rig = _rig(False)
+    cfg = rig.cfg
+    initial_com_z = float(rig.state_0.particle_q.numpy()[rig.soft_start:rig.soft_end, 2].mean())
+    t_pre = cfg.ramp_s + cfg.preload_s
+    t_lift = t_pre + cfg.lift_s
+    t_end = t_lift + cfg.hold_s
+    rows = []
+    for _ in range(int(t_end * FPS)):
+        t = rig.sim_time
+        force = F_CMD * min(1.0, t / cfg.ramp_s)
+        lift_fraction = min(1.0, max(0.0, t - t_pre) / cfg.lift_s)
+        lift_target = GRAB_Z + cfg.lift_height_m * lift_fraction
+        wrench = _frame(rig, force, lift_target)
+        if rig.sim_time >= t_end - 1.0:
+            com_z = float(rig.state_0.particle_q.numpy()[rig.soft_start:rig.soft_end, 2].mean())
+            rows.append({"time_s": float(rig.sim_time), "com_z_m": com_z, "wrench": wrench})
+
+    com_z = np.asarray([row["com_z_m"] for row in rows], dtype=np.float64)
+    velocity = np.diff(com_z) * FPS
+    acceleration = np.diff(velocity) * FPS
+    rise = float(np.median(com_z) - initial_com_z)
+    median_abs_velocity = float(np.median(np.abs(velocity)))
+    median_abs_acceleration = float(np.median(np.abs(acceleration)))
+    max_abs_velocity = float(np.max(np.abs(velocity)))
+    max_abs_acceleration = float(np.max(np.abs(acceleration)))
+    velocity_limit = 5e-3
+    acceleration_limit = 0.5
+    rise_tolerance = 0.01
+    checks = {
+        "initial_com_z_m": initial_com_z,
+        "median_hold_com_z_m": float(np.median(com_z)),
+        "com_rise_m": rise,
+        "commanded_lift_m": float(cfg.lift_height_m),
+        "rise_tolerance_m": rise_tolerance,
+        "median_abs_com_velocity_m_s": median_abs_velocity,
+        "max_abs_com_velocity_m_s": max_abs_velocity,
+        "velocity_limit_m_s": velocity_limit,
+        "median_abs_com_acceleration_m_s2": median_abs_acceleration,
+        "max_abs_com_acceleration_m_s2": max_abs_acceleration,
+        "acceleration_limit_m_s2": acceleration_limit,
+        "airborne_pass": bool(abs(rise - cfg.lift_height_m) <= rise_tolerance),
+        # Median absolute finite differences reject isolated float32/solver jitter
+        # while requiring the entire settled window to be centered near rest.
+        "static_pass": bool(median_abs_velocity <= velocity_limit
+                            and median_abs_acceleration <= acceleration_limit),
+    }
+    _SUSPENDED_CACHE = ([row["wrench"] for row in rows], rows, checks)
+    return _SUSPENDED_CACHE
+
+
 def _median(samples, pad, key):
     return float(np.median([s[pad][key] for s in samples]))
 
@@ -80,25 +139,38 @@ def test_absent():
 
 
 def test_static():
-    samples = _settle(False)
+    samples, _rows, suspension = _suspended_settle()
     fn_l, fn_r = _median(samples, "left", "Fn"), _median(samples, "right", "Fn")
     rtol = 0.15
-    passed = abs(fn_l - F_CMD) <= rtol * F_CMD and abs(fn_r - F_CMD) <= rtol * F_CMD
+    passed = (abs(fn_l - F_CMD) <= rtol * F_CMD
+              and abs(fn_r - F_CMD) <= rtol * F_CMD
+              and suspension["airborne_pass"] and suspension["static_pass"])
     return {"pass": bool(passed), "Fn_left_n": fn_l, "Fn_right_n": fn_r,
-            "F_cmd_n": F_CMD, "relative_tolerance": rtol}
+            "F_cmd_n": F_CMD, "relative_tolerance": rtol,
+            "suspension_checks": suspension}
 
 
 def test_momentum():
-    samples = _settle(False)
+    samples, rows, suspension = _suspended_settle()
     # force_world is force tofu exerts on pads, so negate summed pad world-z to get
     # the upward force pads exert on tofu.
-    support = float(np.median([-s["left"]["force_world"][2] - s["right"]["force_world"][2]
-                               for s in samples]))
+    support_series = np.asarray(
+        [-s["left"]["force_world"][2] - s["right"]["force_world"][2] for s in samples],
+        dtype=np.float64,
+    )
+    support = float(np.median(support_series))
     atol = 0.10
-    return {"pass": bool(abs(support - WEIGHT_N) <= atol),
+    series_indices = np.linspace(0, len(rows) - 1, min(10, len(rows)), dtype=int)
+    short_series = [{"time_s": rows[i]["time_s"],
+                     "vertical_support_n": float(support_series[i])}
+                    for i in series_indices]
+    passed = (abs(support - WEIGHT_N) <= atol
+              and suspension["airborne_pass"] and suspension["static_pass"])
+    return {"pass": bool(passed),
             "component": "negative sum of left/right pad force_world[z] (world z is up)",
             "vertical_support_n": support, "weight_n": WEIGHT_N,
-            "absolute_tolerance_n": atol}
+            "absolute_tolerance_n": atol, "support_time_series": short_series,
+            "suspension_checks": suspension}
 
 
 def main(argv=None):
