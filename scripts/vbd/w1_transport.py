@@ -325,17 +325,18 @@ def _json_safe(value):
 
 def run_transport_cell(E, F, a_peak, seed, substeps=80, cell_m=0.005,
                        snap_dir=None, save_field=None, convergence=False,
-                       friction_epsilon=None, mu_pair=None):
+                       friction_epsilon=None, mu_pair=None, iterations=None):
     from src.contact_validity import ValidityAccumulator
     from src.vbd_rig2 import GRAB_Z, Vbd2Config, Vbd2Rig
 
     fe = 2e-4 if friction_epsilon is None else float(friction_epsilon)
     mp = 1.0 if mu_pair is None else float(mu_pair)
+    vi = 10 if iterations is None else int(iterations)
     cfg = Vbd2Config(E_pa=float(E), nu=0.45, grip_force_n=float(F), cell_m=cell_m,
                      particle_radius=0.0025, contact_ke=1e3, contact_kd=1.0,
                      mu_pair=mp, friction_epsilon=fe, soft_contact_margin=1e-3,
                      substeps=substeps, lift_s=2.5, hold_s=5.0,
-                     lift_height_m=0.05, seed=int(seed))
+                     lift_height_m=0.05, seed=int(seed), vbd_iterations=vi)
     # R2/R4 sensitivity overrides (external consult #3): deliberately vary ONLY the
     # named frozen key(s); assert every OTHER frozen value is untouched via a
     # normalised view. Default call (no override) is byte-identical to production.
@@ -346,10 +347,13 @@ def run_transport_cell(E, F, a_peak, seed, substeps=80, cell_m=0.005,
         overrides["friction_epsilon"] = fe
     if mp != FROZEN_PRODUCTION["mu_pair"]:
         overrides["mu_pair"] = mp
+    if iterations is not None and vi != 10:
+        overrides["vbd_iterations"] = vi
     if overrides:
         frozen_view = {key: getattr(cfg, key, None) for key in FROZEN_PRODUCTION}
         for k in overrides:
-            frozen_view[k] = FROZEN_PRODUCTION[k]
+            if k in FROZEN_PRODUCTION:  # vbd_iterations is not a FROZEN_PRODUCTION key -> free override
+                frozen_view[k] = FROZEN_PRODUCTION[k]
         assert_frozen(frozen_view)
     else:
         assert_frozen(cfg)
@@ -581,6 +585,8 @@ def run_transport_cell(E, F, a_peak, seed, substeps=80, cell_m=0.005,
         receipt["sensitivity_overrides"] = overrides
         if "substeps" in overrides:
             receipt["convergence_substeps"] = overrides["substeps"]
+        if "vbd_iterations" in overrides:
+            receipt["vbd_iterations"] = overrides["vbd_iterations"]
     return receipt
 
 

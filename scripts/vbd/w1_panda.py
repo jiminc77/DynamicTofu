@@ -44,7 +44,8 @@ def _panda_pad_shapes(rig):
     return int(left[0]), int(right[0])
 
 
-def run_panda_cell(E: float, F: float, a_peak: float, seed: int, couple: bool = True):
+def run_panda_cell(E: float, F: float, a_peak: float, seed: int, couple: bool = True,
+                   iterations: int | None = None):
     import src.vbd_rig2 as frozen_rig
 
     original = frozen_rig.Vbd2Rig
@@ -53,7 +54,7 @@ def run_panda_cell(E: float, F: float, a_peak: float, seed: int, couple: bool = 
     w1_transport._pad_shapes = _panda_pad_shapes
     try:
         receipt = w1_transport.run_transport_cell(
-            E, F, a_peak, seed, substeps=80, cell_m=0.005
+            E, F, a_peak, seed, substeps=80, cell_m=0.005, iterations=iterations
         )
     finally:
         frozen_rig.Vbd2Rig = original

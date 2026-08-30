@@ -1,0 +1,88 @@
+{
+  "scenes": [
+    {
+      "scene": "intact",
+      "iterations": 40,
+      "rerun_label": "intact",
+      "expected_label": "intact",
+      "label_reproduced": true,
+      "n_frames": 696,
+      "provenance": "validated collector at 40 iterations",
+      "taxel_extent": {
+        "shape": [
+          8,
+          8
+        ],
+        "local_axes": [
+          "z",
+          "x"
+        ],
+        "x_m": [
+          -0.022,
+          0.022
+        ],
+        "z_m": [
+          -0.022,
+          0.022
+        ],
+        "layout": "grid[z,x], floor-to-bin with upper edge clipped to 7"
+      }
+    },
+    {
+      "scene": "slip",
+      "iterations": 40,
+      "rerun_label": "slip",
+      "expected_label": "slip",
+      "label_reproduced": true,
+      "n_frames": 696,
+      "provenance": "validated collector at 40 iterations",
+      "taxel_extent": {
+        "shape": [
+          8,
+          8
+        ],
+        "local_axes": [
+          "z",
+          "x"
+        ],
+        "x_m": [
+          -0.022,
+          0.022
+        ],
+        "z_m": [
+          -0.022,
+          0.022
+        ],
+        "layout": "grid[z,x], floor-to-bin with upper edge clipped to 7"
+      }
+    },
+    {
+      "scene": "damage",
+      "iterations": 40,
+      "rerun_label": "damage",
+      "expected_label": "damage",
+      "label_reproduced": true,
+      "n_frames": 696,
+      "provenance": "validated collector at 40 iterations",
+      "taxel_extent": {
+        "shape": [
+          8,
+          8
+        ],
+        "local_axes": [
+          "z",
+          "x"
+        ],
+        "x_m": [
+          -0.022,
+          0.022
+        ],
+        "z_m": [
+          -0.022,
+          0.022
+        ],
+        "layout": "grid[z,x], floor-to-bin with upper edge clipped to 7"
+      }
+    }
+  ]
+}
