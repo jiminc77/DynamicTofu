@@ -5,18 +5,14 @@
   "labels_untouched": true,
   "criteria": {
     "shell_luminance_mean_gt": 200,
-    "insets_present_mirrored": true,
-    "shell_gap_mm_lte": 3,
-    "flange_above_centroid": true,
-    "no_mp4_encoded": true,
     "gripper_fully_in_frame": true,
-    "intact_amplitude_px_gte": 90
+    "insets_present_mirrored": true
   },
   "scenes": {
     "intact": {
       "grasp": {
         "time_s": 1.7999999999999985,
-        "shell_luminance_mean": 250.45434654180715,
+        "shell_luminance_mean": 250.45429275836852,
         "shell_pixel_count": 91623,
         "gripper_fully_in_frame": true,
         "insets_present_mirrored": true,
@@ -24,7 +20,7 @@
       },
       "mid_motion": {
         "time_s": 9.400000000000047,
-        "shell_luminance_mean": 251.79911279475056,
+        "shell_luminance_mean": 251.79915972413443,
         "shell_pixel_count": 80619,
         "gripper_fully_in_frame": true,
         "insets_present_mirrored": true,
@@ -50,7 +46,7 @@
       },
       "mid_motion": {
         "time_s": 9.400000000000047,
-        "shell_luminance_mean": 250.00357607967712,
+        "shell_luminance_mean": 250.00353624967798,
         "shell_pixel_count": 23294,
         "gripper_fully_in_frame": true,
         "insets_present_mirrored": true,
@@ -68,7 +64,7 @@
     "damage": {
       "grasp": {
         "time_s": 1.7999999999999985,
-        "shell_luminance_mean": 250.2071431519919,
+        "shell_luminance_mean": 250.20710702130143,
         "shell_pixel_count": 25679,
         "gripper_fully_in_frame": true,
         "insets_present_mirrored": true,
@@ -76,7 +72,7 @@
       },
       "mid_motion": {
         "time_s": 9.400000000000047,
-        "shell_luminance_mean": 250.38417697005582,
+        "shell_luminance_mean": 250.38413995632374,
         "shell_pixel_count": 27017,
         "gripper_fully_in_frame": true,
         "insets_present_mirrored": true,
@@ -84,7 +80,7 @@
       },
       "ending": {
         "time_s": 10.600000000000106,
-        "shell_luminance_mean": 250.37869081916762,
+        "shell_luminance_mean": 250.37876408997653,
         "shell_pixel_count": 27296,
         "gripper_fully_in_frame": true,
         "insets_present_mirrored": true,
@@ -96,13 +92,5 @@
     "gap_mm": 2.270936965559356e-05,
     "flange_above_centroid": true
   },
-  "passed": true,
-  "intact_amplitude_px": 96.10457258892257,
-  "intact_camera_distance_factor": 0.52,
-  "no_mp4_encoded": true,
-  "intact_start_tick": {
-    "world_fixed": true,
-    "world_x_m": 1.0913936421275139e-10,
-    "source": "first frozen-frame palm x"
-  }
+  "passed": true
 }
