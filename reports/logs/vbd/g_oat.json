@@ -1,0 +1,290 @@
+{
+  "schema": "g_oat.v1",
+  "note": "R4 OAT contact-parameter sensitivity vs frozen baseline (eps=2e-4, mu=1.0). Diagnostic only; no production value changed; each run tagged non-frozen.",
+  "eps_values": [
+    0.0001,
+    0.0005,
+    0.001
+  ],
+  "mu_values": [
+    0.8,
+    1.2
+  ],
+  "n_run": 13,
+  "n_label_changed": 2,
+  "cells": [
+    {
+      "tag": "E7_F0.8_a1_eps0.0001",
+      "E_kPa": 7,
+      "F": 0.8,
+      "a": 1,
+      "param": "friction_epsilon",
+      "value": 0.0001,
+      "frozen_baseline": {
+        "friction_epsilon": 0.0002,
+        "mu": 1.0
+      },
+      "frozen_label": "slip",
+      "oat_label": "slip",
+      "changed": false,
+      "dvf": 0.0,
+      "hold_slip_z_mm": 4.356518387794495,
+      "transport_slip_xz_mm": 1.0787715840045862,
+      "ejected": false,
+      "status": "ok",
+      "wall_s": 306.6
+    },
+    {
+      "tag": "E7_F0.8_a1_eps0.0005",
+      "E_kPa": 7,
+      "F": 0.8,
+      "a": 1,
+      "param": "friction_epsilon",
+      "value": 0.0005,
+      "frozen_baseline": {
+        "friction_epsilon": 0.0002,
+        "mu": 1.0
+      },
+      "frozen_label": "slip",
+      "oat_label": "slip",
+      "changed": false,
+      "dvf": 0.0,
+      "hold_slip_z_mm": 2.0921211689710617,
+      "transport_slip_xz_mm": 0.5062994686107924,
+      "ejected": false,
+      "status": "ok",
+      "wall_s": 307.3
+    },
+    {
+      "tag": "E7_F0.8_a1_eps0.001",
+      "E_kPa": 7,
+      "F": 0.8,
+      "a": 1,
+      "param": "friction_epsilon",
+      "value": 0.001,
+      "frozen_baseline": {
+        "friction_epsilon": 0.0002,
+        "mu": 1.0
+      },
+      "frozen_label": "slip",
+      "oat_label": "slip",
+      "changed": false,
+      "dvf": 0.0,
+      "hold_slip_z_mm": 3.031611442565918,
+      "transport_slip_xz_mm": 0.8470007289336111,
+      "ejected": false,
+      "status": "ok",
+      "wall_s": 306.8
+    },
+    {
+      "tag": "E15_F0.6_a1_eps0.0001",
+      "E_kPa": 15,
+      "F": 0.6,
+      "a": 1,
+      "param": "friction_epsilon",
+      "value": 0.0001,
+      "frozen_baseline": {
+        "friction_epsilon": 0.0002,
+        "mu": 1.0
+      },
+      "frozen_label": "slip",
+      "oat_label": "slip",
+      "changed": false,
+      "dvf": 0.0,
+      "hold_slip_z_mm": 5.357585847377777,
+      "transport_slip_xz_mm": 1.2643154237846732,
+      "ejected": false,
+      "status": "ok",
+      "wall_s": 307.7
+    },
+    {
+      "tag": "E15_F0.6_a1_eps0.0005",
+      "E_kPa": 15,
+      "F": 0.6,
+      "a": 1,
+      "param": "friction_epsilon",
+      "value": 0.0005,
+      "frozen_baseline": {
+        "friction_epsilon": 0.0002,
+        "mu": 1.0
+      },
+      "frozen_label": "slip",
+      "oat_label": "slip",
+      "changed": false,
+      "dvf": 0.0,
+      "hold_slip_z_mm": 2.5025159120559692,
+      "transport_slip_xz_mm": 1.0420293074191878,
+      "ejected": false,
+      "status": "ok",
+      "wall_s": 306.7
+    },
+    {
+      "tag": "E15_F0.6_a1_eps0.001",
+      "E_kPa": 15,
+      "F": 0.6,
+      "a": 1,
+      "param": "friction_epsilon",
+      "value": 0.001,
+      "frozen_baseline": {
+        "friction_epsilon": 0.0002,
+        "mu": 1.0
+      },
+      "frozen_label": "slip",
+      "oat_label": "slip",
+      "changed": false,
+      "dvf": 0.0,
+      "hold_slip_z_mm": 3.693927079439163,
+      "transport_slip_xz_mm": 1.5019052302910283,
+      "ejected": false,
+      "status": "ok",
+      "wall_s": 307.5
+    },
+    {
+      "tag": "E25_F0.6_a1_eps0.0001",
+      "E_kPa": 25,
+      "F": 0.6,
+      "a": 1,
+      "param": "friction_epsilon",
+      "value": 0.0001,
+      "frozen_baseline": {
+        "friction_epsilon": 0.0002,
+        "mu": 1.0
+      },
+      "frozen_label": "slip",
+      "oat_label": "slip",
+      "changed": false,
+      "dvf": 0.0,
+      "hold_slip_z_mm": 5.122510716319084,
+      "transport_slip_xz_mm": 2.0392168001108106,
+      "ejected": false,
+      "status": "ok",
+      "wall_s": 309.2
+    },
+    {
+      "tag": "E25_F0.6_a1_eps0.0005",
+      "E_kPa": 25,
+      "F": 0.6,
+      "a": 1,
+      "param": "friction_epsilon",
+      "value": 0.0005,
+      "frozen_baseline": {
+        "friction_epsilon": 0.0002,
+        "mu": 1.0
+      },
+      "frozen_label": "slip",
+      "oat_label": "slip",
+      "changed": false,
+      "dvf": 0.0,
+      "hold_slip_z_mm": 2.388348802924156,
+      "transport_slip_xz_mm": 1.4511163979566357,
+      "ejected": false,
+      "status": "ok",
+      "wall_s": 308.3
+    },
+    {
+      "tag": "E25_F0.6_a1_eps0.001",
+      "E_kPa": 25,
+      "F": 0.6,
+      "a": 1,
+      "param": "friction_epsilon",
+      "value": 0.001,
+      "frozen_baseline": {
+        "friction_epsilon": 0.0002,
+        "mu": 1.0
+      },
+      "frozen_label": "slip",
+      "oat_label": "slip",
+      "changed": false,
+      "dvf": 0.0,
+      "hold_slip_z_mm": 3.5433266311883926,
+      "transport_slip_xz_mm": 2.1681553698940195,
+      "ejected": false,
+      "status": "ok",
+      "wall_s": 306.8
+    },
+    {
+      "tag": "E7_F0.8_a1_mu0.8",
+      "E_kPa": 7,
+      "F": 0.8,
+      "a": 1,
+      "param": "mu",
+      "value": 0.8,
+      "frozen_baseline": {
+        "friction_epsilon": 0.0002,
+        "mu": 1.0
+      },
+      "frozen_label": "slip",
+      "oat_label": "slip",
+      "changed": false,
+      "dvf": 0.0,
+      "hold_slip_z_mm": 2.8834883123636246,
+      "transport_slip_xz_mm": 1.0931343475024744,
+      "ejected": false,
+      "status": "ok",
+      "wall_s": 307.2
+    },
+    {
+      "tag": "E7_F0.8_a1_mu1.2",
+      "E_kPa": 7,
+      "F": 0.8,
+      "a": 1,
+      "param": "mu",
+      "value": 1.2,
+      "frozen_baseline": {
+        "friction_epsilon": 0.0002,
+        "mu": 1.0
+      },
+      "frozen_label": "slip",
+      "oat_label": "intact",
+      "changed": true,
+      "dvf": 0.0,
+      "hold_slip_z_mm": 1.7557237297296524,
+      "transport_slip_xz_mm": 0.3257157261483039,
+      "ejected": false,
+      "status": "ok",
+      "wall_s": 308.4
+    },
+    {
+      "tag": "E15_F0.6_a1_mu0.8",
+      "E_kPa": 15,
+      "F": 0.6,
+      "a": 1,
+      "param": "mu",
+      "value": 0.8,
+      "frozen_baseline": {
+        "friction_epsilon": 0.0002,
+        "mu": 1.0
+      },
+      "frozen_label": "slip",
+      "oat_label": "slip",
+      "changed": false,
+      "dvf": 0.0,
+      "hold_slip_z_mm": 6.074441596865654,
+      "transport_slip_xz_mm": 1.9216321290450968,
+      "ejected": false,
+      "status": "ok",
+      "wall_s": 307.4
+    },
+    {
+      "tag": "E15_F0.6_a1_mu1.2",
+      "E_kPa": 15,
+      "F": 0.6,
+      "a": 1,
+      "param": "mu",
+      "value": 1.2,
+      "frozen_baseline": {
+        "friction_epsilon": 0.0002,
+        "mu": 1.0
+      },
+      "frozen_label": "slip",
+      "oat_label": "intact",
+      "changed": true,
+      "dvf": 0.0,
+      "hold_slip_z_mm": 1.8179751932621002,
+      "transport_slip_xz_mm": 0.6151355016383405,
+      "ejected": false,
+      "status": "ok",
+      "wall_s": 308.9
+    }
+  ]
+}
