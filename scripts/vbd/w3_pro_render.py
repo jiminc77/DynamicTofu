@@ -156,6 +156,9 @@ def camera_for(files, scene, version=2):
             # wrist coupling; retain the wide slip landing bounds.
             target=np.array((mid,0,max(.065,(zlo+zhi)/2+.015)))
             eye=target+np.array((-.42,-.52,.20))
+        if version >= 10:
+            target=np.array((mid,0,.14))
+            eye=target+np.array((-.68,-.78,.30))
         return look_at(eye,target),(lo,hi),eye,target
     xs=[]
     for p in files:
@@ -181,6 +184,9 @@ def camera_for(files, scene, version=2):
         # 10--12 cm of the exported hand. Aim below the wrist coupling.
         target=np.array((mid,0,.062))
         eye=target+np.array((-.34,-.42,.17))
+    if version >= 10:
+        target=np.array((mid,0,.14))
+        eye=target+np.array((-.48,-.58,.24))
     return look_at(eye,target), (lo,hi), eye, target
 
 
@@ -281,6 +287,9 @@ def add_hud(rgb, scene, t, meta, slow, version=2):
     if slow:
         d.rounded_rectangle((1000,28,1248,78),10,fill=(185,38,45,235))
         d.text((1018,39),"SLOW MOTION x4",font=font,fill="white")
+    elif version >= 10 and 2.2 <= t < 8.7:
+        d.rounded_rectangle((984,28,1248,78),10,fill=(44,91,140,235))
+        d.text((1000,39),"FAST-FORWARD x8",font=font,fill="white")
     return np.asarray(im)
 
 
@@ -441,7 +450,8 @@ def compose_overlays(rgb, q, bodies, boundary, scene, t, meta, version=2):
                               per_frame=version >= 4, version=version)
 
 
-def pyrender_frame(q,bodies,t,scene,meta,boundary,tets,inv_dm,camera,xlim,version=2):
+def pyrender_frame(q,bodies,t,scene,meta,boundary,tets,inv_dm,camera,xlim,version=2,
+                   return_masks=False):
     import pyrender, trimesh
     sc=pyrender.Scene(bg_color=(.95,.96,.97,1),ambient_light=(.42,.42,.42))
     if scene=="damage":
@@ -467,24 +477,41 @@ def pyrender_frame(q,bodies,t,scene,meta,boundary,tets,inv_dm,camera,xlim,versio
         sc.add(pyrender.Mesh.from_trimesh(tm,material=mat),pose=pose)
     if version >= 5:
         geometry=panda_rig_geometry()
+        shell_nodes=[]
+        gripper_nodes=[]
         for i,body_index in enumerate(geometry["shape_body"]):
             world_pose=transform(bodies[body_index]) @ transform(geometry["shape_transform"][i])
             color=geometry["shape_color"][i]
             if geometry["shape_kind"][i] == 8:
-                if version >= 9:
+                metallic,roughness=.05,.34
+                if version >= 10:
+                    if i in (2,4):
+                        color=np.array((.949,.949,.941))
+                        metallic,roughness=.05,.40
+                    elif i in (0,1,3):
+                        color=np.array((.690,.690,.710))
+                        metallic,roughness=.70,.40
+                    elif i in (5,6,7,8):
+                        color=np.array((.165,.165,.165))
+                        metallic,roughness=.05,.55
+                elif version >= 9:
                     if body_index == 1:
                         color=np.array((.88,.88,.88))
                     elif body_index in (2,3):
                         color=np.array((.12,.12,.12))
                 material=pyrender.MetallicRoughnessMaterial(
-                    baseColorFactor=(*color,1),metallicFactor=.05,roughnessFactor=.34)
+                    baseColorFactor=(*color,1),metallicFactor=metallic,roughnessFactor=roughness,
+                    emissiveFactor=(color*.28 if version >= 10 and i in (2,4) else None))
                 va,vb=geometry["vertex_range"][i]
                 fa,fb=geometry["face_range"][i]
                 tm=trimesh.Trimesh(
                     geometry["vertices"][va:vb],
                     geometry["faces"][fa:fb]-va,process=False)
-                sc.add(pyrender.Mesh.from_trimesh(tm,material=material,smooth=True),
-                       pose=world_pose)
+                node=sc.add(pyrender.Mesh.from_trimesh(tm,material=material,smooth=True),
+                            pose=world_pose)
+                gripper_nodes.append(node)
+                if version >= 10 and i in (2,4):
+                    shell_nodes.append(node)
             elif geometry["shape_kind"][i] == 7:
                 # Sensor plates are deliberately matte; geometry and model
                 # attachment remain exactly the exported simulated boxes.
@@ -504,7 +531,8 @@ def pyrender_frame(q,bodies,t,scene,meta,boundary,tets,inv_dm,camera,xlim,versio
                         baseColorFactor=(.02,.02,.02,1),emissiveFactor=color*.72,
                         metallicFactor=0,roughnessFactor=1)
                 tm=trimesh.creation.box(extents=2*geometry["shape_scale"][i])
-                sc.add(pyrender.Mesh.from_trimesh(tm,material=material),pose=world_pose)
+                node=sc.add(pyrender.Mesh.from_trimesh(tm,material=material),pose=world_pose)
+                gripper_nodes.append(node)
             else:
                 raise RuntimeError(f"unsupported exported Panda shape kind {geometry['shape_kind'][i]}")
     else:
@@ -531,9 +559,18 @@ def pyrender_frame(q,bodies,t,scene,meta,boundary,tets,inv_dm,camera,xlim,versio
     shadow=trimesh.creation.cylinder(radius=.045,height=.0006); shadow.apply_scale((1.8,.65,1)); shadow.apply_translation((q[:,0].mean(),q[:,1].mean(),.0005))
     sc.add(pyrender.Mesh.from_trimesh(shadow,material=pyrender.MetallicRoughnessMaterial(baseColorFactor=(.12,.14,.16,.18),alphaMode="BLEND")))
     sc.add(pyrender.PerspectiveCamera(yfov=np.deg2rad(34)),pose=camera)
-    light=pyrender.DirectionalLight(color=np.ones(3),intensity=3.0); sc.add(light,pose=look_at(camera[:3,3],np.array((mid,0,.04))))
-    r=pyrender.OffscreenRenderer(WIDTH,HEIGHT); rgb,_=r.render(sc,flags=pyrender.RenderFlags.RGBA); r.delete()
-    return compose_overlays(rgb[:,:,:3], q, bodies, boundary, scene, t, meta, version)
+    light=pyrender.DirectionalLight(color=np.ones(3),intensity=4.5); sc.add(light,pose=look_at(camera[:3,3],np.array((mid,0,.04))))
+    r=pyrender.OffscreenRenderer(WIDTH,HEIGHT); rgb,_=r.render(sc,flags=pyrender.RenderFlags.RGBA)
+    masks=None
+    if return_masks:
+        shell_rgb,_=r.render(sc,flags=pyrender.RenderFlags.SEG,
+                             seg_node_map={node:(255,255,255) for node in shell_nodes})
+        grip_rgb,_=r.render(sc,flags=pyrender.RenderFlags.SEG,
+                            seg_node_map={node:(255,255,255) for node in gripper_nodes})
+        masks=(shell_rgb[:,:,0]>0,grip_rgb[:,:,0]>0)
+    r.delete()
+    composed=compose_overlays(rgb[:,:,:3], q, bodies, boundary, scene, t, meta, version)
+    return (composed,*masks) if return_masks else composed
 
 
 def mpl_frame(q,bodies,t,scene,meta,boundary,tets,inv_dm,camera,xlim,version=2):
@@ -683,6 +720,16 @@ def render_scene(scene, smoke=False, version=2):
     inv_dm=rest_poses(tets,first)
     egl,status=egl_available()
     camera,xlim,eye,target=camera_for(files,scene,version)
+    wide_view=(camera,xlim,eye,target)
+    slip_cut_t=None
+    if version >= 10 and scene == "slip":
+        slip_cut_t=float(meta["drop_t"])+.2
+        _,grip_bodies,_=min((load_frame(path) for path in files),
+                            key=lambda frame: abs(frame[2]-1.8))
+        grip_mid=float(grip_bodies[1,0])
+        target=np.array((grip_mid,0,.14))
+        eye=target+np.array((-.48,-.58,.24))
+        xlim=(grip_mid-.18,grip_mid+.18)
     aftermath=None
     if 3 <= version < 5 and scene=="slip":
         (camera,xlim,eye,target),aftermath=slip_v3_cameras(files)
@@ -690,6 +737,8 @@ def render_scene(scene, smoke=False, version=2):
     grip_y=float((grip_frame[1][2,1]+grip_frame[1][3,1])/2)
     def view_at(t,bodies):
         moving_eye,moving_target,bounds=eye.copy(),target.copy(),xlim
+        if version >= 10 and scene == "slip" and t > slip_cut_t:
+            _,bounds,moving_eye,moving_target=wide_view
         if aftermath is not None and t > 9.55:
             _,wide_xlim,wide_eye,wide_target=aftermath
             u=np.clip((t-9.55)/.40,0,1); u=u*u*(3-2*u)
@@ -700,6 +749,40 @@ def render_scene(scene, smoke=False, version=2):
             moving_eye[1]+=drift; moving_target[1]+=drift
         return look_at(moving_eye,moving_target),bounds
     renderer=pyrender_frame if egl else mpl_frame
+    if smoke == "gate":
+        if not egl:
+            raise RuntimeError("v10 still gate requires EGL/pyrender segmentation")
+        ending_t=(min(load_frame(files[settle_index])[2],float(meta["drop_t"])+1.0)
+                  if scene=="slip" else 10.60)
+        check_times={"grasp":1.80,"mid_motion":9.40,"ending":ending_t}
+        results={}
+        out_dir=CLIPS/"panda"
+        for name,requested_t in check_times.items():
+            path=min(files,key=lambda p:abs(load_frame(p)[2]-requested_t))
+            q,b,t=load_frame(path); frame_camera,frame_xlim=view_at(t,b)
+            frame,shell_mask,grip_mask=pyrender_frame(
+                q,b,t,scene,meta,boundary,tets,inv_dm,frame_camera,frame_xlim,version,
+                return_masks=True)
+            still_path=out_dir/f"w3_{scene}_v10_{name}.png"
+            Image.fromarray(frame).save(still_path)
+            usable=shell_mask.copy()
+            usable[:215,:660]=False
+            usable[HEIGHT-205:,:]=False
+            luminance=(.2126*frame[:,:,0]+.7152*frame[:,:,1]+.0722*frame[:,:,2])
+            shell_mean=float(luminance[usable].mean()) if usable.any() else 0.0
+            ys,xs=np.nonzero(grip_mask)
+            fully=bool(len(xs) and xs.min()>2 and xs.max()<WIDTH-3 and ys.min()>2 and ys.max()<HEIGHT-3)
+            panel_y=HEIGHT-18-180
+            panel_presence=[
+                float((frame[panel_y:panel_y+180,x: x+180].mean(axis=2)>180).mean())>.25
+                for x in (WIDTH-18-2*180-12,WIDTH-18-180)]
+            mirrored=bool(all(panel_presence))
+            results[name]={"time_s":t,"shell_luminance_mean":shell_mean,
+                           "shell_pixel_count":int(usable.sum()),
+                           "gripper_fully_in_frame":fully,
+                           "insets_present_mirrored":mirrored,
+                           "still":str(still_path.relative_to(ROOT))}
+        return results
     if smoke:
         target_time = 9.8 if scene == "damage" else 9.3
         smoke_files=files
@@ -725,7 +808,14 @@ def render_scene(scene, smoke=False, version=2):
         Image.fromarray(composed).save(key_dir/("dwell.png" if scene == "damage" else "hold.png"))
         return out,status,xlim,eye,target
     render_paths=[]
-    if version >= 5 and scene=="slip":
+    if version >= 10:
+        last_index=settle_index if scene=="slip" else len(files)-1
+        for i,p in enumerate(files[:last_index+1]):
+            _,_,t=load_frame(p)
+            stride=16 if 2.2 <= t < 8.7 else 2
+            if i%stride==0:
+                render_paths.extend([p]*(4 if scene=="slip" and 9.20<=t<=float(meta["drop_t"]) else 1))
+    elif version >= 5 and scene=="slip":
         for i,p in enumerate(files[:settle_index+1]):
             _,_,t=load_frame(p)
             if i%2==0:
@@ -749,7 +839,8 @@ def render_scene(scene, smoke=False, version=2):
     import imageio.v2 as imageio
     mode=f"v{version}" if version >= 3 else "pro"
     stem=f"w3_{scene}_{mode}"
-    out=CLIPS/f"{stem}.mp4"; keys=CLIPS/f"{stem}_keys"; keys.mkdir(exist_ok=True)
+    output_dir=CLIPS/"panda" if version >= 10 else CLIPS
+    out=output_dir/f"{stem}.mp4"; keys=output_dir/f"{stem}_keys"; keys.mkdir(exist_ok=True)
     writer=imageio.get_writer(out,fps=FPS,codec="libx264",quality=8,macro_block_size=None)
     times=[]
     try:
@@ -788,11 +879,39 @@ def main():
     ap.add_argument("--v7",action="store_true",help="v7: vertical hand pose, three-quarter camera, matte pads (ships to user)")
     ap.add_argument("--v8",action="store_true",help="v8: validated iter-40 normal/shear force insets")
     ap.add_argument("--v9",action="store_true",help="v9: cropped Panda appearance and tactile polish")
+    ap.add_argument("--v10",action="store_true",help="v10: render-only hand materials, cameras, and timing")
     a=ap.parse_args()
     chosen=SCENES if a.render or a.smoke else ((a.smoke_scene,) if a.smoke_scene else (a.scene,))
     smoke=a.smoke or bool(a.smoke_scene)
     failures=[]
-    version=9 if a.v9 else (8 if a.v8 else (7 if a.v7 else (6 if a.v6 else (5 if a.v5 else (4 if a.v4 else (3 if a.v3 else 2))))))
+    version=10 if a.v10 else (9 if a.v9 else (8 if a.v8 else (7 if a.v7 else (6 if a.v6 else (5 if a.v5 else (4 if a.v4 else (3 if a.v3 else 2)))))))
+    if version >= 10 and not smoke:
+        checks={}
+        try:
+            for scene in chosen:
+                checks[scene]=render_scene(scene,"gate",version)
+            payload={
+                "version":10,
+                "render_only":True,
+                "simulation_rerun":False,
+                "labels_untouched":True,
+                "criteria":{"shell_luminance_mean_gt":200,
+                            "gripper_fully_in_frame":True,
+                            "insets_present_mirrored":True},
+                "scenes":checks,
+            }
+            all_rows=[row for scene_rows in checks.values() for row in scene_rows.values()]
+            payload["passed"]=all(
+                row["shell_luminance_mean"]>200 and row["gripper_fully_in_frame"]
+                and row["insets_present_mirrored"] for row in all_rows)
+            (CLIPS/"panda"/"v10_stillcheck.json").write_text(
+                json.dumps(payload,indent=2)+"\n",encoding="ascii")
+            if not payload["passed"]:
+                print("ERROR v10 still-check gate failed; encoding stopped",file=sys.stderr)
+                return True
+        except Exception as exc:
+            print(f"ERROR v10 still-check gate: {exc}",file=sys.stderr)
+            return True
     for scene in chosen:
         try:
             result=render_scene(scene,smoke,version); print(f"{scene}: {result}")

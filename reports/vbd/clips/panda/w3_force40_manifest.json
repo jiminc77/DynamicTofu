@@ -1,4 +1,12 @@
 {
+  "v10_render_revision": {
+    "render_only": true,
+    "simulation_rerun": false,
+    "labels_untouched": true,
+    "source_frames": "w3_<scene>_force40",
+    "rig_geometry": "panda_rig_geometry.npz",
+    "note": "v10 changes presentation only; existing force40 labels and label audit assertions are unchanged."
+  },
   "scenes": [
     {
       "scene": "intact",

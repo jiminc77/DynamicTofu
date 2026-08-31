@@ -1,0 +1,92 @@
+{
+  "version": 10,
+  "render_only": true,
+  "simulation_rerun": false,
+  "labels_untouched": true,
+  "criteria": {
+    "shell_luminance_mean_gt": 200,
+    "gripper_fully_in_frame": true,
+    "insets_present_mirrored": true
+  },
+  "scenes": {
+    "intact": {
+      "grasp": {
+        "time_s": 1.7999999999999985,
+        "shell_luminance_mean": 248.46137538781522,
+        "shell_pixel_count": 23078,
+        "gripper_fully_in_frame": true,
+        "insets_present_mirrored": true,
+        "still": "reports/vbd/clips/panda/w3_intact_v10_grasp.png"
+      },
+      "mid_motion": {
+        "time_s": 9.400000000000047,
+        "shell_luminance_mean": 250.40106855357638,
+        "shell_pixel_count": 21446,
+        "gripper_fully_in_frame": true,
+        "insets_present_mirrored": true,
+        "still": "reports/vbd/clips/panda/w3_intact_v10_mid_motion.png"
+      },
+      "ending": {
+        "time_s": 10.600000000000106,
+        "shell_luminance_mean": 250.10022179887275,
+        "shell_pixel_count": 21469,
+        "gripper_fully_in_frame": true,
+        "insets_present_mirrored": true,
+        "still": "reports/vbd/clips/panda/w3_intact_v10_ending.png"
+      }
+    },
+    "slip": {
+      "grasp": {
+        "time_s": 1.7999999999999985,
+        "shell_luminance_mean": 248.5670779728583,
+        "shell_pixel_count": 23580,
+        "gripper_fully_in_frame": true,
+        "insets_present_mirrored": true,
+        "still": "reports/vbd/clips/panda/w3_slip_v10_grasp.png"
+      },
+      "mid_motion": {
+        "time_s": 9.400000000000047,
+        "shell_luminance_mean": 250.04459968123152,
+        "shell_pixel_count": 25724,
+        "gripper_fully_in_frame": true,
+        "insets_present_mirrored": true,
+        "still": "reports/vbd/clips/panda/w3_slip_v10_mid_motion.png"
+      },
+      "ending": {
+        "time_s": 10.416666666666764,
+        "shell_luminance_mean": 248.36375555187954,
+        "shell_pixel_count": 24181,
+        "gripper_fully_in_frame": true,
+        "insets_present_mirrored": true,
+        "still": "reports/vbd/clips/panda/w3_slip_v10_ending.png"
+      }
+    },
+    "damage": {
+      "grasp": {
+        "time_s": 1.7999999999999985,
+        "shell_luminance_mean": 249.12463449213902,
+        "shell_pixel_count": 24997,
+        "gripper_fully_in_frame": true,
+        "insets_present_mirrored": true,
+        "still": "reports/vbd/clips/panda/w3_damage_v10_grasp.png"
+      },
+      "mid_motion": {
+        "time_s": 9.400000000000047,
+        "shell_luminance_mean": 249.17988788387015,
+        "shell_pixel_count": 17291,
+        "gripper_fully_in_frame": true,
+        "insets_present_mirrored": true,
+        "still": "reports/vbd/clips/panda/w3_damage_v10_mid_motion.png"
+      },
+      "ending": {
+        "time_s": 10.600000000000106,
+        "shell_luminance_mean": 249.0788299334191,
+        "shell_pixel_count": 17873,
+        "gripper_fully_in_frame": true,
+        "insets_present_mirrored": true,
+        "still": "reports/vbd/clips/panda/w3_damage_v10_ending.png"
+      }
+    }
+  },
+  "passed": true
+}
