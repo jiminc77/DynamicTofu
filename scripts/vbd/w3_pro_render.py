@@ -63,6 +63,38 @@ def transform(pose):
     m=np.eye(4); m[:3,:3]=rotation(pose[3:]); m[:3,3]=pose[:3]; return m
 
 
+def v11_hand_visual_pose(pose):
+    """Place the shell from the URDF hand frame inferred from finger joints."""
+    matrix=np.eye(4)
+    # URDF finger origins are +58.4 mm from fr3_hand. The visual shell needs
+    # its arm-mount face above that plane; flip about mesh Y, then seat its
+    # 66 mm extremum flush with the finger-mount plane.
+    matrix[:3,:3]=np.diag((-1.,1.,-1.))
+    matrix[:3,3]=np.array((0.,0.,.1244))
+    return matrix
+
+
+def v11_shell_attachment_checks():
+    geometry=panda_rig_geometry()
+    transformed=[]
+    centers=[]
+    pose=v11_hand_visual_pose(geometry["shape_transform"][0])
+    for i in np.flatnonzero(geometry["shape_body"] == 1):
+        va,vb=geometry["vertex_range"][i]
+        vertices=geometry["vertices"][va:vb] @ pose[:3,:3].T + pose[:3,3]
+        transformed.append(vertices)
+        centers.append(vertices.mean(axis=0))
+    shell=np.concatenate(transformed)
+    gap_mm=abs(float(shell[:,2].min())-.0584)*1000
+    housing_centroid_z=centers[2][2]
+    flange_above=bool(centers[1][2] > housing_centroid_z
+                      and centers[0][2] > housing_centroid_z
+                      and centers[4][2] > housing_centroid_z)
+    if gap_mm > 3 or not flange_above:
+        raise RuntimeError("v11 shell attachment 3D gate failed")
+    return {"gap_mm":gap_mm,"flange_above_centroid":flange_above}
+
+
 def offset_pose(pose, xyz):
     matrix = transform(pose)
     matrix[:3, 3] += matrix[:3, :3] @ np.asarray(xyz, float)
@@ -187,6 +219,12 @@ def camera_for(files, scene, version=2):
     if version >= 10:
         target=np.array((mid,0,.14))
         eye=target+np.array((-.48,-.58,.24))
+    if version >= 11 and scene == "intact":
+        # Preserve the damage camera angle but tighten its distance so the
+        # frozen 4.5 cm intact excursion remains visibly measurable.
+        start_x=xs[0]
+        target=np.array((start_x,0,.11))
+        eye=target+np.array((-.48,-.58,.24))*.31
     return look_at(eye,target), (lo,hi), eye, target
 
 
@@ -480,7 +518,10 @@ def pyrender_frame(q,bodies,t,scene,meta,boundary,tets,inv_dm,camera,xlim,versio
         shell_nodes=[]
         gripper_nodes=[]
         for i,body_index in enumerate(geometry["shape_body"]):
-            world_pose=transform(bodies[body_index]) @ transform(geometry["shape_transform"][i])
+            shape_pose=transform(geometry["shape_transform"][i])
+            if version >= 11 and body_index == 1:
+                shape_pose=v11_hand_visual_pose(geometry["shape_transform"][i])
+            world_pose=transform(bodies[body_index]) @ shape_pose
             color=geometry["shape_color"][i]
             if geometry["shape_kind"][i] == 8:
                 metallic,roughness=.05,.34
@@ -763,7 +804,7 @@ def render_scene(scene, smoke=False, version=2):
             frame,shell_mask,grip_mask=pyrender_frame(
                 q,b,t,scene,meta,boundary,tets,inv_dm,frame_camera,frame_xlim,version,
                 return_masks=True)
-            still_path=out_dir/f"w3_{scene}_v10_{name}.png"
+            still_path=out_dir/f"w3_{scene}_v{version}_{name}.png"
             Image.fromarray(frame).save(still_path)
             usable=shell_mask.copy()
             usable[:215,:660]=False
@@ -880,18 +921,19 @@ def main():
     ap.add_argument("--v8",action="store_true",help="v8: validated iter-40 normal/shear force insets")
     ap.add_argument("--v9",action="store_true",help="v9: cropped Panda appearance and tactile polish")
     ap.add_argument("--v10",action="store_true",help="v10: render-only hand materials, cameras, and timing")
+    ap.add_argument("--v11",action="store_true",help="v11: corrected hand-shell axes and intact camera")
     a=ap.parse_args()
     chosen=SCENES if a.render or a.smoke else ((a.smoke_scene,) if a.smoke_scene else (a.scene,))
     smoke=a.smoke or bool(a.smoke_scene)
     failures=[]
-    version=10 if a.v10 else (9 if a.v9 else (8 if a.v8 else (7 if a.v7 else (6 if a.v6 else (5 if a.v5 else (4 if a.v4 else (3 if a.v3 else 2)))))))
+    version=11 if a.v11 else (10 if a.v10 else (9 if a.v9 else (8 if a.v8 else (7 if a.v7 else (6 if a.v6 else (5 if a.v5 else (4 if a.v4 else (3 if a.v3 else 2))))))))
     if version >= 10 and not smoke:
         checks={}
         try:
             for scene in chosen:
                 checks[scene]=render_scene(scene,"gate",version)
             payload={
-                "version":10,
+                "version":version,
                 "render_only":True,
                 "simulation_rerun":False,
                 "labels_untouched":True,
@@ -900,11 +942,13 @@ def main():
                             "insets_present_mirrored":True},
                 "scenes":checks,
             }
+            if version >= 11:
+                payload["shell_attachment_3d"]=v11_shell_attachment_checks()
             all_rows=[row for scene_rows in checks.values() for row in scene_rows.values()]
             payload["passed"]=all(
                 row["shell_luminance_mean"]>200 and row["gripper_fully_in_frame"]
                 and row["insets_present_mirrored"] for row in all_rows)
-            (CLIPS/"panda"/"v10_stillcheck.json").write_text(
+            (CLIPS/"panda"/f"v{version}_stillcheck.json").write_text(
                 json.dumps(payload,indent=2)+"\n",encoding="ascii")
             if not payload["passed"]:
                 print("ERROR v10 still-check gate failed; encoding stopped",file=sys.stderr)

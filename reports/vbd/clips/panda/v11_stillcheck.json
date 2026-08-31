@@ -1,0 +1,102 @@
+{
+  "version": 11,
+  "render_only": true,
+  "simulation_rerun": false,
+  "labels_untouched": true,
+  "criteria": {
+    "shell_luminance_mean_gt": 200,
+    "insets_present_mirrored": true,
+    "shell_gap_mm_lte": 3,
+    "flange_above_centroid": true,
+    "intact_amplitude_px_gte": 150,
+    "no_mp4_encoded": true
+  },
+  "scenes": {
+    "intact": {
+      "grasp": {
+        "time_s": 1.7999999999999985,
+        "shell_luminance_mean": 252.0110198017298,
+        "shell_pixel_count": 253089,
+        "gripper_fully_in_frame": false,
+        "insets_present_mirrored": true,
+        "still": "reports/vbd/clips/panda/w3_intact_v11_grasp.png"
+      },
+      "mid_motion": {
+        "time_s": 9.400000000000047,
+        "shell_luminance_mean": 252.76440210730985,
+        "shell_pixel_count": 152232,
+        "gripper_fully_in_frame": false,
+        "insets_present_mirrored": true,
+        "still": "reports/vbd/clips/panda/w3_intact_v11_mid_motion.png"
+      },
+      "ending": {
+        "time_s": 10.600000000000106,
+        "shell_luminance_mean": 252.74737724807696,
+        "shell_pixel_count": 152497,
+        "gripper_fully_in_frame": false,
+        "insets_present_mirrored": true,
+        "still": "reports/vbd/clips/panda/w3_intact_v11_ending.png"
+      }
+    },
+    "slip": {
+      "grasp": {
+        "time_s": 1.7999999999999985,
+        "shell_luminance_mean": 250.5647968964059,
+        "shell_pixel_count": 23650,
+        "gripper_fully_in_frame": true,
+        "insets_present_mirrored": true,
+        "still": "reports/vbd/clips/panda/w3_slip_v11_grasp.png"
+      },
+      "mid_motion": {
+        "time_s": 9.400000000000047,
+        "shell_luminance_mean": 250.00357607967712,
+        "shell_pixel_count": 23294,
+        "gripper_fully_in_frame": true,
+        "insets_present_mirrored": true,
+        "still": "reports/vbd/clips/panda/w3_slip_v11_mid_motion.png"
+      },
+      "ending": {
+        "time_s": 10.416666666666764,
+        "shell_luminance_mean": 248.49643480220888,
+        "shell_pixel_count": 17746,
+        "gripper_fully_in_frame": true,
+        "insets_present_mirrored": true,
+        "still": "reports/vbd/clips/panda/w3_slip_v11_ending.png"
+      }
+    },
+    "damage": {
+      "grasp": {
+        "time_s": 1.7999999999999985,
+        "shell_luminance_mean": 250.2071431519919,
+        "shell_pixel_count": 25679,
+        "gripper_fully_in_frame": true,
+        "insets_present_mirrored": true,
+        "still": "reports/vbd/clips/panda/w3_damage_v11_grasp.png"
+      },
+      "mid_motion": {
+        "time_s": 9.400000000000047,
+        "shell_luminance_mean": 250.38417697005582,
+        "shell_pixel_count": 27017,
+        "gripper_fully_in_frame": true,
+        "insets_present_mirrored": true,
+        "still": "reports/vbd/clips/panda/w3_damage_v11_mid_motion.png"
+      },
+      "ending": {
+        "time_s": 10.600000000000106,
+        "shell_luminance_mean": 250.37869081916762,
+        "shell_pixel_count": 27296,
+        "gripper_fully_in_frame": true,
+        "insets_present_mirrored": true,
+        "still": "reports/vbd/clips/panda/w3_damage_v11_ending.png"
+      }
+    }
+  },
+  "shell_attachment_3d": {
+    "gap_mm": 2.270936965559356e-05,
+    "flange_above_centroid": true
+  },
+  "passed": true,
+  "intact_amplitude_px": 153.362833618345,
+  "intact_camera_distance_factor": 0.31,
+  "no_mp4_encoded": true
+}

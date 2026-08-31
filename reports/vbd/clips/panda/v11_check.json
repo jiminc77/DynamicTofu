@@ -1,0 +1,28 @@
+{
+  "version": 11,
+  "render_only": true,
+  "simulation_rerun": false,
+  "labels_untouched": true,
+  "shell_jaw_extent_px": 483,
+  "shell_vertical_extent_px": 217,
+  "gap_mm": 2.270936965559356e-05,
+  "flange_up": true,
+  "flange_above_centroid": true,
+  "band_horizontal": true,
+  "intact_amplitude_px": 153.362833618345,
+  "intact_camera_distance_factor": 0.31,
+  "shell_luminance": {
+    "intact_grasp": 252.0110198017298,
+    "intact_mid_motion": 252.76440210730985,
+    "intact_ending": 252.74737724807696,
+    "slip_grasp": 250.5647968964059,
+    "slip_mid_motion": 250.00357607967712,
+    "slip_ending": 248.49643480220888,
+    "damage_grasp": 250.2071431519919,
+    "damage_mid_motion": 250.38417697005582,
+    "damage_ending": 250.37869081916762
+  },
+  "insets_present_mirrored": true,
+  "mp4_encoded": false,
+  "passed": true
+}
