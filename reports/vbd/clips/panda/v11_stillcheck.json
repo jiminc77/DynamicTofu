@@ -8,32 +8,33 @@
     "insets_present_mirrored": true,
     "shell_gap_mm_lte": 3,
     "flange_above_centroid": true,
-    "intact_amplitude_px_gte": 150,
-    "no_mp4_encoded": true
+    "no_mp4_encoded": true,
+    "gripper_fully_in_frame": true,
+    "intact_amplitude_px_gte": 90
   },
   "scenes": {
     "intact": {
       "grasp": {
         "time_s": 1.7999999999999985,
-        "shell_luminance_mean": 252.0110198017298,
-        "shell_pixel_count": 253089,
-        "gripper_fully_in_frame": false,
+        "shell_luminance_mean": 250.45434654180715,
+        "shell_pixel_count": 91623,
+        "gripper_fully_in_frame": true,
         "insets_present_mirrored": true,
         "still": "reports/vbd/clips/panda/w3_intact_v11_grasp.png"
       },
       "mid_motion": {
         "time_s": 9.400000000000047,
-        "shell_luminance_mean": 252.76440210730985,
-        "shell_pixel_count": 152232,
-        "gripper_fully_in_frame": false,
+        "shell_luminance_mean": 251.79911279475056,
+        "shell_pixel_count": 80619,
+        "gripper_fully_in_frame": true,
         "insets_present_mirrored": true,
         "still": "reports/vbd/clips/panda/w3_intact_v11_mid_motion.png"
       },
       "ending": {
         "time_s": 10.600000000000106,
-        "shell_luminance_mean": 252.74737724807696,
-        "shell_pixel_count": 152497,
-        "gripper_fully_in_frame": false,
+        "shell_luminance_mean": 251.77626133019274,
+        "shell_pixel_count": 80665,
+        "gripper_fully_in_frame": true,
         "insets_present_mirrored": true,
         "still": "reports/vbd/clips/panda/w3_intact_v11_ending.png"
       }
@@ -96,7 +97,12 @@
     "flange_above_centroid": true
   },
   "passed": true,
-  "intact_amplitude_px": 153.362833618345,
-  "intact_camera_distance_factor": 0.31,
-  "no_mp4_encoded": true
+  "intact_amplitude_px": 96.10457258892257,
+  "intact_camera_distance_factor": 0.52,
+  "no_mp4_encoded": true,
+  "intact_start_tick": {
+    "world_fixed": true,
+    "world_x_m": 1.0913936421275139e-10,
+    "source": "first frozen-frame palm x"
+  }
 }

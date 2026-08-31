@@ -9,12 +9,12 @@
   "flange_up": true,
   "flange_above_centroid": true,
   "band_horizontal": true,
-  "intact_amplitude_px": 153.362833618345,
-  "intact_camera_distance_factor": 0.31,
+  "intact_amplitude_px": 96.10457258892257,
+  "intact_camera_distance_factor": 0.52,
   "shell_luminance": {
-    "intact_grasp": 252.0110198017298,
-    "intact_mid_motion": 252.76440210730985,
-    "intact_ending": 252.74737724807696,
+    "intact_grasp": 250.45434654180715,
+    "intact_mid_motion": 251.79911279475056,
+    "intact_ending": 251.77626133019274,
     "slip_grasp": 250.5647968964059,
     "slip_mid_motion": 250.00357607967712,
     "slip_ending": 248.49643480220888,
@@ -24,5 +24,11 @@
   },
   "insets_present_mirrored": true,
   "mp4_encoded": false,
-  "passed": true
+  "passed": true,
+  "intact_gripper_fully_in_frame": true,
+  "intact_start_tick": {
+    "world_fixed": true,
+    "world_x_m": 1.0913936421275139e-10,
+    "source": "first frozen-frame palm x"
+  }
 }

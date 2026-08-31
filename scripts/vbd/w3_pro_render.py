@@ -224,7 +224,7 @@ def camera_for(files, scene, version=2):
         # frozen 4.5 cm intact excursion remains visibly measurable.
         start_x=xs[0]
         target=np.array((start_x,0,.11))
-        eye=target+np.array((-.48,-.58,.24))*.31
+        eye=target+np.array((-.48,-.58,.24))*.52
     return look_at(eye,target), (lo,hi), eye, target
 
 
@@ -597,6 +597,11 @@ def pyrender_frame(q,bodies,t,scene,meta,boundary,tets,inv_dm,camera,xlim,versio
     mid=sum(xlim)/2; ground=trimesh.creation.box((xlim[1]-xlim[0],.42,.002)); ground.apply_translation((mid,0,-.002))
     sc.add(pyrender.Mesh.from_trimesh(ground,material=pyrender.MetallicRoughnessMaterial(baseColorFactor=(.86,.88,.90,1),roughnessFactor=1)))
     for x in np.arange(np.floor(xlim[0]/.05)*.05,xlim[1]+.05,.05): box((.0007,.40,.0008),(.62,.66,.70),np.array(((1,0,0,x),(0,1,0,0),(0,0,1,.0003),(0,0,0,1))))
+    if version >= 11 and scene == "intact":
+        # Fixed world reference for the short quasi-static out-and-back.
+        start_x=float(meta["intact_palm_start_x"])
+        box((.0025,.40,.0012),(.08,.18,.30),
+            np.array(((1,0,0,start_x),(0,1,0,0),(0,0,1,.0008),(0,0,0,1))))
     shadow=trimesh.creation.cylinder(radius=.045,height=.0006); shadow.apply_scale((1.8,.65,1)); shadow.apply_translation((q[:,0].mean(),q[:,1].mean(),.0005))
     sc.add(pyrender.Mesh.from_trimesh(shadow,material=pyrender.MetallicRoughnessMaterial(baseColorFactor=(.12,.14,.16,.18),alphaMode="BLEND")))
     sc.add(pyrender.PerspectiveCamera(yfov=np.deg2rad(34)),pose=camera)
@@ -723,6 +728,9 @@ def render_scene(scene, smoke=False, version=2):
     else:
         BODY_REORDER=None
     files=snapshots(scene,version); first,_,_=load_frame(files[0])
+    if version >= 11 and scene == "intact":
+        _,start_bodies,_=load_frame(files[0])
+        meta["intact_palm_start_x"]=float(start_bodies[1,0])
     settle_index=None
     if version >= 5 and scene == "slip":
         if load_frame(files[-1])[2] <= float(meta["drop_t"]):

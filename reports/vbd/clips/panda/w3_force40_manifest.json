@@ -5,7 +5,7 @@
     "labels_untouched": true,
     "source_frames": "w3_<scene>_force40",
     "rig_geometry": "panda_rig_geometry.npz",
-    "note": "v11 corrects only the visual hand-shell attachment and intact presentation camera; the intact camera retains the damage angle at 0.31x distance because the frozen intact excursion is 4.5 cm rather than 0.3 m. Physics, fingers, pads, labels, and force bands are unchanged."
+    "note": "v11 corrects only the visual hand-shell attachment and intact presentation camera; the intact camera retains the damage angle at 0.52x distance because the frozen intact excursion is 4.5 cm rather than 0.3 m, with a world-fixed track tick at the palm start x. Physics, fingers, pads, labels, and force bands are unchanged."
   },
   "v10_render_revision": {
     "render_only": true,
